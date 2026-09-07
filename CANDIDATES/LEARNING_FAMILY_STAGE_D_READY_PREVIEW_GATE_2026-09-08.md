@@ -1,6 +1,6 @@
 # LEARNING FAMILY STAGE D — READY PREVIEW GATE
 
-Status: CANDIDATE / READY DEPLOY PREVIEW VERIFIED / NO PRODUCTION RELEASE
+Status: CANDIDATE / READY DEPLOY PREVIEW VERIFIED / DEVICE BOOT PASS / NO PRODUCTION RELEASE
 Date: 2026-09-08
 Scope: Ready & Set first staging runtime verification gate
 Depends on:
@@ -84,6 +84,18 @@ Expected:
 - visible settings/runtime text shows staging REV_07 / 0.9.3-rc2
 - no Production URL is replaced
 
+Actual evidence received on iPhone, 2026-09-08:
+- first screenshot shows Netlify private-site Team SSO gate: `This site is private / Sign in to Netlify`
+- second screenshot after authentication shows Ready & Set UI successfully loaded from the Netlify non-production preview context
+- Netlify preview collaboration toolbar is visible; this is hosting-review UI, not Ready & Set product UI
+
+Gate A classification:
+- Team SSO gate observed = PASS
+- post-login Preview app boot = PASS
+- Ready & Set home UI render = PASS
+- Production replacement = NOT OBSERVED
+- visible staging version text = NOT YET EVIDENCED FROM PROVIDED SCREENSHOT
+
 ### Gate B — BGM regression
 Expected:
 - local piano/nature/water/lofi/OFF remain available
@@ -153,7 +165,11 @@ After Preview PASS:
 - Preview URL: AVAILABLE
 - Team SSO: PRESERVED
 - Production: UNCHANGED
-- Device actual-result validation: PENDING
+- Device Gate A / Preview boot: PASS
+- Device Gate B / BGM: PENDING
+- Device Gate C / recording BGM guard: PENDING
+- Device Gate D / session restoration: PENDING
+- Device Gate E / specialist routing: PENDING
 - Hide/Snap preview expansion: HOLD UNTIL READY PATTERN PASSES
 
 END — LEARNING FAMILY STAGE D READY PREVIEW GATE 2026-09-08
