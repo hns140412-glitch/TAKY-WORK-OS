@@ -32,7 +32,8 @@ Several pages are intentionally marked with `.scroll` containers/content and act
 Classification:
 - Planner / Today-Timer-Week horizontal swipe = NOT IMPLEMENTED IN CURRENT PREVIEW
 - basic child flow no-vertical-scroll rule = CURRENT RUNTIME DRIFT / ADJUST REQUIRED
-- long Settings/admin/data screens = may use controlled sub-navigation or contained scroll only when unavoidable; they must not force scrolling into the primary child execution flow
+- long Settings/admin/data screens = scrolling allowed when needed
+- scrolling must not be required merely to find or reach the next primary action
 
 ## 3. TARGET VIEWPORT CONTRACT
 
@@ -52,9 +53,32 @@ Hard candidate:
 Do not solve overflow by shrinking text below accessible size.
 Use progressive disclosure, horizontal swipe, tabs, compact Guide bubbles or separate subviews.
 
-Secondary/utility surfaces such as history detail, parent/admin backup, long diagnostics may use contained vertical scroll if content cannot reasonably fit one viewport.
+Secondary/utility surfaces such as Settings, history detail, parent/admin backup and diagnostics may use contained vertical scroll if content cannot reasonably fit one viewport.
 
-## 4. HORIZONTAL SWIPE CONTRACT
+## 4. ACTION REACHABILITY CONTRACT
+
+Scrolling content is acceptable; scrolling to discover the action required to continue is not.
+
+Hard candidate:
+`SCROLL FOR CONTENT = ALLOWED`
+`SCROLL TO FIND PRIMARY ACTION = FAIL`
+
+For Settings / utility pages:
+- Back / Close is always reachable without hunting through content.
+- Save / Apply / Done, when required, should be sticky/fixed or otherwise remain obvious and reachable.
+- destructive actions such as reset must NOT be made sticky or visually prominent; they remain in guarded data/admin sections.
+- section-local actions may scroll with their content when they are not required to continue.
+
+For child mission/setup flow:
+- the next required CTA must be visible within the current safe viewport.
+- if the content would exceed one screen, split it into steps/slides rather than placing START/CONTINUE below a long scroll.
+- a child should not need to scroll to discover `시작`, `계속`, `완료`, `도움`, `잠깐 멈춤`, or the current next-step action.
+
+Candidate layout pattern:
+`SCROLLABLE CONTENT AREA + FIXED/STICKY ACTION ZONE`
+where scrolling is genuinely necessary.
+
+## 5. HORIZONTAL SWIPE CONTRACT
 
 Candidate normalized navigation:
 `TODAY / PLAN ↔ FOCUS / TIMER ↔ WEEK / PROGRESS`
@@ -68,10 +92,10 @@ Candidate normalized navigation:
 
 The exact naming and whether Home/Base Camp participates in the swipe carousel remains REVIEW_REQUIRED before project MASTER promotion.
 
-## 5. IMPLEMENTATION GATE
+## 6. IMPLEMENTATION GATE
 
 Do not add this piecemeal to the current Preview.
 Batch with the contextual Guide UX work:
-`VIEWPORT CONTRACT + SWIPE NAV + GUIDE HABITAT + SPEECH-BUBBLE QUICK ACTIONS → STAGING BATCH → ONE PREVIEW → DEVICE VALIDATION`
+`VIEWPORT CONTRACT + ACTION REACHABILITY + SWIPE NAV + GUIDE HABITAT + SPEECH-BUBBLE QUICK ACTIONS → STAGING BATCH → ONE PREVIEW → DEVICE VALIDATION`
 
 END — READY NAVIGATION / SWIPE / VIEWPORT DELTA 2026-09-08
