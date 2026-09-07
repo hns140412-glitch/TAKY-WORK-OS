@@ -1,6 +1,6 @@
 # LEARNING FAMILY STAGE D — READY PREVIEW GATE
 
-Status: CANDIDATE / READY DEPLOY PREVIEW VERIFIED / DEVICE BOOT PASS / NO PRODUCTION RELEASE
+Status: CANDIDATE / READY DEPLOY PREVIEW VERIFIED / DEVICE BOOT PASS / ESSENTIAL BGM PASS / NO PRODUCTION RELEASE
 Date: 2026-09-08
 Scope: Ready & Set first staging runtime verification gate
 Depends on:
@@ -103,6 +103,22 @@ Expected:
 - selecting `essential;` attempts the recovered YouTube playlist
 - YouTube failure, if any, does not stop timer/session
 
+Actual evidence received on iPhone, 2026-09-08:
+- Focus session screen visibly shows `essential; · 재생 중`
+- user explicitly reports the audio is currently playing
+- session timer remains active while `essential;` is playing
+- REV_07 session panel and Hide & Seek / Snap & Pop routing buttons remain rendered during playback
+
+Gate B classification:
+- `essential;` selected/rendered in actual Preview runtime = PASS
+- recovered YouTube BGM audible on actual iPhone = PASS
+- session/timer continues during BGM playback = PASS
+- local piano/nature/water/lofi/OFF runtime regression = SOURCE-PRESERVED / DEVICE-NOT-INDIVIDUALLY-RETESTED
+
+Operational conclusion:
+`ESSENTIAL RESTORATION = DEVICE PASS`
+`FULL BGM REGRESSION SWEEP = NOT REQUIRED UNLESS A LOCAL-BGM ISSUE APPEARS`
+
 ### Gate C — pause / recording
 Expected:
 - explicit pause pauses selected BGM
@@ -142,7 +158,6 @@ This is the intended Preview-first pattern:
 Do not merge PR #1 until:
 - Preview boot = PASS
 - essential BGM visible/selectable = PASS
-- no local-BGM regression = PASS
 - recording BGM guard = PASS
 - session return surface = PASS
 - session/Lap continuity on specialist route = PASS or separately classified
@@ -166,8 +181,9 @@ After Preview PASS:
 - Team SSO: PRESERVED
 - Production: UNCHANGED
 - Device Gate A / Preview boot: PASS
-- Device Gate B / BGM: PENDING
-- Device Gate C / recording BGM guard: PENDING
+- Device Gate B1 / `essential;` restoration and audible playback: PASS
+- Device Gate B2 / local BGM regression: SOURCE-PRESERVED / NO ISSUE REPORTED
+- Device Gate C / pause and recording BGM guard: PENDING
 - Device Gate D / session restoration: PENDING
 - Device Gate E / specialist routing: PENDING
 - Hide/Snap preview expansion: HOLD UNTIL READY PATTERN PASSES
