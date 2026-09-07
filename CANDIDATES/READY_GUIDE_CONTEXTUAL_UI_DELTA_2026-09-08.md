@@ -8,6 +8,7 @@ Scope: Guide appearance, speech-bubble actions, popup/bottom-sheet reduction, se
 
 Actual iPhone Preview review showed that one action often opens another selection surface, making the flow feel step-heavy.
 User requested that the previously discussed Guide appearance pattern and speech-bubble choices be restored to the interaction model.
+User additionally clarified the intended visual family as including a `Peekaboo / 빼꼼` style and related contextual character-entry styles.
 
 ## 1. PRESERVE — PRIOR GUIDE PATTERN
 
@@ -27,7 +28,59 @@ Hard:
 - Guide must not permanently occupy the main content area.
 - Onboarding must stay short, offer `나중에 하기`, and must not block starting today's task.
 
-## 2. ADOPT — SPEECH BUBBLE FIRST
+## 2. GUIDE APPEARANCE STYLE TAXONOMY
+
+The Guide should not have one fixed entrance animation for every situation. Use a small controlled family of appearances selected by context.
+
+### A. Peekaboo / Edge Peek — PRIMARY
+Korean working description: `빼꼼 등장`.
+
+- character is mostly outside the viewport
+- only part of the face/head/ear/hand/shoulder becomes visible from an edge or corner
+- ideal for low-interruption hints, quick choices, encouragement and noticing
+- may retreat automatically after the child responds
+
+This is the default Ready & Set Guide appearance.
+
+### B. Corner Peek
+- a smaller variation of Peekaboo from a lower/upper corner
+- useful when the side edge is occupied by task/timer controls
+- should not cover core timer, task-state or action buttons
+
+### C. Bubble-first Peek
+- speech bubble appears with only a very small character fragment/avatar anchor
+- used when the message/choice matters more than showing the character
+- best for very quick binary/ternary choices
+
+### D. Slide-in Companion
+- Guide moves slightly farther into the screen than Peekaboo, but does not take over the page
+- used when the child needs a little more explanation or emotional support
+- should still preserve the current task context behind it
+
+### E. Full Guide / Expanded Help — EXCEPTION
+- larger Guide surface or expanded explanation panel
+- only when a short bubble cannot safely explain the issue
+- examples: permission explanation, multi-step recovery, parent/help escalation
+- closes back to the same task/session context
+
+### F. Celebration Pop / Return Peek
+- brief playful appearance after completion or successful recovery
+- should acknowledge the child, then quickly yield the screen back to the result or next action
+- must not become a blocking reward sequence
+
+### Context routing
+
+`LOW INTERRUPTION → PEEKABOO / BUBBLE-FIRST`
+`SHORT EXPLANATION → SLIDE-IN COMPANION`
+`COMPLEX HELP → FULL GUIDE`
+`SUCCESS / RETURN → CELEBRATION POP OR RETURN PEEK`
+
+Hard candidate:
+`GUIDE APPEARANCE INTENSITY SHOULD MATCH CONTEXT INTENSITY`
+`GUIDE MUST NOT BLOCK CORE LEARNING CONTROLS`
+`PEEKABOO = DEFAULT, FULL GUIDE = EXCEPTION`
+
+## 3. ADOPT — SPEECH BUBBLE FIRST
 
 For common, low-complexity choices, prefer in-context Guide speech bubbles over full bottom sheets or sequential modal stacks.
 
@@ -47,13 +100,13 @@ Hard candidate:
 `SIMPLE CHOICE ≠ FULL SHEET REQUIRED`
 `ONE ACTION SHOULD NOT CREATE UNNECESSARY SECOND/THIRD CHOICE LAYERS`
 
-## 3. READY FLOW EXAMPLES
+## 4. READY FLOW EXAMPLES
 
 ### Focus BGM
 Current: `음악 → full sound sheet → sound → 선택 완료`
 Candidate:
 - tap `음악`
-- Guide peeks from side
+- Guide uses Peekaboo from side
 - bubble: `오늘은 뭐 들을까?`
 - quick choices: current favorite / `essential;` / `OFF`
 - `더보기` opens full sound list only if needed
@@ -77,9 +130,14 @@ Instead of showing every task with five state buttons at once:
 
 ### Recording
 Preserve previously defined short Guide intro before entering the recording event.
-The Guide should explain the transition with a short bubble/voice line, then yield the turn to the child.
+The Guide should explain the transition with a short Peek/Bubble or voice line, then yield the turn to the child.
 
-## 4. SETTINGS INFORMATION ARCHITECTURE
+### Help / Blocked state
+- first use Bubble-first Peek: `어디서 막혔어?`
+- quick choice if possible
+- only escalate to Slide-in Companion / Full Guide when the answer requires explanation or parent help
+
+## 5. SETTINGS INFORMATION ARCHITECTURE
 
 ### Guide settings
 Guide settings should contain only Guide-related controls:
@@ -114,7 +172,7 @@ Status:
 `DATA EXPORT FUNCTION = PRESERVE`
 `DATA EXPORT UNDER GUIDE-ASSOCIATED FLOW = ADJUST`
 
-## 5. DEVICE EVIDENCE 2026-09-08
+## 6. DEVICE EVIDENCE 2026-09-08
 
 Observed on actual iPhone Ready Preview:
 - Preview boot works after Netlify Team SSO.
@@ -124,9 +182,12 @@ Observed on actual iPhone Ready Preview:
 - after returning to Focus, UI reports `essential; · 재생 중`.
 - staging version text is visible: `APP VERSION 0.9.3-rc2 · MASTER REV_07 ... STAGING`.
 
-## 6. CLASSIFICATION
+## 7. CLASSIFICATION
 
-- Guide PEEK/TALK/GUIDE/HIDE pattern: PRESERVE / RESTORE
+- Guide `PEEK → TALK → GUIDE → HIDE` pattern: PRESERVE / RESTORE
+- Peekaboo / Edge Peek as default Guide appearance: ADOPT / HARD-CANDIDATE
+- Corner Peek / Bubble-first Peek / Slide-in Companion / Full Guide context variants: ADOPT
+- Full Guide for every interaction: REJECT
 - Guide speech-bubble quick actions: ADOPT
 - full modal/sheet for simple choices: ADJUST / REDUCE
 - one unresolved task at a time during wrap-up: ADOPT
@@ -136,10 +197,12 @@ Observed on actual iPhone Ready Preview:
 - JSON export child-facing prominence: ADJUST
 - destructive reset: PRESERVE FUNCTION / ADD GUARD
 
-## 7. IMPLEMENTATION RULE
+## 8. IMPLEMENTATION RULE
 
 Do not patch this piecemeal into Production.
 
 `UX DELTA → SOURCE/MASTER REVIEW → BATCH IMPLEMENT ON STAGING → ONE PREVIEW → DEVICE VALIDATE → PROMOTE`
+
+The appearance-style family should be implemented as one reusable Guide appearance component/state machine rather than separate ad-hoc animations per screen.
 
 END — READY GUIDE CONTEXTUAL UI DELTA 2026-09-08
