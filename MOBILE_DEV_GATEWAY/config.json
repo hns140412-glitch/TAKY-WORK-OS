@@ -1,0 +1,22 @@
+{
+  "owner": "hns140412-glitch",
+  "sync_interval_seconds": 300,
+  "gateway_port": 4170,
+  "apps": {
+    "ready": {
+      "repo": "Ready-Set",
+      "branch": "runtime-session-bridge-2026-09-10",
+      "port": 4171
+    },
+    "hide": {
+      "repo": "Hide-Seek",
+      "branch": "runtime-session-bridge-2026-09-10",
+      "port": 4172
+    },
+    "snap": {
+      "repo": "Snap-Pop",
+      "branch": "runtime-session-bridge-2026-09-10",
+      "port": 4173
+    }
+  }
+}
