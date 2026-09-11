@@ -1,0 +1,62 @@
+{
+  "task_id": "2026-09-11-family-shell-same-origin-spike-v1",
+  "target_repo": "TAKY-WORK-OS",
+  "target_branch": "runtime-hub-unification-2026-09-11",
+  "mode": "CODEX_BOUNDED_INTEGRATION_SPIKE",
+  "priority": "P0_AFTER_CONTINUITY",
+  "goal": "Prototype and verify a same-origin Family Shell integration layer for Ready & Set, Hide & Seek, and Snap & Pop so development remains isolated by repo/branch while final installed-home-screen experience can move between family apps without opening a normal Safari/new-tab flow, while preserving one Ready-owned learning session/timer/handoff context.",
+  "authority": [
+    "TAKY canonical",
+    "PROJECTS/READY_WHOLE_IMPLEMENTATION_CONTRACT.md",
+    "Ready/Family rule: APP_SWITCH != PAUSE != LAP_END != SESSION_END",
+    "Ready remains sole Session owner",
+    "Guide rules remain existing GUIDE authority",
+    "No location tracking"
+  ],
+  "inspect_first": [
+    "MOBILE_DEV_GATEWAY/runtime_hub.py",
+    "MOBILE_DEV_GATEWAY/config.json",
+    "Ready-Set manifest/start_url/scope/service-worker/handoff behavior on runtime-session-bridge-2026-09-10",
+    "Hide & Seek manifest/start_url/scope/service-worker/handoff behavior on runtime-session-bridge-2026-09-10",
+    "Snap & Pop manifest/start_url/scope/service-worker/handoff behavior on runtime-session-bridge-2026-09-10"
+  ],
+  "required_work": [
+    "Do not merge the three application repositories and do not touch their main/prod branches.",
+    "Create an integration-only Family Shell/prototype under TAKY-WORK-OS or its runtime mirror layer that can expose /ready/, /hide/, /snap/ under one test origin.",
+    "Keep each app source/repository isolated; integration layer may assemble/proxy/build test copies only.",
+    "Define shared Family handoff/session envelope containing at least session_id, goal_id, task_id, lap_id, target_time, session_start_at, explicit pause state/intervals, issue state, active_app, return_target and version.",
+    "Ready remains the single writer/authority for learning Session state. Hide/Snap may consume and return specialist result/handoff evidence but must not create a replacement Ready Session.",
+    "Prototype internal transitions /ready -> /hide -> /ready and /ready -> /snap -> /ready within the same-origin test surface. Do not count a simple external URL opening as PASS.",
+    "Investigate manifest id/start_url/scope constraints for three separate home-screen entries versus one Family Web App with multiple entry routes. Record what is actually provable in browser/runtime and what still requires iPhone installation evidence.",
+    "Do not claim that three separate iOS home-screen icons can share one standalone execution context until physically verified. If not provable, keep it ADR/HOLD and recommend the least-fragile architecture.",
+    "Add automated regression/probe where feasible for route transition, shared handoff envelope, session identity preservation and timestamp continuity. Static tests are not device PASS.",
+    "Ensure integration does not require network success to preserve current session snapshot; local-first recovery remains required.",
+    "Document migration impact from current separate Quick-Tunnel origins and Netlify previews to a same-origin integration deployment.",
+    "Document native-shell escalation boundary for future lock-screen Live Activity or true OS-level app-to-app foreground switching; do not implement native shell in this task."
+  ],
+  "acceptance": [
+    "Integration prototype has one origin with /ready/, /hide/, /snap/ routes or an evidence-backed explanation of a blocker.",
+    "Ready->Hide/Snap->Ready prototype preserves the same session_id/task_id/lap_id and timestamp authority in automated/runtime probe where technically testable.",
+    "No normal external/new-tab URL opening is accepted as final target behavior.",
+    "No main/prod/deploy release changes.",
+    "No destructive changes to Ready/Hide/Snap source repositories.",
+    "Explicit matrix: desktop browser, iOS Home Screen Web App, Android/other = VERIFIED / UNVERIFIED / ADR, never inferred from another platform.",
+    "Actual iPhone Home Screen acceptance remains UNVERIFIED until physical test: Ready installed launch -> specialist transition -> no Safari/new-tab UX -> timer/session continuity -> return."
+  ],
+  "forbidden": [
+    "main/prod merge or release",
+    "paid generation",
+    "GPS/location tracking",
+    "inventing a second session owner",
+    "rewriting Guide ownership",
+    "claiming iPhone PASS from desktop/static tests",
+    "treating URL reachable as app-integration PASS"
+  ],
+  "required_output": [
+    "bounded implementation/prototype commit on runtime-hub-unification-2026-09-11",
+    "docs/FAMILY_SHELL_SAME_ORIGIN_SPIKE_2026-09-11.md",
+    "test/probe evidence",
+    "GAP/ADR/device matrix",
+    "rollback instructions"
+  ]
+}
