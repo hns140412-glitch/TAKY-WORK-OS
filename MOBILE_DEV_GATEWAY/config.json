@@ -18,5 +18,12 @@
       "branch": "runtime-session-bridge-2026-09-10",
       "port": 4173
     }
+  },
+  "codex": {
+    "enabled": true,
+    "command": "codex",
+    "timeout_seconds": 900,
+    "max_prompt_chars": 12000,
+    "allowed_apps": ["ready", "hide", "snap"]
   }
 }
