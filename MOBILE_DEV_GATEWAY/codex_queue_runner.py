@@ -35,7 +35,6 @@ ENV_WORKSPACE_KEYS = {
 RUNTIME.mkdir(exist_ok=True)
 LOG_DIR.mkdir(exist_ok=True)
 TASKS_DIR.mkdir(exist_ok=True)
-
 TERMINAL_STATUSES = {"DONE_PUSHED", "DONE_NO_CHANGES", "INVALID_TASK"}
 
 
@@ -133,14 +132,15 @@ def _process(path: Path, task: dict) -> dict:
         "TAKY isolated work-branch task. Work only inside the current repository and current branch. "
         "Do not switch branches. Do not touch main or production. Do not deploy or release. "
         "Do not read or expose secrets. Keep the change within the user's requested scope. "
-        "Run bounded relevant tests/static checks. Do not commit or push; the gateway performs that step after verification. "
+        "You are authorized to edit files in this work branch. Run bounded relevant tests/static checks. "
+        "Do not commit or push; the gateway performs that step after verification. "
         "Finish with a concise summary of root cause, changed files, checks, and remaining blocker if any.\n\n"
         f"TASK ID: {task['id']}\nUSER TASK:\n{prompt}"
     )
     started_head = _run(["git", "rev-parse", "HEAD"], workspace).stdout.strip()
     try:
-        # Codex 0.153.x parses --full-auto as a global option, before the exec subcommand.
-        proc = subprocess.run([codex, "--full-auto", "exec", instruction], cwd=workspace, text=True, capture_output=True, encoding="utf-8", errors="replace", timeout=TIMEOUT, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
+        # Use the installed CLI's stable non-interactive surface. Do not assume legacy --full-auto support.
+        proc = subprocess.run([codex, "exec", instruction], cwd=workspace, text=True, capture_output=True, encoding="utf-8", errors="replace", timeout=TIMEOUT, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     except subprocess.TimeoutExpired as exc:
         result.update(status="TIMEOUT", error="Codex timed out")
         result["output_tail"] = (((exc.stdout or "") if isinstance(exc.stdout, str) else "") + ((exc.stderr or "") if isinstance(exc.stderr, str) else ""))[-8000:]
@@ -149,7 +149,8 @@ def _process(path: Path, task: dict) -> dict:
     (LOG_DIR / f"queue-{task['id']}.log").write_text(output, encoding="utf-8")
     result.update(codex_returncode=proc.returncode, output_tail=output[-8000:])
     if proc.returncode != 0:
-        result["error"] = "Codex returned non-zero"
+        detail = next((line.strip() for line in reversed(output.splitlines()) if line.strip()), "Codex returned non-zero")
+        result["error"] = f"Codex rc={proc.returncode}: {detail[:1200]}"
         return result
     branch_after = _run(["git", "branch", "--show-current"], workspace).stdout.strip()
     if branch_after != expected_branch:
