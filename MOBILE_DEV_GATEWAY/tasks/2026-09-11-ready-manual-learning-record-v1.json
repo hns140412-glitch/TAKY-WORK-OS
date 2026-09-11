@@ -1,9 +1,0 @@
-{
-  "id": "2026-09-11-ready-manual-learning-record-v1",
-  "action": "codex",
-  "app": "ready",
-  "title": "Add post-hoc child/parent homework progress recording without inventing session time",
-  "prompt": "Implement the newly confirmed Ready & Set rule on the current isolated Ready work branch only: actual learning facts must be recoverable even when the child forgot to open/use Ready during homework. Add a bounded post-hoc progress-recording path for a child and for a parent/guardian to record all or part of a homework task as actually done. Preserve existing canonical session/lap ownership; do NOT create a second homework session store and do NOT fabricate elapsed/focus time when no Ready session existed. Record provenance distinctly (at minimum AUTO/session-derived vs CHILD_REPORTED vs PARENT_REPORTED, and support parent confirmation of a child-reported record where the current data model allows it). Recompute remaining planned quantity from actual reported quantity so PARTIAL/COMPLETED state and next-task planning can use the corrected fact. Keep this within Ready's planning/execution/history responsibility only: do not move Snap & Pop growth, badges, blessings, Wish Shop, diary, letters or notes into Ready. Do not add location tracking. UI should be minimal and child-friendly, e.g. an 'already did it' / 'record what I did' entry point on today's homework where appropriate, with whole/partial amount capture. Existing automatic Ready session behavior must remain unchanged. Add/update bounded static/contract tests for: no duplicate session owner, provenance preserved, no invented time for post-hoc records, partial quantity reduces remaining work, and automatic session path still works. Report root cause/design boundary, changed files, checks run, and any runtime-only blocker. Do not deploy, merge main, or trigger paid generation.",
-  "allow_main": false,
-  "allow_production": false
-}
