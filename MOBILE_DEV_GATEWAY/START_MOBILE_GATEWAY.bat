@@ -9,7 +9,7 @@ echo ==================================================
 if exist runtime\STOP del /q runtime\STOP >nul 2>&1
 
 echo [1/3] Preflight: Git, Codex CLI, app workspaces
-python -c "from pathlib import Path; from tool_resolver import resolve_codex,resolve_git; g=resolve_git(); c=resolve_codex('codex'); ws=[Path(r'D:\Git PWA\Ready ^& Set'),Path(r'D:\Git PWA\Hide ^& Seek'),Path(r'D:\Git PWA\Snap ^& Pop')]; ok=g and c and all((p/'.git').exists() for p in ws); print('[PASS] Git:',g or 'NOT FOUND'); print('[PASS] Codex:',c or 'NOT FOUND'); [print(('[PASS] ' if (p/'.git').exists() else '[FAIL] ')+str(p)) for p in ws]; raise SystemExit(0 if ok else 1)"
+python -c "from pathlib import Path; from tool_resolver import resolve_codex,resolve_git; g=resolve_git(); c=resolve_codex('codex'); ws=[Path('D:/Git PWA/Ready '+chr(38)+' Set'),Path('D:/Git PWA/Hide '+chr(38)+' Seek'),Path('D:/Git PWA/Snap '+chr(38)+' Pop')]; ok=g and c and all((p/'.git').exists() for p in ws); print('[PASS] Git:',g or 'NOT FOUND'); print('[PASS] Codex:',c or 'NOT FOUND'); [print(('[PASS] ' if (p/'.git').exists() else '[FAIL] ')+str(p)) for p in ws]; raise SystemExit(0 if ok else 1)"
 if errorlevel 1 (
   echo.
   echo [STOP] Preflight failed. Nothing was started.
