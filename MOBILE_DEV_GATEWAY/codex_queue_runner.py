@@ -38,16 +38,7 @@ TASKS_DIR.mkdir(exist_ok=True)
 
 
 def _run(args: list[str], cwd: Path, timeout: int = 120) -> subprocess.CompletedProcess:
-    return subprocess.run(
-        args,
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=timeout,
-        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-    )
+    return subprocess.run(args, cwd=cwd, text=True, capture_output=True, encoding="utf-8", errors="replace", timeout=timeout, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
 
 
 def _ledger() -> dict:
@@ -69,23 +60,40 @@ def _workspace(app: str) -> Path:
 
 
 def _codex_path() -> str | None:
+    # Explicit override first. This also supports PCs where Explorer has not
+    # refreshed PATH after Codex installation.
+    override = os.environ.get("TAKY_CODEX_EXE", "").strip().strip('"')
+    if override and Path(override).is_file():
+        return override
+
     path = shutil.which(CODEX_COMMAND)
     if path:
         return path
+
+    local = Path(os.environ.get("LOCALAPPDATA", ""))
+    roaming = Path(os.environ.get("APPDATA", ""))
     candidates = [
-        Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "OpenAI" / "codex.exe",
-        Path(os.environ.get("LOCALAPPDATA", "")) / "Programs" / "Codex" / "codex.exe",
-        Path(os.environ.get("APPDATA", "")) / "npm" / "codex.cmd",
+        local / "Programs" / "OpenAI" / "codex.exe",
+        local / "Programs" / "Codex" / "codex.exe",
+        roaming / "npm" / "codex.cmd",
     ]
     for p in candidates:
-        if p.exists():
+        if p.is_file():
             return str(p)
+
+    # Current OpenAI Codex desktop installs may place the CLI below
+    # %LOCALAPPDATA%\OpenAI\Codex\bin\<version-or-build>\codex.exe.
+    codex_bin = local / "OpenAI" / "Codex" / "bin"
+    if codex_bin.is_dir():
+        found = [p for p in codex_bin.glob("*/codex.exe") if p.is_file()]
+        found += [p for p in codex_bin.glob("codex.exe") if p.is_file()]
+        if found:
+            found.sort(key=lambda p: p.stat().st_mtime, reverse=True)
+            return str(found[0])
     return None
 
 
 def _safe_pull_queue() -> None:
-    # Pull task files into the already checked-out mobile gateway branch.
-    # Never switches branches and never forces local changes.
     status = _run(["git", "status", "--porcelain"], REPO_ROOT)
     if status.returncode != 0 or status.stdout.strip():
         return
@@ -111,17 +119,10 @@ def _process(path: Path, task: dict) -> dict:
     cfg = CONFIG["apps"][app]
     expected_branch = cfg["branch"]
     workspace = _workspace(app)
-    result = {
-        "task_id": task["id"],
-        "app": app,
-        "expected_branch": expected_branch,
-        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "status": "FAILED",
-    }
+    result = {"task_id": task["id"], "app": app, "expected_branch": expected_branch, "started_at": time.strftime("%Y-%m-%d %H:%M:%S"), "status": "FAILED"}
     if not workspace.exists() or not (workspace / ".git").exists():
         result["error"] = f"workspace missing or not a git repo: {workspace}"
         return result
-
     dirty = _run(["git", "status", "--porcelain"], workspace)
     if dirty.returncode != 0:
         result["error"] = dirty.stderr.strip() or "git status failed"
@@ -130,14 +131,12 @@ def _process(path: Path, task: dict) -> dict:
         result["status"] = "BLOCKED_DIRTY_WORKTREE"
         result["error"] = "local workspace has uncommitted changes"
         return result
-
     branch = _run(["git", "branch", "--show-current"], workspace)
     current_branch = branch.stdout.strip()
     if branch.returncode != 0 or current_branch != expected_branch:
         result["status"] = "BLOCKED_WRONG_BRANCH"
         result["error"] = f"expected {expected_branch}, found {current_branch or '?'}"
         return result
-
     fetch = _run(["git", "fetch", "origin", expected_branch], workspace, timeout=120)
     if fetch.returncode != 0:
         result["error"] = "git fetch failed: " + fetch.stderr[-2000:]
@@ -147,13 +146,11 @@ def _process(path: Path, task: dict) -> dict:
         result["status"] = "BLOCKED_NON_FF"
         result["error"] = "git pull --ff-only failed: " + pull.stderr[-2000:]
         return result
-
     codex = _codex_path()
     if not codex:
         result["status"] = "BLOCKED_CODEX_NOT_FOUND"
         result["error"] = "Codex CLI not found"
         return result
-
     prompt = str(task["prompt"]).strip()
     instruction = (
         "TAKY isolated work-branch task. Work only inside the current repository and current branch. "
@@ -165,22 +162,12 @@ def _process(path: Path, task: dict) -> dict:
     )
     started_head = _run(["git", "rev-parse", "HEAD"], workspace).stdout.strip()
     try:
-        proc = subprocess.run(
-            [codex, "exec", "--full-auto", instruction],
-            cwd=workspace,
-            text=True,
-            capture_output=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=TIMEOUT,
-            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-        )
+        proc = subprocess.run([codex, "exec", "--full-auto", instruction], cwd=workspace, text=True, capture_output=True, encoding="utf-8", errors="replace", timeout=TIMEOUT, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     except subprocess.TimeoutExpired as exc:
         result["status"] = "TIMEOUT"
         result["error"] = "Codex timed out"
         result["output_tail"] = (((exc.stdout or "") if isinstance(exc.stdout, str) else "") + ((exc.stderr or "") if isinstance(exc.stderr, str) else ""))[-8000:]
         return result
-
     output = (proc.stdout or "") + (("\n" + proc.stderr) if proc.stderr else "")
     (LOG_DIR / f"queue-{task['id']}.log").write_text(output, encoding="utf-8")
     result["codex_returncode"] = proc.returncode
@@ -188,14 +175,11 @@ def _process(path: Path, task: dict) -> dict:
     if proc.returncode != 0:
         result["error"] = "Codex returned non-zero"
         return result
-
-    # Refuse to publish if Codex somehow changed branch or repository state unexpectedly.
     branch_after = _run(["git", "branch", "--show-current"], workspace).stdout.strip()
     if branch_after != expected_branch:
         result["status"] = "BLOCKED_BRANCH_CHANGED"
         result["error"] = f"branch changed to {branch_after}"
         return result
-
     status = _run(["git", "status", "--porcelain"], workspace)
     if status.returncode != 0:
         result["error"] = "git status after Codex failed"
@@ -205,8 +189,6 @@ def _process(path: Path, task: dict) -> dict:
         result["head"] = started_head
         result["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
         return result
-
-    # No force, no main: add/commit/push only the already verified isolated branch.
     add = _run(["git", "add", "-A"], workspace)
     if add.returncode != 0:
         result["error"] = "git add failed: " + add.stderr[-2000:]
@@ -223,13 +205,7 @@ def _process(path: Path, task: dict) -> dict:
         result["head"] = new_head
         result["error"] = "git push failed: " + push.stderr[-3000:]
         return result
-
-    result.update({
-        "status": "DONE_PUSHED",
-        "head_before": started_head,
-        "head": new_head,
-        "finished_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-    })
+    result.update({"status": "DONE_PUSHED", "head_before": started_head, "head": new_head, "finished_at": time.strftime("%Y-%m-%d %H:%M:%S")})
     return result
 
 
