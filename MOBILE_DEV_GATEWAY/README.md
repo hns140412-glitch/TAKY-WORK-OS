@@ -1,47 +1,76 @@
 # TAKY Mobile Dev Gateway
 
-Purpose: make mobile ChatGPT the working console while the office PC acts as an unattended test host.
+## Purpose
 
-Flow:
+Mobile ChatGPT is the command/approval surface. The office PC is the execution/test host. GitHub isolated work branches are the development boundary. iPhone/browser is the final device check when automated evidence cannot prove behavior.
 
-`Mobile ChatGPT -> GitHub isolated work branches -> office PC mirror -> local servers -> Cloudflare Quick Tunnels -> iPhone browser -> explicit approval -> main promotion`
+Normal path:
 
-## Safety boundary
+`Mobile ChatGPT -> GitHub task/work branch -> office-PC Codex + local test host -> Cloudflare tunnel -> iPhone -> explicit approval -> main`
 
-- This gateway NEVER writes to `main`.
-- It only downloads the configured isolated branches.
-- It uses a separate mirror under `MOBILE_DEV_GATEWAY/runtime/apps` and does not overwrite `D:\Git PWA` working folders.
-- Main promotion remains a separate explicit approval step through ChatGPT/GitHub.
-- Quick Tunnel URLs remain temporary. If the gateway/tunnel process restarts, the URLs change.
+Main/production promotion is never performed by this gateway.
 
-## Current app mapping
+## Current app test mirrors
 
 - Ready & Set: `Ready-Set / runtime-session-bridge-2026-09-10 / 4171`
 - Hide & Seek: `Hide-Seek / runtime-session-bridge-2026-09-10 / 4172`
 - Snap & Pop: `Snap-Pop / runtime-session-bridge-2026-09-10 / 4173`
 - Gateway control page: `4170`
 
-## One-time PC setup
+The existing test mirror continues to download configured isolated branches into `MOBILE_DEV_GATEWAY/runtime/apps`. It does not overwrite normal app folders.
 
-1. On the office PC, switch `TAKY-WORK-OS` to branch `mobile-dev-gateway-2026-09-10` and Pull.
-2. Confirm Python and `cloudflared` are installed.
-3. Double-click `MOBILE_DEV_GATEWAY\START_MOBILE_GATEWAY.bat`.
-4. Keep that one CMD window open. The controller starts the three app servers and four tunnel processes in the background.
-5. Wait until `=== MOBILE CONTROL URL ===` appears.
-6. Open that single URL on the iPhone. The page shows Ready, Hide and Snap links and `Sync latest branch` buttons.
+## PC Codex queue
 
-## Normal mobile workflow
+`codex_queue_runner.py` adds the durable mobile-to-PC execution bridge.
 
-1. In mobile ChatGPT, request a change on the isolated work branch.
-2. ChatGPT updates GitHub work branch only.
-3. The PC gateway syncs automatically every 5 minutes, or tap `Sync all now` from the mobile gateway page for immediate pickup.
-4. Test on the iPhone.
-5. Request corrections in ChatGPT and repeat.
-6. Only after validation, explicitly request `main에 반영해줘` (or the applicable TAKY durable reflection command). Main does not change automatically.
+ChatGPT writes a bounded JSON task into `MOBILE_DEV_GATEWAY/tasks/` on this gateway branch. The PC watcher pulls the gateway branch every 30 seconds, verifies the target local app repository is clean and already on the configured isolated work branch, invokes the PC-installed Codex CLI, then commits/pushes successful changes only to that same isolated branch.
 
-## Notes
+Default local workspaces:
 
-- The gateway generates a Ready cross-app test link containing the current Hide/Snap tunnel URLs as `hide_target` and `snap_target` query parameters.
-- Ready must support those explicit test-only URL overrides before the cross-app button can use the current Quick Tunnel addresses. Until that bridge patch is in place, the three app links still work independently.
-- Closing the gateway CMD, rebooting the PC, losing internet, or entering sleep mode ends the current Quick Tunnels.
-- For permanent fixed hostnames, move later to a Named Cloudflare Tunnel with a managed domain.
+- Ready: `D:\Git PWA\Ready-Set`
+- Hide: `D:\Git PWA\Hide-Seek`
+- Snap: `D:\Git PWA\Snap-Pop`
+
+Optional environment overrides:
+
+- `TAKY_READY_WORKSPACE`
+- `TAKY_HIDE_WORKSPACE`
+- `TAKY_SNAP_WORKSPACE`
+
+The queue blocks instead of forcing through when the worktree is dirty, the branch is wrong, pull is non-fast-forward, Codex is missing, or push fails. It never switches an app repository to main.
+
+Direct public HTTP Codex execution is disabled by configuration. The Cloudflare-exposed gateway remains a test/sync surface; code execution is driven by authenticated GitHub write access to the task queue, not by an anonymous web form.
+
+## Start
+
+On the office PC, with `TAKY-WORK-OS` checked out to `mobile-dev-gateway-2026-09-10` and clean:
+
+1. Fetch/Pull latest once.
+2. Run `MOBILE_DEV_GATEWAY\START_MOBILE_GATEWAY.bat`.
+3. Keep the gateway and `TAKY Codex Queue` consoles open.
+4. The console prints a single Mobile Control URL after Cloudflare Quick Tunnels are ready.
+
+After this one-time update, normal mobile work does not require manually typing code on the PC. ChatGPT can queue bounded work through GitHub; the PC watcher detects it automatically.
+
+## Stop
+
+Run `STOP_MOBILE_GATEWAY.bat`. It writes the shared runtime stop signal. The gateway and Codex queue exit cleanly after the current bounded step. Close any remaining tunnel console if Windows leaves one open.
+
+## Queue task contract
+
+See `MOBILE_DEV_GATEWAY/tasks/README.md`.
+
+The first queued Ready task added with this bridge is `2026-09-11-ready-manual-learning-record-v1`: support child/parent post-hoc homework progress facts when Ready was not used during the actual work, without inventing session time or duplicating session ownership.
+
+## Safety boundary
+
+- Work branch only.
+- No automatic main merge.
+- No production deploy/release.
+- No force push.
+- No secret retrieval/exposure.
+- No paid image generation.
+- Dirty local workspace => block.
+- Wrong branch => block.
+- Codex failure => no commit/push.
+- Device confirmation only after static/automated checks are exhausted.
