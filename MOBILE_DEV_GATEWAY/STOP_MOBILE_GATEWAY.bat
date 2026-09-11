@@ -4,7 +4,8 @@ cd /d "%~dp0"
 if not exist runtime mkdir runtime
 > runtime\STOP echo stop
 
-echo Stop signal written. Gateway and Codex queue will exit cleanly after their current bounded step.
-echo If a Cloudflare tunnel console remains, close that console manually.
-
+echo [STOP] Signal written.
+echo The hidden supervisor will stop Gateway, Codex queue, app servers, and Cloudflare child processes.
+echo Tailscale Serve, if enabled, is left configured so it can resume automatically next time.
+timeout /t 2 /nobreak >nul
 endlocal
