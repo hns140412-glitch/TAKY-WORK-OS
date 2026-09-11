@@ -4,19 +4,33 @@
   "gateway_port": 4170,
   "apps": {
     "ready": {
+      "title": "Ready & Set",
+      "mode": "mirror",
       "repo": "Ready-Set",
       "branch": "runtime-session-bridge-2026-09-10",
       "port": 4171
     },
     "hide": {
+      "title": "Hide & Seek",
+      "mode": "mirror",
       "repo": "Hide-Seek",
       "branch": "runtime-session-bridge-2026-09-10",
       "port": 4172
     },
     "snap": {
+      "title": "Snap & Pop",
+      "mode": "mirror",
       "repo": "Snap-Pop",
       "branch": "runtime-session-bridge-2026-09-10",
       "port": 4173
+    },
+    "gangbuk7": {
+      "title": "강북7 FLOW",
+      "mode": "local_static",
+      "port": 8787,
+      "root": "D:/Git PWA/강북7구역_팀공유_FLOW_로컬서버",
+      "preserve": ["data.json"],
+      "update_channel": "TAKY-ASSETS/deploy/gangbuk7"
     }
   },
   "codex": {
