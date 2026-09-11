@@ -1,7 +1,10 @@
 @echo off
-chcp 65001 >nul
+setlocal
 cd /d "%~dp0"
 if not exist runtime mkdir runtime
-echo stop>runtime\STOP
-echo Stop signal sent. If the gateway window remains open, press Ctrl+C once.
-pause
+> runtime\STOP echo stop
+
+echo Stop signal written. Gateway and Codex queue will exit cleanly after their current bounded step.
+echo If a Cloudflare tunnel console remains, close that console manually.
+
+endlocal
