@@ -1,0 +1,9 @@
+{
+  "id": "2026-09-11-ready-visual-fidelity-harness-v1",
+  "action": "codex",
+  "app": "ready",
+  "title": "Add bounded visual QA harness for reference-led Ready UI work",
+  "prompt": "On the current isolated Ready work branch only, add a lightweight NON-PRODUCTION visual QA harness so future reference-led UI tasks can be verified before the user has to catch obvious mismatches. Do not redesign Ready and do not generate paid images. Preserve existing behavior. Add a bounded dev/test mechanism that makes it easy to capture stable screenshots at known Ready states/viewports (for example via a visual QA route/query/state fixture or equivalent minimally invasive approach) and document how to compare a reference screenshot against the implementation at the same viewport. Include a Visual Contract checklist and a simple evidence record format that captures reference id, viewport, implementation screenshot id/path, major deltas, and verdict MATCHED / ACCEPTABLE_DELTA / FAILED_DELTA. Add static/contract checks ensuring the harness is dev/test-only, does not create another session owner/store, does not alter production navigation by default, and does not enable paid image generation. Prefer deterministic fixture/state setup over manual tapping through long flows where feasible. If browser screenshot automation is already present, integrate with it; otherwise create the smallest foundation without adding heavy dependencies. Completion requires changed files, bounded checks, and a clear remaining runtime-only blocker if screenshot capture cannot be automated locally. Do not switch branches, merge main, deploy production, or release.",
+  "allow_main": false,
+  "allow_production": false
+}
