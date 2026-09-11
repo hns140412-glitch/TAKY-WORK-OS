@@ -20,10 +20,12 @@
     }
   },
   "codex": {
-    "enabled": true,
+    "enabled": false,
+    "queue_enabled": true,
     "command": "codex",
     "timeout_seconds": 900,
     "max_prompt_chars": 12000,
+    "queue_poll_seconds": 30,
     "allowed_apps": ["ready", "hide", "snap"]
   }
 }
