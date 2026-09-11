@@ -23,9 +23,9 @@ TIMEOUT = int(CODEX.get("timeout_seconds", 900))
 CODEX_COMMAND = str(CODEX.get("command", "codex"))
 
 DEFAULT_WORKSPACES = {
-    "ready": r"D:\Git PWA\Ready-Set",
-    "hide": r"D:\Git PWA\Hide-Seek",
-    "snap": r"D:\Git PWA\Snap-Pop",
+    "ready": r"D:\Git PWA\Ready & Set",
+    "hide": r"D:\Git PWA\Hide & Seek",
+    "snap": r"D:\Git PWA\Snap & Pop",
 }
 ENV_WORKSPACE_KEYS = {
     "ready": "TAKY_READY_WORKSPACE",
@@ -262,53 +262,37 @@ def _process(path: Path, task: dict) -> dict:
     return result
 
 
-def poll_once() -> None:
-    _safe_pull_queue()
-    ledger = _ledger()
-    processed = ledger.setdefault("processed", {})
-    for path in sorted(TASKS_DIR.glob("*.json")):
-        try:
-            task = _load_task(path)
-            task_id = str(task["id"])
-            prior = processed.get(task_id)
-            if isinstance(prior, dict) and prior.get("status") in TERMINAL_STATUSES:
-                continue
-            result = _process(path, task)
-        except Exception as exc:
-            task_id = path.stem
-            result = {
-                "task_id": task_id,
-                "status": "INVALID_TASK",
-                "error": str(exc),
-                "finished_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-            }
-        processed[task_id] = result
-        _save_ledger(ledger)
-        print(f"[CODEX QUEUE] {task_id}: {result.get('status')}", flush=True)
-
-
-def loop() -> None:
-    git = _git_exe()
-    codex = resolve_codex(CODEX_COMMAND)
+def main() -> None:
     print(f"[CODEX QUEUE] polling every {INTERVAL}s", flush=True)
-    print(f"[CODEX QUEUE] git: {git or 'NOT FOUND'}", flush=True)
-    print(f"[CODEX QUEUE] codex: {codex or 'NOT FOUND'}", flush=True)
+    print(f"[CODEX QUEUE] git: {_git_exe() or 'NOT FOUND'}", flush=True)
+    print(f"[CODEX QUEUE] codex: {resolve_codex(CODEX_COMMAND) or 'NOT FOUND'}", flush=True)
     while not STOP_FILE.exists():
         try:
-            poll_once()
+            _safe_pull_queue()
+            ledger = _ledger()
+            processed = ledger.setdefault("processed", {})
+            for path in sorted(TASKS_DIR.glob("*.json")):
+                task_id = path.stem
+                previous = processed.get(task_id, {})
+                if previous.get("status") in TERMINAL_STATUSES:
+                    continue
+                try:
+                    task = _load_task(path)
+                    result = _process(path, task)
+                except Exception as exc:
+                    result = {
+                        "task_id": task_id,
+                        "status": "FAILED",
+                        "error": str(exc),
+                        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
+                    }
+                processed[task_id] = result
+                _save_ledger(ledger)
+                print(f"[CODEX QUEUE] {task_id}: {result.get('status')}", flush=True)
         except Exception as exc:
             print(f"[CODEX QUEUE WARN] {exc}", flush=True)
-        for _ in range(max(1, INTERVAL)):
-            if STOP_FILE.exists():
-                return
-            time.sleep(1)
-
-
-def start_daemon() -> threading.Thread:
-    thread = threading.Thread(target=loop, name="taky-codex-queue", daemon=True)
-    thread.start()
-    return thread
+        time.sleep(INTERVAL)
 
 
 if __name__ == "__main__":
-    loop()
+    main()
