@@ -3,7 +3,6 @@ from __future__ import annotations
 import json
 import os
 import subprocess
-import threading
 import time
 from pathlib import Path
 
@@ -37,21 +36,7 @@ RUNTIME.mkdir(exist_ok=True)
 LOG_DIR.mkdir(exist_ok=True)
 TASKS_DIR.mkdir(exist_ok=True)
 
-TERMINAL_STATUSES = {
-    "DONE_PUSHED",
-    "DONE_NO_CHANGES",
-    "INVALID_TASK",
-}
-RETRYABLE_STATUSES = {
-    "BLOCKED_CODEX_NOT_FOUND",
-    "BLOCKED_GIT_NOT_FOUND",
-    "BLOCKED_DIRTY_WORKTREE",
-    "BLOCKED_WRONG_BRANCH",
-    "BLOCKED_NON_FF",
-    "COMMITTED_NOT_PUSHED",
-    "TIMEOUT",
-    "FAILED",
-}
+TERMINAL_STATUSES = {"DONE_PUSHED", "DONE_NO_CHANGES", "INVALID_TASK"}
 
 
 def _git_exe() -> str | None:
@@ -65,16 +50,7 @@ def _run(args: list[str], cwd: Path, timeout: int = 120) -> subprocess.Completed
         if not git:
             return subprocess.CompletedProcess(command, 127, "", "Git executable not found")
         command[0] = git
-    return subprocess.run(
-        command,
-        cwd=cwd,
-        text=True,
-        capture_output=True,
-        encoding="utf-8",
-        errors="replace",
-        timeout=timeout,
-        creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-    )
+    return subprocess.run(command, cwd=cwd, text=True, capture_output=True, encoding="utf-8", errors="replace", timeout=timeout, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
 
 
 def _ledger() -> dict:
@@ -96,20 +72,17 @@ def _workspace(app: str) -> Path:
 
 
 def _safe_pull_queue() -> None:
-    git = _git_exe()
-    if not git:
+    if not _git_exe():
         print("[CODEX QUEUE] Git not found; self-pull skipped", flush=True)
         return
     status = _run(["git", "status", "--porcelain"], REPO_ROOT)
-    if status.returncode != 0 or status.stdout.strip():
-        return
-    _run(["git", "pull", "--ff-only"], REPO_ROOT, timeout=90)
+    if status.returncode == 0 and not status.stdout.strip():
+        _run(["git", "pull", "--ff-only"], REPO_ROOT, timeout=90)
 
 
 def _load_task(path: Path) -> dict:
     task = json.loads(path.read_text(encoding="utf-8"))
-    required = ["id", "app", "prompt"]
-    if any(not str(task.get(k, "")).strip() for k in required):
+    if any(not str(task.get(k, "")).strip() for k in ["id", "app", "prompt"]):
         raise ValueError("task requires id, app, prompt")
     if task["app"] not in CONFIG["apps"]:
         raise ValueError("unknown app")
@@ -120,68 +93,41 @@ def _load_task(path: Path) -> dict:
     return task
 
 
-def _blocked_git(task: dict, expected_branch: str) -> dict:
-    return {
-        "task_id": task["id"],
-        "app": task["app"],
-        "expected_branch": expected_branch,
-        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "status": "BLOCKED_GIT_NOT_FOUND",
-        "error": "Git executable not found. Install Git or use GitHub Desktop bundled Git / TAKY_GIT_EXE.",
-    }
-
-
 def _process(path: Path, task: dict) -> dict:
     app = task["app"]
-    cfg = CONFIG["apps"][app]
-    expected_branch = cfg["branch"]
+    expected_branch = CONFIG["apps"][app]["branch"]
     workspace = _workspace(app)
-    result = {
-        "task_id": task["id"],
-        "app": app,
-        "expected_branch": expected_branch,
-        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-        "status": "FAILED",
-    }
-
+    result = {"task_id": task["id"], "app": app, "expected_branch": expected_branch, "started_at": time.strftime("%Y-%m-%d %H:%M:%S"), "status": "FAILED"}
     if not _git_exe():
-        return _blocked_git(task, expected_branch)
+        result.update(status="BLOCKED_GIT_NOT_FOUND", error="Git executable not found")
+        return result
     if not workspace.exists() or not (workspace / ".git").exists():
         result["error"] = f"workspace missing or not a git repo: {workspace}"
         return result
-
     dirty = _run(["git", "status", "--porcelain"], workspace)
     if dirty.returncode != 0:
         result["error"] = dirty.stderr.strip() or "git status failed"
         return result
     if dirty.stdout.strip():
-        result["status"] = "BLOCKED_DIRTY_WORKTREE"
-        result["error"] = "local workspace has uncommitted changes"
+        result.update(status="BLOCKED_DIRTY_WORKTREE", error="local workspace has uncommitted changes")
         return result
-
     branch = _run(["git", "branch", "--show-current"], workspace)
     current_branch = branch.stdout.strip()
     if branch.returncode != 0 or current_branch != expected_branch:
-        result["status"] = "BLOCKED_WRONG_BRANCH"
-        result["error"] = f"expected {expected_branch}, found {current_branch or '?'}"
+        result.update(status="BLOCKED_WRONG_BRANCH", error=f"expected {expected_branch}, found {current_branch or '?'}")
         return result
-
     fetch = _run(["git", "fetch", "origin", expected_branch], workspace, timeout=120)
     if fetch.returncode != 0:
         result["error"] = "git fetch failed: " + fetch.stderr[-2000:]
         return result
     pull = _run(["git", "pull", "--ff-only", "origin", expected_branch], workspace, timeout=120)
     if pull.returncode != 0:
-        result["status"] = "BLOCKED_NON_FF"
-        result["error"] = "git pull --ff-only failed: " + pull.stderr[-2000:]
+        result.update(status="BLOCKED_NON_FF", error="git pull --ff-only failed: " + pull.stderr[-2000:])
         return result
-
     codex = resolve_codex(CODEX_COMMAND)
     if not codex:
-        result["status"] = "BLOCKED_CODEX_NOT_FOUND"
-        result["error"] = "Codex CLI not found"
+        result.update(status="BLOCKED_CODEX_NOT_FOUND", error="Codex CLI not found")
         return result
-
     prompt = str(task["prompt"]).strip()
     instruction = (
         "TAKY isolated work-branch task. Work only inside the current repository and current branch. "
@@ -192,73 +138,45 @@ def _process(path: Path, task: dict) -> dict:
         f"TASK ID: {task['id']}\nUSER TASK:\n{prompt}"
     )
     started_head = _run(["git", "rev-parse", "HEAD"], workspace).stdout.strip()
-
     try:
-        proc = subprocess.run(
-            [codex, "exec", "--full-auto", instruction],
-            cwd=workspace,
-            text=True,
-            capture_output=True,
-            encoding="utf-8",
-            errors="replace",
-            timeout=TIMEOUT,
-            creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
-        )
+        # Codex 0.153.x parses --full-auto as a global option, before the exec subcommand.
+        proc = subprocess.run([codex, "--full-auto", "exec", instruction], cwd=workspace, text=True, capture_output=True, encoding="utf-8", errors="replace", timeout=TIMEOUT, creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0))
     except subprocess.TimeoutExpired as exc:
-        result["status"] = "TIMEOUT"
-        result["error"] = "Codex timed out"
+        result.update(status="TIMEOUT", error="Codex timed out")
         result["output_tail"] = (((exc.stdout or "") if isinstance(exc.stdout, str) else "") + ((exc.stderr or "") if isinstance(exc.stderr, str) else ""))[-8000:]
         return result
-
     output = (proc.stdout or "") + (("\n" + proc.stderr) if proc.stderr else "")
     (LOG_DIR / f"queue-{task['id']}.log").write_text(output, encoding="utf-8")
-    result["codex_returncode"] = proc.returncode
-    result["output_tail"] = output[-8000:]
+    result.update(codex_returncode=proc.returncode, output_tail=output[-8000:])
     if proc.returncode != 0:
         result["error"] = "Codex returned non-zero"
         return result
-
     branch_after = _run(["git", "branch", "--show-current"], workspace).stdout.strip()
     if branch_after != expected_branch:
-        result["status"] = "BLOCKED_BRANCH_CHANGED"
-        result["error"] = f"branch changed to {branch_after}"
+        result.update(status="BLOCKED_BRANCH_CHANGED", error=f"branch changed to {branch_after}")
         return result
-
     status = _run(["git", "status", "--porcelain"], workspace)
     if status.returncode != 0:
         result["error"] = "git status after Codex failed"
         return result
     if not status.stdout.strip():
-        result["status"] = "DONE_NO_CHANGES"
-        result["head"] = started_head
-        result["finished_at"] = time.strftime("%Y-%m-%d %H:%M:%S")
+        result.update(status="DONE_NO_CHANGES", head=started_head, finished_at=time.strftime("%Y-%m-%d %H:%M:%S"))
         return result
-
     add = _run(["git", "add", "-A"], workspace)
     if add.returncode != 0:
         result["error"] = "git add failed: " + add.stderr[-2000:]
         return result
-
     commit_message = f"TAKY-CODEX {task['id']}: {str(task.get('title') or prompt).splitlines()[0][:72]}"
     commit = _run(["git", "commit", "-m", commit_message], workspace, timeout=120)
     if commit.returncode != 0:
         result["error"] = "git commit failed: " + commit.stderr[-3000:]
         return result
-
     new_head = _run(["git", "rev-parse", "HEAD"], workspace).stdout.strip()
     push = _run(["git", "push", "origin", f"HEAD:{expected_branch}"], workspace, timeout=180)
     if push.returncode != 0:
-        result["status"] = "COMMITTED_NOT_PUSHED"
-        result["head"] = new_head
-        result["error"] = "git push failed: " + push.stderr[-3000:]
+        result.update(status="COMMITTED_NOT_PUSHED", head=new_head, error="git push failed: " + push.stderr[-3000:])
         return result
-
-    result.update({
-        "status": "DONE_PUSHED",
-        "head_before": started_head,
-        "head": new_head,
-        "finished_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-    })
+    result.update(status="DONE_PUSHED", head_before=started_head, head=new_head, finished_at=time.strftime("%Y-%m-%d %H:%M:%S"))
     return result
 
 
@@ -273,22 +191,17 @@ def main() -> None:
             processed = ledger.setdefault("processed", {})
             for path in sorted(TASKS_DIR.glob("*.json")):
                 task_id = path.stem
-                previous = processed.get(task_id, {})
-                if previous.get("status") in TERMINAL_STATUSES:
+                if processed.get(task_id, {}).get("status") in TERMINAL_STATUSES:
                     continue
                 try:
-                    task = _load_task(path)
-                    result = _process(path, task)
+                    result = _process(path, _load_task(path))
                 except Exception as exc:
-                    result = {
-                        "task_id": task_id,
-                        "status": "FAILED",
-                        "error": str(exc),
-                        "started_at": time.strftime("%Y-%m-%d %H:%M:%S"),
-                    }
+                    result = {"task_id": task_id, "status": "FAILED", "error": str(exc), "started_at": time.strftime("%Y-%m-%d %H:%M:%S")}
                 processed[task_id] = result
                 _save_ledger(ledger)
-                print(f"[CODEX QUEUE] {task_id}: {result.get('status')}", flush=True)
+                error = str(result.get("error") or "").replace("\n", " ").strip()
+                suffix = f" | {error[:220]}" if error else ""
+                print(f"[CODEX QUEUE] {task_id}: {result.get('status')}{suffix}", flush=True)
         except Exception as exc:
             print(f"[CODEX QUEUE WARN] {exc}", flush=True)
         time.sleep(INTERVAL)
