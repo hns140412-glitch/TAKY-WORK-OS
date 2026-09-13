@@ -26,6 +26,7 @@
     "timeout_seconds": 900,
     "max_prompt_chars": 12000,
     "queue_poll_seconds": 30,
+    "no_change_retries": 0,
     "allowed_apps": ["ready", "hide", "snap"]
   }
 }
