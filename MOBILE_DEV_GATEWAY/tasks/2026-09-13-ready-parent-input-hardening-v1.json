@@ -1,0 +1,9 @@
+{
+  "id": "2026-09-13-ready-parent-input-hardening-v1",
+  "action": "codex",
+  "app": "ready",
+  "title": "Harden parent homework and timetable input",
+  "prompt": "On the existing Ready & Set isolated work branch, implement and verify the actual parent-facing input path without deploying or touching main. Goal 1: the visible parent manual homework entry UI must be usable end-to-end with no internal page.evaluate shortcut: title + subject + deadline must be explicitly confirmed, optional volume is preserved, parent review is required before FACT commit, confirmed manual FACT immediately triggers Foundation Planner recalculation, and the existing no-AI/no-paid path remains zero external API calls. Add/adjust a browser regression that uses the real UI controls and proves parent manual input -> confirmed FACT -> Planner TODAY_TASK -> child Today's Island pin. Goal 2: fix recurring timetable edit for an already-active profile when the chosen effective date is today or otherwise not later than the profile's current effective_from. Preserve append-only revision semantics: do not mutate historical profile evidence. For a same-day 'from today onward' edit, represent today safely (for example an explicit day override when required by the Foundation revision contract) and start the new recurring revision at the earliest valid later date, so the user does not receive REVISION_REQUIRES_LATER_EFFECTIVE_DATE. Keep missing timetable rows != free time and STUDY_OPPORTUNITY explicit only. Add a regression for this same-day edit path. Do not modify production/main, do not deploy, do not enable paid homework AI or character generation, and do not add broad refactors. Run the smallest relevant existing contracts/browser gates and leave concise evidence in the commit message or test output.",
+  "allow_main": false,
+  "allow_production": false
+}
