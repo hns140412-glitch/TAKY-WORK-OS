@@ -1,9 +1,9 @@
 # TAKY ACTIVE RULE PROFILE
 
 [TAKY_ACTIVE_RULE_PROFILE]
-PROFILE_VERSION: 2026-09-13.1
+PROFILE_VERSION: 2026-09-13.2
 SOURCE_REPOSITORY: hns140412-glitch/TAKY
-SOURCE_CANONICAL_HEAD: c6e1911aacbb81b8c0a8536b78b56712fa2d098c
+SOURCE_CANONICAL_HEAD: 75321e267dd111164d15fc94b10fbb13ef69121b
 SOURCE_PATH: PROJECTIONS/ACTIVE_RULE_PROFILE.md
 STATUS: DERIVED_EXECUTION_PROJECTION / NON_SEMANTIC_OWNER
 
@@ -39,6 +39,9 @@ Do not switch branches, write to main/production, deploy/release, read/expose se
 
 10. REPORT TRUTHFULLY
 Distinguish `DECIDED / IMPLEMENTED / VERIFIED / DEVICE_UNVERIFIED / BLOCKED`. Do not claim runtime, device, deployment, Notion automation, or external-system verification without evidence.
+
+11. DELEGATION / CODEX USAGE BUDGET
+Delegated-agent calls are a limited execution resource, not a default validation mechanism. Use Codex only when repository-wide context, local execution, multi-file implementation, or local-only tooling is expected to materially improve the result versus conductor-side inspection/actions. Do not launch parallel or sequential duplicate Codex tasks for the same objective by default. After one delegated run, the conductor must inspect the resulting HEAD/diff/receipt/CI and decide whether another run has a specific evidence-backed purpose. `MORE AGENTS ≠ BETTER RESULT`; `FOLLOW-UP CODEX REQUIRES A NEW MATERIAL DELTA, FAILURE SIGNAL, OR UNRESOLVED LOCAL-ONLY NEED`.
 
 At task start:
 - inspect the current branch/HEAD and worktree;
