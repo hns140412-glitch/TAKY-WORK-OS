@@ -1,0 +1,35 @@
+name: Temporary Ready staging deploy 2026-09-13
+
+on:
+  push:
+    branches:
+      - tmp-ready-staging-deploy-20260913-2131
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 6
+    steps:
+      - name: Checkout verified Ready branch
+        uses: actions/checkout@v4
+        with:
+          repository: hns140412-glitch/Ready-Set
+          ref: 7b95046e7f55c01a0d45b96f18688c4b886c5760
+          path: ready
+          fetch-depth: 1
+
+      - name: Mask one-time Netlify capability
+        env:
+          NETLIFY_PROXY_PATH: 'https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..VW0VOku5gn8fKWvh.oc2D57EwJMmHAQ6iREv2qrMioePWmBQRsBQsKJOX3khQycrtPitjIqySEpzPp6xRBlezvevy2QP-uYStCjm3fFoZmTFTwb9eAsp7jsZkGVSuOwRHSyuVpjubR_pOm1vSyJxWXgEZVAVGv3526xoP0Z8HQv8LOpXEY0D5_Wj7h9YZijpd7VxvpSucp5tS0mJhaU2exKoN2BPJUcHVtWahGMqb43wlTjFysKy26QUIJbJB6qhC0eP6ouQ8dK88RlPzUWlCse3Vqq6EsJg-Jba83gjFGtppETQjVF6cjU-O-xyW8NQjY2XrxfUGGH-jSoLPWfrLhE8xpjY7bjoItPxGfEhf7hs0MqBGOK-BkuWJGU4VzQZCQOrhzPvFPm4AvmdZhC71RFUZ.uFBNcYRnSMsDgd7lmq0t2A'
+        run: echo "::add-mask::$NETLIFY_PROXY_PATH"
+
+      - name: Deploy verified Ready source to dedicated staging site
+        working-directory: ready
+        env:
+          NETLIFY_PROXY_PATH: 'https://netlify-mcp.netlify.app/proxy/eyJhbGciOiJkaXIiLCJlbmMiOiJBMjU2R0NNIn0..VW0VOku5gn8fKWvh.oc2D57EwJMmHAQ6iREv2qrMioePWmBQRsBQsKJOX3khQycrtPitjIqySEpzPp6xRBlezvevy2QP-uYStCjm3fFoZmTFTwb9eAsp7jsZkGVSuOwRHSyuVpjubR_pOm1vSyJxWXgEZVAVGv3526xoP0Z8HQv8LOpXEY0D5_Wj7h9YZijpd7VxvpSucp5tS0mJhaU2exKoN2BPJUcHVtWahGMqb43wlTjFysKy26QUIJbJB6qhC0eP6ouQ8dK88RlPzUWlCse3Vqq6EsJg-Jba83gjFGtppETQjVF6cjU-O-xyW8NQjY2XrxfUGGH-jSoLPWfrLhE8xpjY7bjoItPxGfEhf7hs0MqBGOK-BkuWJGU4VzQZCQOrhzPvFPm4AvmdZhC71RFUZ.uFBNcYRnSMsDgd7lmq0t2A'
+        run: |
+          set -euo pipefail
+          npx -y @netlify/mcp@latest --site-id 63bd9a17-909b-4bac-8cb3-06437a628896 --proxy-path "$NETLIFY_PROXY_PATH"
