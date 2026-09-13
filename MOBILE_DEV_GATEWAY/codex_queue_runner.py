@@ -15,12 +15,19 @@ TASKS_DIR = BASE / "tasks"
 LEDGER = RUNTIME / "codex_queue_ledger.json"
 LOG_DIR = RUNTIME / "logs"
 STOP_FILE = RUNTIME / "STOP"
+ACTIVE_PROFILE = BASE / "TAKY_ACTIVE_RULE_PROFILE.md"
 CONFIG = json.loads((BASE / "config.json").read_text(encoding="utf-8"))
 CODEX = CONFIG.get("codex", {})
 INTERVAL = int(CODEX.get("queue_poll_seconds", 30))
 TIMEOUT = int(CODEX.get("timeout_seconds", 900))
 CODEX_COMMAND = str(CODEX.get("command", "codex"))
 MAX_NO_CHANGE_RETRIES = int(CODEX.get("no_change_retries", 1))
+PROFILE_MAX_CHARS = int(CODEX.get("active_rule_profile_max_chars", 12000))
+PROFILE_REQUIRED_MARKERS = (
+    "[TAKY_ACTIVE_RULE_PROFILE]",
+    "SOURCE_CANONICAL_HEAD:",
+    "END_TAKY_ACTIVE_RULE_PROFILE",
+)
 
 DEFAULT_WORKSPACES = {
     "ready": r"D:\Git PWA\Ready & Set",
@@ -109,6 +116,25 @@ def _load_task(path: Path) -> dict:
     return task
 
 
+def _load_active_profile() -> tuple[str, str]:
+    if not ACTIVE_PROFILE.exists():
+        raise FileNotFoundError(f"active rule profile missing: {ACTIVE_PROFILE}")
+    text = ACTIVE_PROFILE.read_text(encoding="utf-8").strip()
+    if not text:
+        raise ValueError("active rule profile is empty")
+    if len(text) > PROFILE_MAX_CHARS:
+        raise ValueError(f"active rule profile exceeds {PROFILE_MAX_CHARS} characters")
+    missing = [marker for marker in PROFILE_REQUIRED_MARKERS if marker not in text]
+    if missing:
+        raise ValueError("active rule profile missing marker(s): " + ", ".join(missing))
+    source_head = "UNKNOWN"
+    for line in text.splitlines():
+        if line.startswith("SOURCE_CANONICAL_HEAD:"):
+            source_head = line.split(":", 1)[1].strip() or "UNKNOWN"
+            break
+    return text, source_head
+
+
 def _last_nonempty_line(text: str) -> str:
     return next((line.strip() for line in reversed(text.splitlines()) if line.strip()), "")
 
@@ -156,6 +182,15 @@ def _process(path: Path, task: dict, no_change_attempts: int = 0) -> dict:
             error="git pull --ff-only failed: " + pull.stderr[-2000:],
         )
         return result
+
+    try:
+        active_profile, profile_source_head = _load_active_profile()
+    except Exception as exc:
+        result.update(status="BLOCKED_RULE_PROFILE_INVALID", error=str(exc))
+        return result
+    result["active_rule_profile"] = ACTIVE_PROFILE.name
+    result["active_rule_source_head"] = profile_source_head
+
     codex = resolve_codex(CODEX_COMMAND)
     if not codex:
         result.update(status="BLOCKED_CODEX_NOT_FOUND", error="Codex CLI not found")
@@ -170,7 +205,9 @@ def _process(path: Path, task: dict, no_change_attempts: int = 0) -> dict:
             "and run the requested checks. Do not finish with only analysis or a plan."
         )
     instruction = (
-        "TAKY isolated work-branch task. Work only inside the current repository and current branch. "
+        "TAKY ACTIVE RULE PROFILE — AUTO-INJECTED DERIVED PROJECTION. CANONICAL OWNER RULES WIN ON CONFLICT.\n\n"
+        + active_profile
+        + "\n\nTAKY isolated work-branch task. Work only inside the current repository and current branch. "
         "Do not switch branches. Do not touch main or production. Do not deploy or release. "
         "Do not read or expose secrets. Keep the change within the user's requested scope. "
         "You are explicitly authorized to edit files inside this workspace. Run bounded relevant tests/static checks. "
