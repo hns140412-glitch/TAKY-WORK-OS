@@ -1,0 +1,10 @@
+{
+  "id": "2026-09-13-ready-conductor-review-v1",
+  "action": "codex",
+  "app": "ready",
+  "title": "Independently review and improve Ready first-run parent flow",
+  "expect_changes": true,
+  "allow_main": false,
+  "allow_production": false,
+  "prompt": "Act as the second implementation/review worker under TAKY orchestration. Start from the LIVE Ready work-branch HEAD after prior queued work. Read AGENTS.md and CODEX_RECEIPTS/2026-09-13-ready-conductor-e2e-v1.json if present. Independently trace the actual user-visible path Intro -> guardian/child setup -> deferred character if no-cost -> explorer/world -> persisted parent role -> Timetable -> Homework -> explicit FACT confirmation -> Foundation Planner -> Today Task. Do not merely repeat the prior worker's claims. Inspect actual runtime code and run bounded relevant tests. Fix remaining material defects you can prove, prioritizing user-visible operability and avoiding redundant validation. Pay special attention to: actual first-loaded identity owner/boot order, parent role persistence across reload, timetable and homework being first-class actions, NO_CONFIRMED_OPPORTUNITY being visible and actionable rather than silent, FACT_CONFIRMED being the only promotion point, no free-time inference from missing rows, next class as deadline boundary rather than allocation slot, answer/reference parent-only, and installed-PWA cache/version consistency. Do not touch main/production, secrets, paid generation, or enable paid homework analysis. If the prior worker already made a correct fix, preserve it rather than reworking for style. Create CODEX_RECEIPTS/2026-09-13-ready-conductor-review-v1.json with task_id, reviewed_head, material_findings, fixes_made, changed_files, tests_run with pass/fail, comparison_to_prior_receipt, remaining_blockers, and physical_device_validation_needed. The receipt must be evidence-based. This task requires an actual repository change: either fix a material issue or, if no material code issue remains, add only the evidence receipt plus a minimal deterministic regression check that covers the most important previously untested path. The gateway will commit/push."
+}
