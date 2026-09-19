@@ -9,7 +9,27 @@ TAKY-WORK-OS is the implementation and operating layer for AI-assisted professio
 TAKY / GRAND MASTER rules govern this repository. Work OS rules may specialize execution but may not weaken validation, evidence, approval, privacy, source-of-truth, Deep Analysis, or anti-omission rules.
 
 ## Interaction principle
-The user should be able to provide files in chat and request work naturally. TAKY handles classification, naming, filing, validation, and result organization behind the scenes. Do not force the user to operate a complex lifecycle folder tree for ordinary work.
+The user should be able to provide files in chat and request work naturally. TAKY handles classification, naming, filing, targeted validation, and result organization behind the scenes. Do not force the user to operate a complex lifecycle folder tree for ordinary work.
+
+## Productive execution loop — HARD LOCK
+Work OS exists to produce useful work, learn from it, and compound reusable capability.
+
+Default:
+`GOAL → DISCOVER → BUILD → VERIFY → SHIP → LEARN`
+
+Meaning:
+- GOAL — define the useful result and protected constraints.
+- DISCOVER — recover only the context/evidence needed to act well; search alternatives when useful.
+- BUILD — create, modify, analyze, automate, or decide the material result.
+- VERIFY — run the minimum representative checks needed for the current claim/risk.
+- SHIP — deliver/store/route the result to the correct project surface.
+- LEARN — capture reusable methods, assets, patterns, and corrections that improve future work.
+
+`READING RULES != WORK COMPLETED`
+`ERROR PREVENTION != PRIMARY OUTCOME`
+`NO MATERIAL BLOCKER + EXECUTION AVAILABLE → EXECUTE`
+
+Validation is a bounded rail. Additional checks require a new material risk, changed artifact, release/approval claim, or evidence likely to change the result.
 
 ## Google Drive workspace
 Preferred governed workspace name: TAKY-WORK-OS.
@@ -47,11 +67,19 @@ Do not create INPUT/WORKING/REVIEW/OUTPUT subfolders by default. Those are lifec
 If project identity is clear from conversation, filenames, source documents, or approved project context, classify automatically. Ask the user only when ambiguity materially changes where the work belongs or how it should be executed.
 
 ## Deep Analysis operating rule
-Work OS inherits TAKY Deep Analysis. For material professional work, analysis shall recover relevant source/context/decisions, check coverage, assess source reliability, actively use authoritative sources and relevant cases, compare alternatives, extract useful principles, verify local/domain/project applicability, classify prior decisions, find omissions/conflicts/errors, complement, improve and optimize, then self-correct, self-validate, cross-validate, impact/regression-check and recheck decision coverage.
+Work OS inherits TAKY Deep Analysis, but Deep Analysis is a means to improve the result, not the default work product.
 
-Comparative research is for principle extraction, not direct copying. Foreign or external practices must be localized and revalidated against applicable Korean law/administration and project conditions before adoption when the project is in Korea.
+For material professional work:
+1. recover the minimum relevant source/context/decisions needed to avoid a materially wrong action;
+2. identify the highest-value available improvement or decision;
+3. build/execute it;
+4. observe the actual artifact/result;
+5. use targeted research, impact, regression, or independent validation only where the result/claim materially needs it;
+6. propagate useful learning into the appropriate reusable owner.
 
-Relevant prior items must end in a traceable state: PRESERVE / ADOPT / ADJUST / HOLD / REJECT / CONFLICT / SUPERSEDED. A source that was merely read is not necessarily covered; non-adopted items must not disappear without disposition.
+Comparative research is for principle extraction, alternative discovery and result improvement, not direct copying. Foreign or external practices must be localized and revalidated against applicable Korean law/administration and project conditions before adoption when the project is in Korea.
+
+For material recovered decisions, preserve traceable state such as PRESERVE / ADOPT / ADJUST / HOLD / REJECT / CONFLICT / SUPERSEDED. Do not require exhaustive disposition of irrelevant material before productive execution can continue.
 
 ## Architecture project state model
 For architecture workflows distinguish:
@@ -158,10 +186,17 @@ Hard rules:
 Do not force physical migration of established project folders solely to match Work OS. Recognize legacy semantics such as CURRENT / ARCHIVE / STUDY / SENT / RECEIVED / OFFICE MEMO / BACKUP / APPROVAL and map them to logical Work OS state while preserving the user's established physical structure unless migration is separately approved.
 
 ## Internal lifecycle
-The simplified Drive view does not remove GRAND MASTER gates. Internally preserve intent, fit, orchestration, routing, execution trace, handoff, self-validation, evidence validation, cross-validation, regression/impact checks, human approval where required, commit/action, and history.
+The simplified Drive view does not remove TAKY authority, but Work OS SHALL not turn every task into a full governance ceremony.
 
-AI5 remains:
+Default lifecycle:
+`GOAL → DISCOVER → BUILD → VERIFY → SHIP → LEARN`.
+
+Activate orchestration, routing, handoff, impact/regression checks, independent cross-validation, and human approval only where the task actually requires them.
+
+AI5 remains available as a control stack:
 ORCHESTRATION → ROUTING → HANDOFF → CROSS-VALIDATION → HUMAN APPROVAL
+
+It is not a requirement that all five stages run for every ordinary task.
 
 ## Storage separation
 - TAKY: canonical central governance/master logic
