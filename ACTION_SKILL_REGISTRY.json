@@ -1,0 +1,58 @@
+{
+  "registry_version": "2026-09-19.1",
+  "purpose": "Route ordinary Work OS requests toward useful execution, reusable learning and only the necessary validation.",
+  "default_pipeline": [
+    "GOAL",
+    "DISCOVER",
+    "BUILD",
+    "VERIFY",
+    "SHIP",
+    "LEARN"
+  ],
+  "rules": [
+    "BUILD is required whenever an authorized useful action is available and no real blocker exists.",
+    "VERIFY is proportional to the current claim/risk and must not replace BUILD.",
+    "LEARN captures reusable delta only when it changes future work.",
+    "Routers select an execution form; they do not become new authority."
+  ],
+  "actions": [
+    {
+      "id": "GOAL",
+      "output": "primary outcome + protected constraints + completion boundary"
+    },
+    {
+      "id": "DISCOVER",
+      "output": "minimum relevant context/evidence + useful alternatives",
+      "anti_pattern": "full-history scan without material need"
+    },
+    {
+      "id": "BUILD",
+      "output": "artifact / implementation / analysis / decision / automation"
+    },
+    {
+      "id": "VERIFY",
+      "output": "targeted evidence for material claims or regression risk",
+      "anti_pattern": "validation-only substitute result"
+    },
+    {
+      "id": "SHIP",
+      "output": "user-visible delivery + correct storage/routing"
+    },
+    {
+      "id": "LEARN",
+      "output": "reusable recipe/component/router/correction when materially useful"
+    }
+  ],
+  "routers": [
+    {
+      "id": "IDEATION_ROUTER",
+      "owner": "_LAB/IDEATION_ROUTER.md",
+      "purpose": "Route new ideas to experiment space with novelty/usefulness/cost/evidence state instead of immediate canonical promotion."
+    },
+    {
+      "id": "VISUALIZATION_ROUTER",
+      "owner": "ROUTERS/VISUALIZATION_ROUTER.md",
+      "purpose": "Select table/flow/diagram/chart/wireframe/map based on the information relationship and user outcome."
+    }
+  ]
+}
