@@ -6,7 +6,7 @@ Status: REV_00 / PRE-CONFIRMATION EVOLVING DESIGN SOURCE
 TAKY-WORK-OS is the implementation and operating layer for AI-assisted professional work through conversation. It stores reusable workflows, automation logic, validation rules, schemas, scripts, and integration policies. It is not the primary warehouse for business project files.
 
 ## Authority
-TAKY / GRAND MASTER rules govern this repository. Work OS rules may specialize execution but may not weaken validation, evidence, approval, privacy, source-of-truth, Deep Analysis, or anti-omission rules.
+Central canonical TAKY at `hns140412-glitch/TAKY` governs this subordinate implementation/operating repository. Work OS rules may specialize execution but may not weaken validation, evidence, approval, privacy, source-of-truth, Deep Analysis, or anti-omission rules.
 
 ## Interaction principle
 The user should be able to provide files in chat and request work naturally. TAKY handles classification, naming, filing, targeted validation, and result organization behind the scenes. Do not force the user to operate a complex lifecycle folder tree for ordinary work.
@@ -32,18 +32,33 @@ Meaning:
 Validation is a bounded rail. Additional checks require a new material risk, changed artifact, release/approval claim, or evidence likely to change the result.
 
 ## Google Drive workspace
-Preferred governed workspace name: TAKY-WORK-OS.
-Google Drive holds actual project inputs and generated business artifacts such as DWG/DXF, PDF, XLSX, DOCX, images, references, and deliverables.
 
-Default visible structure:
+Canonical storage routing is owned by central TAKY:
+`hns140412-glitch/TAKY / OS/DRIVE_STORAGE_MAP.json`.
 
-TAKY-WORK-OS/
-└─ [PROJECT]/
-   └─ [YYYY-MM-DD]_[WORK-TITLE]/
-      ├─ 요청자료/
-      │  └─ original files supplied for the request
-      ├─ 요청사항.md
-      └─ TAKY-generated review, working, report, and final artifacts
+This repository does not define a competing Drive root. The current governed single-entry root is:
+
+```
+TAKY/
+├─ 00_ACTIVE/
+├─ 10_PROJECTS/
+├─ 20_REVIEWS_C2S/
+├─ 80_HANDOFF/
+└─ 90_ARCHIVE/
+```
+
+Project working/source/result material belongs under the registered project root inside `10_PROJECTS` (for example READY_SET / SNAP_POP / HIDE_SEEK) according to the central storage map.
+
+The historical `TAKY-WORK-OS/[PROJECT]/...` Drive-root pattern is superseded and SHALL NOT be created as a parallel current workspace.
+
+Within a project work item, a simple visible pattern may still be used when useful:
+
+```
+[PROJECT] / [YYYY-MM-DD]_[WORK-TITLE] /
+├─ 요청자료/
+├─ 요청사항.md
+└─ generated review / working / final artifacts
+```
 
 Do not create INPUT/WORKING/REVIEW/OUTPUT subfolders by default. Those are lifecycle states, not mandatory user-facing folders. Add subfolders only when scale or a specific workflow genuinely requires them.
 
