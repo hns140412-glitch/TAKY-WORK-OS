@@ -26,7 +26,7 @@ on:
       - 'tools/drawing_pdf_svg_exporter.test.py'
       - 'tools/drawing_edge_diff.py'
       - 'tools/drawing_edge_diff.test.py'
-      - 'DRAWING/**'
+      - 'runtime/drawing-prompt-compiler.js'\n      - 'runtime/drawing-prompt-compiler.test.js'\n      - 'tools/drawing_pdf_raster_overlay.py'\n      - 'tools/drawing_pdf_raster_overlay.test.py'\n      - 'tools/drawing_multiply_compositor.py'\n      - 'tools/drawing_multiply_compositor.test.py'\n      - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
   pull_request:
     paths:
@@ -66,12 +66,15 @@ jobs:
       - run: node runtime/drawing-source-router.test.js
       - run: node runtime/drawing-reference-router.test.js
       - run: node runtime/drawing-task-contract.test.js
+      - run: node runtime/drawing-prompt-compiler.test.js
       - run: node runtime/svg-presentation-compositor.test.js
       - run: python tools/drawing_pdf_vector_adapter.test.py
       - run: python tools/drawing_dxf_adapter.test.py
       - run: python tools/drawing_geometry_diff.test.py
       - run: python tools/drawing_pdf_svg_exporter.test.py
       - run: python tools/drawing_edge_diff.test.py
+      - run: python tools/drawing_pdf_raster_overlay.test.py
+      - run: python tools/drawing_multiply_compositor.test.py
       - name: Validate drawing registries
         run: |
-          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json','DRAWING/PRESENTATION_MASK_CONTRACT.json','DRAWING/BENCHMARK_FIXTURE_CONTRACT.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
+          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json','DRAWING/PRESENTATION_MASK_CONTRACT.json','DRAWING/BENCHMARK_FIXTURE_CONTRACT.json','DRAWING/ACTUAL_FIXTURE_BASELINE_2026-09-23.json','DRAWING/OUTPUT_EVALUATION_CONTRACT.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
