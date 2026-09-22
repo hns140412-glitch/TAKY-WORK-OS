@@ -340,3 +340,32 @@ Actual Work DWG probe:
 - header = AC1032 (AutoCAD 2018/2019/2020 family);
 - current local runtime has no ODAFileConverter / LibreDWG decoder;
 - therefore no direct area claim was made from the DWG.
+
+
+## Primary objective — PDF-FIRST SCALE REVIEW REPORT
+
+Locked purpose:
+- the primary deliverable is a source-preserving A3 PDF scale-review report;
+- the main task is not raw area extraction and not AI rendering;
+- area/legal/design-overview engines are supporting systems that enrich the report only when evidence is verified.
+
+Priority order:
+1. preserve source geometry / authority;
+2. improve report comprehension and visual hierarchy;
+3. produce decision-ready A3 PDF pages;
+4. add verified design-overview / area values;
+5. derive HTML / PPTX / XLSX / SVG / PNG from the same report state.
+
+Report pattern:
+- executive overview;
+- site + 1F;
+- 2F;
+- basement parking;
+- section / levels;
+- design-overview + validation.
+
+Current real-output prototype:
+- six A3 landscape pages created from the actual Work PDFs;
+- source drawings inserted as PDF vector references rather than redrawn;
+- presentation is added on separate report pages;
+- design-overview unknowns remain PENDING rather than estimated.
