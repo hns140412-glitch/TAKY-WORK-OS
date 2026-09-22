@@ -9,6 +9,8 @@ on:
       - 'runtime/drawing-source-router.test.js'
       - 'runtime/drawing-reference-router.js'
       - 'runtime/drawing-reference-router.test.js'
+      - 'runtime/drawing-task-contract.js'
+      - 'runtime/drawing-task-contract.test.js'
       - 'runtime/svg-presentation-compositor.js'
       - 'runtime/svg-presentation-compositor.test.js'
       - 'tools/drawing_pdf_vector_adapter.py'
@@ -23,6 +25,8 @@ on:
       - 'runtime/drawing-source-router.test.js'
       - 'runtime/drawing-reference-router.js'
       - 'runtime/drawing-reference-router.test.js'
+      - 'runtime/drawing-task-contract.js'
+      - 'runtime/drawing-task-contract.test.js'
       - 'runtime/svg-presentation-compositor.js'
       - 'runtime/svg-presentation-compositor.test.js'
       - 'tools/drawing_pdf_vector_adapter.py'
@@ -45,8 +49,9 @@ jobs:
       - run: node runtime/drawing-engine-core.test.js
       - run: node runtime/drawing-source-router.test.js
       - run: node runtime/drawing-reference-router.test.js
+      - run: node runtime/drawing-task-contract.test.js
       - run: node runtime/svg-presentation-compositor.test.js
       - run: python tools/drawing_pdf_vector_adapter.test.py
       - name: Validate drawing registries
         run: |
-          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
+          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
