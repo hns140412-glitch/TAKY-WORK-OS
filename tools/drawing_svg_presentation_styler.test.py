@@ -17,7 +17,7 @@ r=m.apply_styles(svg)
 assert r["geometry_preserved"] is True
 assert r["geometry_fingerprint_before"] == r["geometry_fingerprint_after"]
 assert r["styled_elements"] == 2
-assert 'stroke-width="0.70"' in r["svg"] or 'stroke-width="0.7"' in r["svg"]
+assert 'stroke-width="0.70mm"' in r["svg"] or 'stroke-width="0.7mm"' in r["svg"]
 assert 'opacity="0.55"' in r["svg"]
 
 try:
