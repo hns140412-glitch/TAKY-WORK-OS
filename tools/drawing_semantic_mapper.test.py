@@ -19,21 +19,34 @@ rules = {
     "rule_set_id": "fixture",
     "rule_set_version": "1",
     "rules": [
-        {"rule_id": "wall", "field": "layer", "match": "exact", "pattern": "A-WALL", "semantic_type": "WALL", "confidence": "EXPLICIT_LAYER_RULE"},
-        {"rule_id": "room", "field": "layer", "match": "exact", "pattern": "A-ROOM", "semantic_type": "ROOM_BOUNDARY", "confidence": "EXPLICIT_LAYER_RULE"}
+        {"rule_id": "wall", "field": "layer", "match": "exact", "pattern": "A-WALL", "semantic_type": "WALL", "confidence": "PROJECT_STANDARD_VERIFIED", "verification_state":"CAD_RULE_VERIFIED"},
+        {"rule_id": "room", "field": "layer", "match": "exact", "pattern": "A-ROOM", "semantic_type": "ROOM_BOUNDARY", "confidence": "PROJECT_STANDARD_VERIFIED", "verification_state":"CAD_RULE_VERIFIED"}
     ]
 }
 r = mod.map_entities(payload, rules)
-assert r["stats"] == {"total": 3, "candidate": 2, "unmapped": 1, "review_required": 0}
+assert r["stats"]["candidate"] == 2
+assert r["stats"]["verified_candidate"] == 2
+assert r["stats"]["unmapped"] == 1
 assert r["records"][0]["semantic_type"] == "WALL"
+assert r["records"][0]["verification_state"] == "CAD_RULE_VERIFIED"
 assert r["records"][2]["semantic_type"] == "UNKNOWN"
 assert r["canonical_promotion"] is False
+
+unverified = {
+    "rule_set_id":"u","rule_set_version":"1",
+    "rules":[
+        {"rule_id":"u1","field":"layer","match":"exact","pattern":"A-WALL","semantic_type":"COLUMN","enabled":True}
+    ]
+}
+ru = mod.map_entities({"entities":[payload["entities"][0]]}, unverified)
+assert ru["records"][0]["semantic_type"] == "UNKNOWN"
+assert ru["stats"]["ignored_unverified_rule_count"] == 1
 
 conflict = {
     "rule_set_id":"c","rule_set_version":"1",
     "rules":[
-        {"rule_id":"a","field":"layer","match":"prefix","pattern":"A-","semantic_type":"WALL"},
-        {"rule_id":"b","field":"layer","match":"exact","pattern":"A-WALL","semantic_type":"COLUMN"}
+        {"rule_id":"a","field":"layer","match":"prefix","pattern":"A-","semantic_type":"WALL","verification_state":"CAD_RULE_VERIFIED"},
+        {"rule_id":"b","field":"layer","match":"exact","pattern":"A-WALL","semantic_type":"COLUMN","verification_state":"CAD_RULE_VERIFIED"}
     ]
 }
 r2 = mod.map_entities({"entities":[payload["entities"][0]]}, conflict)
