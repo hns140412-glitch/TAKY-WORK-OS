@@ -182,3 +182,20 @@ P1 next:
 6. section fixture benchmark
 
 Do not begin full BIM reconstruction or automatic 2D->measured-3D generation.
+
+
+## 9. Gemini Multiply-overlay idea — real fixture validation
+
+The user-provided Gemini summary recommended a Photoshop-style CAD line Multiply overlay.
+
+Real fixture benchmark result:
+- vector-path reconstruction alone preserved only a subset of the rendered PDF appearance;
+- a full source snapshot composited with Multiply preserved source-render edges with very low raw edge mismatch in the tested plan / basement / section fixtures.
+
+Implementation decision:
+- keep VECTOR/SVG overlay for clean geometry/style control;
+- add SOURCE_SNAPSHOT_MULTIPLY as the complete-appearance preservation fallback;
+- do not convert either overlay into CAD semantic authority;
+- for SALES outputs, use clean layer/mask routes when possible so technical clutter is not reintroduced indiscriminately.
+
+This is an example of `Think Again`: the Gemini recommendation was not copied as a Photoshop manual step; it was converted into a deterministic, testable compositor route.
