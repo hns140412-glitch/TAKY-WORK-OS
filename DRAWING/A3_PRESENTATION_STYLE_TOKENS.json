@@ -1,37 +1,43 @@
 {
   "registry_version": "2026-09-23.1",
   "authority": "PRESENTATION_DEFAULTS_NOT_GEOMETRY_RULES",
-  "note": "Numeric stroke widths are starting defaults for A3 presentation output and remain profile/project-tunable. Hierarchy ordering is more important than any single number.",
+  "note": "Numeric stroke defaults are physical millimetre targets for A3 output and remain profile/project-tunable. Hierarchy ordering is more important than any single number.",
   "roles": {
     "CUT": {
       "stroke": "#111111",
       "stroke_width_mm": 0.7,
-      "opacity": 1
+      "opacity": 1,
+      "svg_stroke_width": "0.70mm"
     },
     "PRIMARY": {
       "stroke": "#202020",
       "stroke_width_mm": 0.38,
-      "opacity": 1
+      "opacity": 1,
+      "svg_stroke_width": "0.38mm"
     },
     "SECONDARY": {
       "stroke": "#555555",
       "stroke_width_mm": 0.22,
-      "opacity": 0.9
+      "opacity": 0.9,
+      "svg_stroke_width": "0.22mm"
     },
     "CONTEXT": {
       "stroke": "#999999",
       "stroke_width_mm": 0.14,
-      "opacity": 0.55
+      "opacity": 0.55,
+      "svg_stroke_width": "0.14mm"
     },
     "FURNITURE": {
       "stroke": "#777777",
       "stroke_width_mm": 0.16,
-      "opacity": 0.72
+      "opacity": 0.72,
+      "svg_stroke_width": "0.16mm"
     },
     "LANDSCAPE": {
       "stroke": "#7d8a7d",
       "stroke_width_mm": 0.16,
-      "opacity": 0.62
+      "opacity": 0.62,
+      "svg_stroke_width": "0.16mm"
     },
     "ANNOTATION": {
       "stroke": "#333333",
