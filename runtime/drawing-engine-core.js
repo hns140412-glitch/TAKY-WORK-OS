@@ -77,9 +77,26 @@
   function geometryFingerprint(keyState){
     const payload=(keyState?.objects||[])
       .filter(o=>!o.presentation_only)
-      .map(o=>({object_id:o.object_id,object_type:o.object_type,geometry:o.geometry,semantics:o.semantics}))
+      .map(o=>({object_id:o.object_id,object_type:o.object_type,geometry:o.geometry}))
       .sort((a,b)=>a.object_id.localeCompare(b.object_id));
     return 'gk_'+fnv1a(canonicalize(payload));
+  }
+
+  function semanticFingerprint(keyState){
+    const payload=(keyState?.objects||[])
+      .filter(o=>!o.presentation_only)
+      .map(o=>({object_id:o.object_id,object_type:o.object_type,semantics:o.semantics,policy:o.policy}))
+      .sort((a,b)=>a.object_id.localeCompare(b.object_id));
+    return 'sk_'+fnv1a(canonicalize(payload));
+  }
+
+  function keyStateFingerprint(keyState){
+    return 'ks_'+fnv1a(canonicalize({
+      source_id:keyState?.source_id||null,
+      source_authority:keyState?.source_authority||null,
+      geometry_key:geometryFingerprint(keyState),
+      semantic_key:semanticFingerprint(keyState)
+    }));
   }
 
   function routeExecution({purpose='',source_authority='RASTER_REFERENCE',requires_numeric_authority=false,changes_geometry=false}={}){
@@ -125,6 +142,10 @@
       ok:!issues.some(i=>i.severity==='CRITICAL'||i.severity==='HIGH'),
       geometry_key_before:geometryFingerprint(before),
       geometry_key_after:geometryFingerprint(after),
+      semantic_key_before:semanticFingerprint(before),
+      semantic_key_after:semanticFingerprint(after),
+      key_state_before:keyStateFingerprint(before),
+      key_state_after:keyStateFingerprint(after),
       issues:Object.freeze(issues)
     };
   }
@@ -137,12 +158,14 @@
   }
 
   return Object.freeze({
-    version:'1.0.0',
+    version:'1.1.0',
     POLICIES,
     MODES,
     AUTHORITIES,
     normalizeKeyState,
     geometryFingerprint,
+    semanticFingerprint,
+    keyStateFingerprint,
     routeExecution,
     validateKeyPreservation,
     evaluateUserIntent
