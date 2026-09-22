@@ -231,3 +231,47 @@ Implemented:
 - L7 finalizes source overlay, fidelity checks, quality review and A3 bundle;
 - multiple views can fan out from one KEY_STATE without repeating source interpretation;
 - a presentation-only failure reruns only the affected downstream layer.
+
+
+## Layered parallel execution — IMPLEMENTED
+
+Execution topology:
+
+`L0 SOURCE -> L1 GEOMETRY -> L2 SEMANTIC -> [L3 PRESENTATION || L4 ENTOURAGE || L5 ANNOTATION || L6 AI/ATMOSPHERE] -> L7 FINAL OVERLAY / VALIDATION`
+
+Implemented runtime:
+- `runtime/drawing-layer-orchestrator.js` — shared L0-L2 + view-specific parallel fan-out.
+- `runtime/drawing-work-unit-runner.js` — emits only currently ready work units.
+- `runtime/drawing-layer-invalidation.js` — selective downstream invalidation.
+- `runtime/drawing-artifact-manifest.js` — per-layer lineage / required evidence.
+- `DRAWING/LAYER_EXECUTION_CONTRACT.json`
+- `DRAWING/LAYER_ARTIFACT_CONTRACT.json`
+
+Change-impact rules:
+- L0 source change -> recompute every downstream layer and every view.
+- L1 geometry change -> invalidate L2-L7 across every view.
+- L2 semantic/rule change -> invalidate L3-L7 across every view.
+- L3 presentation change -> rerun only L3 + that view's L7.
+- L4 entourage change -> rerun only L4 + that view's L7.
+- L5 annotation change -> rerun only L5 + that view's L7; AI atmosphere remains reusable unless annotation was an AI input.
+- L6 AI/atmosphere change -> rerun only L6 + that view's L7.
+
+Efficiency target:
+One KEY_STATE / source extraction can produce SALES / PUBLICATION / SECTION / A3 views without repeating source interpretation.
+
+## SVG conversion — CODED
+
+Executable routes:
+- PDF full rendered-page SVG -> `tools/drawing_pdf_full_svg_exporter.py`
+- PDF clean vector/source-line SVG -> `tools/drawing_pdf_svg_exporter.py`
+- DXF rendered SVG -> `tools/drawing_dxf_svg_exporter.py`
+- runtime route selector -> `runtime/drawing-svg-route.js`
+- DWG remains conversion-required: DWG decoder -> DXF -> TAKY adapters.
+
+Authority boundary:
+- full PDF SVG = issued snapshot representation;
+- PDF geometry SVG = source-derived;
+- DXF SVG = CAD-derived view;
+- original CAD/PDF remains preserved authority/evidence.
+
+The official PyMuPDF and ezdxf APIs support these routes; implementation does not depend on CloudConvert for PDF or DXF.
