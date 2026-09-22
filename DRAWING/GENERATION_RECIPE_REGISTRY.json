@@ -1,12 +1,12 @@
 {
-  "registry_version": "2026-09-23.1",
+  "registry_version": "2026-09-23.2",
   "authority": "REFERENCE_RECIPE_ONLY",
-  "rule": "Generation recipes never become geometry authority. Exact tuning values are experimental until benchmarked against source-preservation fixtures.",
+  "rule": "Generation recipes never become geometry authority. Exact tuning values are experiment seeds, not universal constants.",
   "recipes": [
     {
       "recipe_id": "COMFYUI_LINEART_2PASS_GEMINI_REFERENCE",
-      "status": "EXPERIMENTAL",
-      "source_class": "USER_PROVIDED_GEMINI_REFERENCE",
+      "status": "EXPERIMENTAL_BENCHMARK_REQUIRED",
+      "source_class": "USER_PROVIDED_GEMINI_SUMMARY",
       "utilization": [
         "ENGINE_REFERENCE_DATA",
         "EVALUATION_FIXTURE",
@@ -15,54 +15,89 @@
       "intended_outputs": [
         "ARCHVIZ",
         "SECTION_COLLAGE",
-        "AXONOMETRIC_PRESENTATION"
+        "AXONOMETRIC_PRESENTATION",
+        "SALES_TEXTURED"
       ],
       "source_contract": {
         "immutable_source": "original CAD/PDF/vector remains untouched",
-        "guide_input": "structure-only derived guide may suppress text/dimensions/hatches",
-        "final_overlay": "authoritative/source linework reapplied after generative passes",
+        "guide_input": "a derived structure guide may suppress text/dimensions/hatches, but the full source is retained separately",
+        "final_overlay": "source vector/linework is reapplied after generative passes where appropriate",
         "canonical_promotion": false
       },
-      "candidate_parameters": {
-        "lineart_resolution_long_edge": 2048,
-        "controlnet_strength": 0.78,
-        "control_start": 0,
-        "control_end": 0.8,
-        "base_denoise": 0.65,
-        "upscale_factor": 1.5,
-        "detail_denoise": 0.32
-      },
-      "parameter_policy": {
-        "fixed": false,
-        "benchmark_required": true,
-        "note": "Official ComfyUI guidance treats ControlNet strength/start/end as tuning controls; community architecture workflows report geometry drift even with ControlNet. Second-pass denoise behavior differs between latent upscale and image-space upscale."
-      },
-      "safer_variants": [
-        {
-          "id": "IMAGE_SPACE_UPSCALE_LOW_DENOISE",
-          "preferred_for": "geometry-sensitive presentation refinement",
-          "flow": [
-            "controlled base pass",
-            "VAE decode",
-            "deterministic/image-model upscale",
-            "VAE encode",
-            "low-denoise detail pass",
-            "source vector overlay",
-            "geometry diff"
+      "first_pass": {
+        "controlnet": {
+          "types_by_input": {
+            "2D_PLAN": [
+              "LINEART",
+              "MLSD_OR_CANNY"
+            ],
+            "SECTION": [
+              "LINEART",
+              "CANNY"
+            ],
+            "3D_VIEW": [
+              "LINEART",
+              "DEPTH"
+            ]
+          },
+          "strength_seed": 0.78,
+          "strength_benchmark_band": [
+            0.65,
+            0.85
+          ],
+          "start_seed": 0,
+          "end_seed": 0.8,
+          "end_benchmark_band": [
+            0.75,
+            1
           ]
         },
-        {
-          "id": "LATENT_UPSCALE_EXPERIMENT",
-          "preferred_for": "texture exploration only after preservation benchmark",
-          "risk": "second sampler may materially change geometry; denoise must be tuned by model and upscale method"
+        "denoise_seed": 0.65,
+        "denoise_benchmark_band": [
+          0.45,
+          0.7
+        ]
+      },
+      "second_pass": {
+        "upscale_factor_seed": 1.5,
+        "image_space": {
+          "preferred_for": "geometry-sensitive refinement",
+          "denoise_seed": 0.32,
+          "denoise_benchmark_band": [
+            0.25,
+            0.5
+          ],
+          "flow": [
+            "VAE decode",
+            "deterministic/model-based image upscale",
+            "VAE encode",
+            "low-denoise detail pass",
+            "source overlay",
+            "geometry/edge check"
+          ]
+        },
+        "latent_space": {
+          "status": "EXPERIMENTAL_HIGHER_MUTATION_RISK",
+          "denoise_seed": null,
+          "denoise_benchmark_band": [
+            0.55,
+            0.75
+          ],
+          "warning": "A 0.32 second-pass denoise is not treated as a valid universal latent-upscale setting. Latent upscaling can require substantially more denoise and may move composition."
         }
-      ],
+      },
+      "finishing": {
+        "vector_overlay": "source-controlled; opacity/blend are presentation parameters, not fixed truth",
+        "film_grain": "optional presentation texture; disable for technical or measurement outputs",
+        "exact_values_fixed": false
+      },
       "rejection_rules": [
         "negative prompt is not a geometry guarantee",
         "ControlNet is not a CAD accuracy guarantee",
         "do not discard the original full drawing after creating a structure guide",
         "do not promote AI or raster-derived geometry to authoritative geometry",
-        "do not use style score alone as completion evidence"
+        "do not use style score alone as completion evidence",
+        "do not treat vendor/community parameter values as universal without fixture benchmarking"
       ]
     }
   ]
