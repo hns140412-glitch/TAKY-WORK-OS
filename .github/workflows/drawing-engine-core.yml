@@ -3,68 +3,24 @@ name: drawing-engine-core
 on:
   push:
     paths:
-      - 'runtime/drawing-engine-core.js'
-      - 'runtime/drawing-engine-core.test.js'
-      - 'runtime/drawing-source-router.js'
-      - 'runtime/drawing-source-router.test.js'
-      - 'runtime/drawing-reference-router.js'
-      - 'runtime/drawing-reference-router.test.js'
-      - 'runtime/drawing-task-contract.js'
-      - 'runtime/drawing-task-contract.test.js'
-      - 'runtime/drawing-prompt-compiler.js'
-      - 'runtime/drawing-prompt-compiler.test.js'
+      - 'runtime/drawing-*.js'
+      - 'runtime/drawing-*.test.js'
       - 'runtime/svg-presentation-compositor.js'
       - 'runtime/svg-presentation-compositor.test.js'
-      - 'tools/drawing_pdf_vector_adapter.py'
-      - 'tools/drawing_pdf_vector_adapter.test.py'
-      - 'tools/drawing_dxf_adapter.py'
-      - 'tools/drawing_dxf_adapter.test.py'
-      - 'tools/drawing_geometry_diff.py'
-      - 'tools/drawing_geometry_diff.test.py'
-      - 'tools/drawing_pdf_svg_exporter.py'
-      - 'tools/drawing_pdf_svg_exporter.test.py'
-      - 'tools/drawing_edge_diff.py'
-      - 'tools/drawing_edge_diff.test.py'
-      - 'tools/drawing_pdf_raster_overlay.py'
-      - 'tools/drawing_pdf_raster_overlay.test.py'
-      - 'tools/drawing_multiply_compositor.py'
-      - 'tools/drawing_multiply_compositor.test.py'
-      - 'tools/drawing_semantic_mapper.py'
-      - 'tools/drawing_semantic_mapper.test.py'
-      - 'tools/drawing_mask_manifest.py'
-      - 'tools/drawing_mask_manifest.test.py'
+      - 'tools/drawing_*.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
+      - '.github/workflows/drawing-engine-core.yml'
   pull_request:
     paths:
-      - 'runtime/drawing-engine-core.js'
-      - 'runtime/drawing-engine-core.test.js'
-      - 'runtime/drawing-source-router.js'
-      - 'runtime/drawing-source-router.test.js'
-      - 'runtime/drawing-reference-router.js'
-      - 'runtime/drawing-reference-router.test.js'
-      - 'runtime/drawing-task-contract.js'
-      - 'runtime/drawing-task-contract.test.js'
-      - 'runtime/drawing-prompt-compiler.js'
-      - 'runtime/drawing-prompt-compiler.test.js'
+      - 'runtime/drawing-*.js'
+      - 'runtime/drawing-*.test.js'
       - 'runtime/svg-presentation-compositor.js'
       - 'runtime/svg-presentation-compositor.test.js'
-      - 'tools/drawing_pdf_vector_adapter.py'
-      - 'tools/drawing_pdf_vector_adapter.test.py'
-      - 'tools/drawing_dxf_adapter.py'
-      - 'tools/drawing_dxf_adapter.test.py'
-      - 'tools/drawing_geometry_diff.py'
-      - 'tools/drawing_geometry_diff.test.py'
-      - 'tools/drawing_pdf_svg_exporter.py'
-      - 'tools/drawing_pdf_svg_exporter.test.py'
-      - 'tools/drawing_edge_diff.py'
-      - 'tools/drawing_edge_diff.test.py'
-      - 'tools/drawing_pdf_raster_overlay.py'
-      - 'tools/drawing_pdf_raster_overlay.test.py'
-      - 'tools/drawing_multiply_compositor.py'
-      - 'tools/drawing_multiply_compositor.test.py'
+      - 'tools/drawing_*.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
+      - '.github/workflows/drawing-engine-core.yml'
 
 jobs:
   test:
@@ -78,21 +34,48 @@ jobs:
         with:
           python-version: '3.12'
       - run: python -m pip install --disable-pip-version-check pymupdf ezdxf pillow
-      - run: node runtime/drawing-engine-core.test.js
-      - run: node runtime/drawing-source-router.test.js
-      - run: node runtime/drawing-reference-router.test.js
-      - run: node runtime/drawing-task-contract.test.js
-      - run: node runtime/drawing-prompt-compiler.test.js
-      - run: node runtime/svg-presentation-compositor.test.js
-      - run: python tools/drawing_pdf_vector_adapter.test.py
-      - run: python tools/drawing_dxf_adapter.test.py
-      - run: python tools/drawing_geometry_diff.test.py
-      - run: python tools/drawing_pdf_svg_exporter.test.py
-      - run: python tools/drawing_edge_diff.test.py
-      - run: python tools/drawing_pdf_raster_overlay.test.py
-      - run: python tools/drawing_multiply_compositor.test.py
-      - run: python tools/drawing_semantic_mapper.test.py
-      - run: python tools/drawing_mask_manifest.test.py
-      - name: Validate drawing registries
+
+      - name: Run drawing JS tests
+        shell: bash
         run: |
-          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json','DRAWING/PRESENTATION_MASK_CONTRACT.json','DRAWING/BENCHMARK_FIXTURE_CONTRACT.json','DRAWING/ACTUAL_FIXTURE_BASELINE_2026-09-23.json','DRAWING/OUTPUT_EVALUATION_CONTRACT.json','DRAWING/DXF_LAYER_SEMANTIC_RULES.example.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
+          set -euo pipefail
+          found=0
+          for testfile in runtime/drawing-*.test.js; do
+            if [ -f "$testfile" ]; then
+              found=1
+              echo "RUN $testfile"
+              node "$testfile"
+            fi
+          done
+          node runtime/svg-presentation-compositor.test.js
+          test "$found" -eq 1
+
+      - name: Run drawing Python tests
+        shell: bash
+        run: |
+          set -euo pipefail
+          found=0
+          for testfile in tools/drawing_*.test.py; do
+            if [ -f "$testfile" ]; then
+              found=1
+              echo "RUN $testfile"
+              python "$testfile"
+            fi
+          done
+          test "$found" -eq 1
+
+      - name: Validate all drawing JSON contracts
+        shell: bash
+        run: |
+          set -euo pipefail
+          python - <<'PY'
+          import json
+          from pathlib import Path
+
+          files = sorted(Path("DRAWING").glob("*.json"))
+          if not files:
+              raise SystemExit("No DRAWING JSON contracts found")
+          for path in files:
+              json.loads(path.read_text(encoding="utf-8"))
+              print(f"{path} PASS")
+          PY
