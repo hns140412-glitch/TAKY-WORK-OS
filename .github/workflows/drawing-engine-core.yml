@@ -7,8 +7,12 @@ on:
       - 'runtime/drawing-engine-core.test.js'
       - 'runtime/drawing-source-router.js'
       - 'runtime/drawing-source-router.test.js'
+      - 'runtime/drawing-reference-router.js'
+      - 'runtime/drawing-reference-router.test.js'
       - 'runtime/svg-presentation-compositor.js'
       - 'runtime/svg-presentation-compositor.test.js'
+      - 'tools/drawing_pdf_vector_adapter.py'
+      - 'tools/drawing_pdf_vector_adapter.test.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
   pull_request:
@@ -17,8 +21,12 @@ on:
       - 'runtime/drawing-engine-core.test.js'
       - 'runtime/drawing-source-router.js'
       - 'runtime/drawing-source-router.test.js'
+      - 'runtime/drawing-reference-router.js'
+      - 'runtime/drawing-reference-router.test.js'
       - 'runtime/svg-presentation-compositor.js'
       - 'runtime/svg-presentation-compositor.test.js'
+      - 'tools/drawing_pdf_vector_adapter.py'
+      - 'tools/drawing_pdf_vector_adapter.test.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
 
@@ -30,9 +38,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python -m pip install --disable-pip-version-check pymupdf
       - run: node runtime/drawing-engine-core.test.js
       - run: node runtime/drawing-source-router.test.js
+      - run: node runtime/drawing-reference-router.test.js
       - run: node runtime/svg-presentation-compositor.test.js
-      - name: Validate presentation preset registry
+      - run: python tools/drawing_pdf_vector_adapter.test.py
+      - name: Validate drawing registries
         run: |
-          node -e "JSON.parse(require('fs').readFileSync('DRAWING/PRESENTATION_PRESET_REGISTRY.json','utf8')); console.log('preset registry PASS')"
+          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
