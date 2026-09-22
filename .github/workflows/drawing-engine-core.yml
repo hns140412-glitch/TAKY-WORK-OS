@@ -29,6 +29,10 @@ on:
       - 'tools/drawing_pdf_raster_overlay.test.py'
       - 'tools/drawing_multiply_compositor.py'
       - 'tools/drawing_multiply_compositor.test.py'
+      - 'tools/drawing_semantic_mapper.py'
+      - 'tools/drawing_semantic_mapper.test.py'
+      - 'tools/drawing_mask_manifest.py'
+      - 'tools/drawing_mask_manifest.test.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
   pull_request:
@@ -87,6 +91,8 @@ jobs:
       - run: python tools/drawing_edge_diff.test.py
       - run: python tools/drawing_pdf_raster_overlay.test.py
       - run: python tools/drawing_multiply_compositor.test.py
+      - run: python tools/drawing_semantic_mapper.test.py
+      - run: python tools/drawing_mask_manifest.test.py
       - name: Validate drawing registries
         run: |
-          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json','DRAWING/PRESENTATION_MASK_CONTRACT.json','DRAWING/BENCHMARK_FIXTURE_CONTRACT.json','DRAWING/ACTUAL_FIXTURE_BASELINE_2026-09-23.json','DRAWING/OUTPUT_EVALUATION_CONTRACT.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
+          node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json','DRAWING/PRESENTATION_MASK_CONTRACT.json','DRAWING/BENCHMARK_FIXTURE_CONTRACT.json','DRAWING/ACTUAL_FIXTURE_BASELINE_2026-09-23.json','DRAWING/OUTPUT_EVALUATION_CONTRACT.json','DRAWING/DXF_LAYER_SEMANTIC_RULES.example.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
