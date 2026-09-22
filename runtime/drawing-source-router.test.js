@@ -1,0 +1,11 @@
+const assert=require('assert');
+const r=require('./drawing-source-router');
+assert.equal(r.classifySource({file_name:'a.dxf',declared_authoritative:true}).source_type,'DXF');
+assert.equal(r.classifySource({file_name:'a.dxf',declared_authoritative:true}).source_authority,'AUTHORITATIVE_VECTOR');
+assert.equal(r.classifySource({file_name:'a.dxf'}).source_authority,'DERIVED_VECTOR');
+assert.equal(r.classifySource({file_name:'a.dwg'}).adapter,'ODA_TO_DXF_THEN_EZDXF');
+assert.equal(r.classifySource({file_name:'a.pdf',pdf_has_vector:true}).adapter,'PYMUPDF_VECTOR');
+assert.equal(r.classifySource({file_name:'a.pdf',pdf_has_vector:false}).source_type,'RASTER_PDF');
+assert.equal(r.classifySource({file_name:'a.png'}).source_authority,'RASTER_REFERENCE');
+assert.equal(r.canClaimAuthoritativeGeometry(r.classifySource({file_name:'a.png'})),false);
+console.log('drawing-source-router: PASS');
