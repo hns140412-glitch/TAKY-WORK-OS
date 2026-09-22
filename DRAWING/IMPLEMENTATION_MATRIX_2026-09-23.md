@@ -196,3 +196,38 @@ The expanded CI now covers:
 - all drawing JSON registries/contracts
 
 A previous workflow parse failure during path-list expansion was a CI YAML construction error, not a runtime test failure. The workflow was rewritten cleanly before the next exact-head run.
+
+
+## A3 absolute output engine
+
+Implemented:
+- fixed ISO A3 portrait / landscape specification;
+- landscape default = 420 mm x 297 mm;
+- HTML absolute-mm page shell + print CSS;
+- PDF A3 media-box validation;
+- PNG A3 300-DPI exact pixel validation;
+- PPTX A3 slide-size validation;
+- XLSX A3 page setup / explicit print-area / one-page-fit validation;
+- one canonical A3 SVG -> HTML / PDF / PNG / PPTX / XLSX bundle export;
+- bundle-wide PASS gate;
+- automatic re-export from the preserved canonical A3 SVG when a format fails;
+- max two output re-export attempts, then BLOCKED rather than silent scaling.
+
+Current default A3 landscape targets:
+- PDF: 1190.551 x 841.890 pt
+- PPTX: 15120000 x 10692000 EMU
+- PNG at 300 DPI: 4961 x 3508 px
+- HTML: 420 mm x 297 mm
+- XLSX: A3 landscape / fit 1 x 1 / explicit print area
+
+Important boundary:
+A3 format repair never mutates SOURCE / GEOMETRY / SEMANTIC state. It regenerates only export views from the preserved board state.
+
+## Layer-parallel execution
+
+Implemented:
+- L0 SOURCE / L1 GEOMETRY / L2 SEMANTIC computed once;
+- L3 PRESENTATION / L4 ENTOURAGE / L5 ANNOTATION / L6 AI-ATMOSPHERE can run in parallel;
+- L7 finalizes source overlay, fidelity checks, quality review and A3 bundle;
+- multiple views can fan out from one KEY_STATE without repeating source interpretation;
+- a presentation-only failure reruns only the affected downstream layer.
