@@ -5,12 +5,20 @@ on:
     paths:
       - 'runtime/drawing-engine-core.js'
       - 'runtime/drawing-engine-core.test.js'
+      - 'runtime/drawing-source-router.js'
+      - 'runtime/drawing-source-router.test.js'
+      - 'runtime/svg-presentation-compositor.js'
+      - 'runtime/svg-presentation-compositor.test.js'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
   pull_request:
     paths:
       - 'runtime/drawing-engine-core.js'
       - 'runtime/drawing-engine-core.test.js'
+      - 'runtime/drawing-source-router.js'
+      - 'runtime/drawing-source-router.test.js'
+      - 'runtime/svg-presentation-compositor.js'
+      - 'runtime/svg-presentation-compositor.test.js'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
 
@@ -23,6 +31,8 @@ jobs:
         with:
           node-version: '22'
       - run: node runtime/drawing-engine-core.test.js
+      - run: node runtime/drawing-source-router.test.js
+      - run: node runtime/svg-presentation-compositor.test.js
       - name: Validate presentation preset registry
         run: |
           node -e "JSON.parse(require('fs').readFileSync('DRAWING/PRESENTATION_PRESET_REGISTRY.json','utf8')); console.log('preset registry PASS')"
