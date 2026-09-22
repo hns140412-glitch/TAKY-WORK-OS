@@ -33,7 +33,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check pymupdf ezdxf pillow python-pptx openpyxl
+      - run: python -m pip install --disable-pip-version-check pymupdf ezdxf pillow python-pptx openpyxl shapely
 
       - name: Run drawing JS tests
         shell: bash
