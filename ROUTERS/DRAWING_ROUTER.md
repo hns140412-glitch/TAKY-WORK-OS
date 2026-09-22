@@ -61,3 +61,41 @@ Required:
 - CAD_EXCEL -> AUTHORITATIVE
 - AREA_ANALYSIS -> AUTHORITATIVE
 - REGULATORY_CHECK -> AUTHORITATIVE
+
+
+## CAD semantic onboarding
+
+When DXF is available, do not jump directly from layer names to SALES masks.
+
+Required flow:
+
+`DXF_DIRECT_PARSE -> LAYER_ENTITY_PROFILE -> RULE_CANDIDATE_MINING -> EXPLICIT_VERIFIED_PROMOTION -> UNKNOWN_FIRST_SEMANTIC_MAPPING -> MASK_MANIFEST -> SALES_ADMISSION`
+
+Runtime / tools:
+- `tools/drawing_dxf_layer_profiler.py`
+- `tools/drawing_dxf_rule_candidate_miner.py`
+- `tools/drawing_dxf_rule_promoter.py`
+- `tools/drawing_semantic_mapper.py`
+- `tools/drawing_mask_manifest.py`
+- `tools/drawing_dxf_mask_pipeline.py`
+- `runtime/drawing-mask-gate-bridge.js`
+- `runtime/drawing-sales-mask-gate.js`
+- `runtime/drawing-view-admission.js`
+
+Rules:
+- layer/block names create PROPOSAL_ONLY candidates;
+- geometry shape may support a proposal but cannot verify it;
+- only explicit verified evidence activates a semantic rule;
+- enabled-but-unverified rules are ignored;
+- unmatched entities remain UNKNOWN;
+- ROOM_MATERIAL requires a verified closed room boundary;
+- SALES_PLAN / SALES_TEXTURED must pass `drawing-view-admission`;
+- if SALES semantic admission fails, use PUBLICATION fallback rather than guessing or asking the user to debug the pipeline.
+
+## Source availability fallback
+
+If no DXF/DWG source is available:
+- preserve PDF as source snapshot;
+- use PDF source-line / source-weight presentation routes;
+- do not manufacture CAD semantics from PDF graphics;
+- keep SALES_TEXTURED locked until verified semantic evidence is available.
