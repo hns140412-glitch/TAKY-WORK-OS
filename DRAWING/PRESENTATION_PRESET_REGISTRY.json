@@ -1,0 +1,97 @@
+{
+  "registry_version": "2026-09-23.1",
+  "rule": "Presets may alter presentation only. Geometry/semantic mutation is outside this registry.",
+  "principles": [
+    "WHITE_SPACE_IS_INFORMATION",
+    "MATERIAL_SCALE_MATCHES_DRAWING_SCALE",
+    "SHADOW_MUST_NOT_REDUCE_LEGIBILITY",
+    "SOURCE_LINE_AND_RENDER_LAYER_SEPARATED_WHEN_POSSIBLE",
+    "UNKNOWN_SOURCE_DATA_SURVIVES_ROUND_TRIP",
+    "FURNITURE_COMMUNICATES_SCALE_AND_USE"
+  ],
+  "presets": [
+    {
+      "preset_id": "TECHNICAL_CLEAN",
+      "mode": "FAST",
+      "linework": "source_dominant",
+      "poche": "strong_cut_only",
+      "material": "minimal",
+      "shadow": "none",
+      "annotation": "technical",
+      "entourage": "minimal"
+    },
+    {
+      "preset_id": "PUBLICATION",
+      "mode": "CONTROLLED",
+      "linework": "source_dominant",
+      "poche": "selective",
+      "material": "restrained",
+      "shadow": "low",
+      "annotation": "editorial_reduced",
+      "entourage": "selective",
+      "white_space": "high"
+    },
+    {
+      "preset_id": "SITE_PRESENTATION",
+      "mode": "CONTROLLED",
+      "linework": "source_dominant",
+      "hierarchy": [
+        "building",
+        "access",
+        "hardscape",
+        "landscape",
+        "context"
+      ],
+      "shadow": "low",
+      "context_fade": "high"
+    },
+    {
+      "preset_id": "SECTION_PRESENTATION",
+      "mode": "CONTROLLED",
+      "linework": "source_dominant",
+      "hierarchy": [
+        "cut",
+        "near",
+        "mid",
+        "far"
+      ],
+      "earth_poche": "clear",
+      "shadow": "low",
+      "human_scale": "selective"
+    },
+    {
+      "preset_id": "SALES_CLEAN",
+      "mode": "CONTROLLED",
+      "linework": "source_dominant",
+      "material": "light_zoning",
+      "furniture": "real_scale",
+      "shadow": "none_to_low",
+      "annotation": "room_and_key_dimensions"
+    },
+    {
+      "preset_id": "SALES_TEXTURED",
+      "mode": "CONTROLLED",
+      "linework": "source_overlay_final",
+      "material": "scaled_texture",
+      "furniture": "real_scale",
+      "shadow": "low",
+      "annotation": "room_and_key_dimensions"
+    },
+    {
+      "preset_id": "CG_HANDOFF",
+      "mode": "CONTROLLED",
+      "linework": "source_reference",
+      "material": "reference_only",
+      "annotation": "handoff_notes",
+      "shadow": "not_authoritative"
+    },
+    {
+      "preset_id": "A3_REPORT",
+      "mode": "CONTROLLED",
+      "linework": "source_dominant",
+      "annotation": "report_hierarchy",
+      "white_space": "high",
+      "layout": "print_readability"
+    }
+  ]
+}
