@@ -1,0 +1,10 @@
+const assert=require('assert');
+const f=require('./drawing-finalization-orchestrator');
+const p=f.buildFinalizationPlan({view_id:'SALE',profile:'SALES_PLAN'});
+assert.equal(p.steps[p.steps.length-1].action,'SHIP_ONLY_AFTER_ALL_PASS');
+assert.equal(p.retry.on_format_failure,'REEXPORT_FROM_CANONICAL_A3_SVG');
+assert.equal(f.nextAction({fidelity:'FAIL',quality:'PASS',formats:'PASS'}),'RETURN_TO_KEY_STATE');
+assert.equal(f.nextAction({fidelity:'PASS',quality:'NEEDS_REVISION',formats:'PASS'}),'REVISE_PRESENTATION_LAYER');
+assert.equal(f.nextAction({fidelity:'PASS',quality:'PASS',formats:'FAIL'}),'REEXPORT_A3_BUNDLE');
+assert.equal(f.nextAction({fidelity:'PASS',quality:'PASS',formats:'PASS'}),'SHIP');
+console.log('drawing-finalization-orchestrator: PASS');
