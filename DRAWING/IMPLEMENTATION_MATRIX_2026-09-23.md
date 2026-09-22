@@ -175,3 +175,24 @@ The mining pass also reduced the runtime prompt burden:
 - workflow mechanics and tuning values stay in recipes/runtime;
 - prompts carry goal, output, preserve/change boundary, preset and completion criteria;
 - final output review uses source-fidelity hard gates first, then legibility/hierarchy/material scale/color/layout and purpose-specific human usefulness.
+
+
+## Current exact-head verification
+
+The expanded CI now covers:
+- source/key-state core
+- source routing
+- utilization/reference routing
+- task outcome contract
+- compact prompt compiler
+- SVG source-line compositor
+- vector-PDF adapter
+- DXF adapter
+- deterministic geometry diff
+- PDF-to-SVG exporter
+- raster edge diff
+- PDF snapshot raster overlay
+- Multiply source-snapshot compositor
+- all drawing JSON registries/contracts
+
+A previous workflow parse failure during path-list expansion was a CI YAML construction error, not a runtime test failure. The workflow was rewritten cleanly before the next exact-head run.
