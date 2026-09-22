@@ -876,6 +876,132 @@
         "geometry preserved",
         "levels preserved"
       ]
+    },
+    {
+      "method_id": "M-RELATION-FIRST",
+      "purpose": "복잡한 정보를 장식보다 관계 중심으로 단순화",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "source anchors",
+        "relative spatial relation",
+        "labels tied to evidence"
+      ],
+      "change": [
+        "context visibility",
+        "accent",
+        "annotation density"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "SVG"
+      ],
+      "validation": [
+        "protected anchors present",
+        "no unrecorded relation invented"
+      ]
+    },
+    {
+      "method_id": "M-ONE-MOVE-SEQUENCE",
+      "purpose": "대지/진입/배치/동선 변화를 한 프레임 한 메시지로 설명",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "verified state",
+        "verified operation"
+      ],
+      "change": [
+        "visibility",
+        "accent arrows",
+        "frame sequencing"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF"
+      ],
+      "validation": [
+        "one explicit operation per frame",
+        "caption matches state delta"
+      ]
+    },
+    {
+      "method_id": "M-SECTION-LAYERED",
+      "purpose": "단면을 CUT/GROUND/SOIL/STRUCTURE/SPACE/BACKGROUND 계층으로 표현",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "section geometry",
+        "levels",
+        "ground profile"
+      ],
+      "change": [
+        "poche",
+        "tone",
+        "human scale",
+        "background suppression"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG",
+        "SVG"
+      ],
+      "validation": [
+        "cut mask provenance",
+        "level preservation",
+        "source overlay"
+      ]
+    },
+    {
+      "method_id": "M-EDITORIAL-RESTRAINT",
+      "purpose": "여백과 figure-ground를 우선해 도면 자체가 중심이 되게 함",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "primary drawing",
+        "critical annotations"
+      ],
+      "change": [
+        "white space",
+        "secondary context opacity",
+        "caption density"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG"
+      ],
+      "validation": [
+        "primary view immediately identifiable",
+        "secondary elements subordinate"
+      ]
+    },
+    {
+      "method_id": "M-HUMAN-SCALE",
+      "purpose": "사람/가구를 공간 크기와 사용성 전달용으로만 최소 사용",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "architecture geometry"
+      ],
+      "change": [
+        "entourage only"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG"
+      ],
+      "validation": [
+        "known scale",
+        "no critical edge obstruction"
+      ]
     }
   ],
   "pages": [
@@ -900,7 +1026,9 @@
       "case_refs": [],
       "method_refs": [
         "M-SOURCE-WEIGHT",
-        "M-COMMITTEE-CARD"
+        "M-COMMITTEE-CARD",
+        "M-EDITORIAL-RESTRAINT",
+        "M-ONE-MOVE-SEQUENCE"
       ],
       "source_visual_refs": [
         "SRC-PDF-1F",
@@ -944,7 +1072,10 @@
       ],
       "case_refs": [],
       "method_refs": [
-        "M-SOURCE-WEIGHT"
+        "M-SOURCE-WEIGHT",
+        "M-RELATION-FIRST",
+        "M-ONE-MOVE-SEQUENCE",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-PDF-1F",
@@ -994,7 +1125,8 @@
       ],
       "case_refs": [],
       "method_refs": [
-        "M-COMMITTEE-CARD"
+        "M-COMMITTEE-CARD",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-DWG-WORK"
@@ -1037,7 +1169,9 @@
       "method_refs": [
         "M-SOURCE-WEIGHT",
         "M-SNAPSHOT-MULTIPLY",
-        "M-COMMITTEE-CARD"
+        "M-COMMITTEE-CARD",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-PDF-B1",
@@ -1090,7 +1224,9 @@
       "method_refs": [
         "M-SOURCE-WEIGHT",
         "M-SNAPSHOT-MULTIPLY",
-        "M-COMMITTEE-CARD"
+        "M-COMMITTEE-CARD",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-PDF-1F"
@@ -1134,7 +1270,9 @@
       "case_refs": [],
       "method_refs": [
         "M-SOURCE-WEIGHT",
-        "M-SNAPSHOT-MULTIPLY"
+        "M-SNAPSHOT-MULTIPLY",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-PDF-2F"
@@ -1172,7 +1310,10 @@
       "case_refs": [],
       "method_refs": [
         "M-SECTION-SAFE",
-        "M-SNAPSHOT-MULTIPLY"
+        "M-SNAPSHOT-MULTIPLY",
+        "M-SECTION-LAYERED",
+        "M-HUMAN-SCALE",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-PDF-SECTION"
@@ -1220,7 +1361,9 @@
         "CASE-INFO-73718"
       ],
       "method_refs": [
-        "M-CASE-MATRIX"
+        "M-CASE-MATRIX",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-CASE-0915",
@@ -1259,7 +1402,8 @@
         "CASE-PARC-HANNAM"
       ],
       "method_refs": [
-        "M-CASE-MATRIX"
+        "M-CASE-MATRIX",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-CASE-0915"
@@ -1300,7 +1444,9 @@
       ],
       "case_refs": [],
       "method_refs": [
-        "M-COMMITTEE-CARD"
+        "M-COMMITTEE-CARD",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
         "SRC-COMMITTEE"
@@ -1340,7 +1486,8 @@
         "CASE-LECIEL1022"
       ],
       "method_refs": [
-        "M-COMMITTEE-CARD"
+        "M-COMMITTEE-CARD",
+        "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [],
       "layout_slots": [
@@ -1436,5 +1583,153 @@
     "source_fidelity": "PENDING",
     "report_comprehension": "PENDING",
     "output_bundle": "PENDING"
+  },
+  "presentation_reference_policy": {
+    "principle": "External sites and Work/REFERENCE supply representation methods only; Work project sources retain geometry and factual authority.",
+    "drive_sources": [
+      "REPRESENTATION_METHOD_INDEX",
+      "TREND_LEADER_MINING_2026-09-23",
+      "GLOBAL_OFFICE_DNA_2026-09-23"
+    ],
+    "external_sources": [
+      {
+        "source": "ArchDaily",
+        "url": "https://www.archdaily.com/1121384/the-limits-of-the-section-an-essay-on-graphic-representation",
+        "mined_dna": [
+          "section as layered selection/translation",
+          "vertical relationships",
+          "human-scale legibility"
+        ],
+        "use": [
+          "P07"
+        ]
+      },
+      {
+        "source": "OMA / AMO",
+        "url": "https://www.oma.com/projects/diagrams",
+        "mined_dna": [
+          "relation-first",
+          "structure/proximity over ornament",
+          "abstraction for legibility"
+        ],
+        "use": [
+          "P02",
+          "P08",
+          "P10"
+        ]
+      },
+      {
+        "source": "Drawing Matter",
+        "url": "https://drawingmatter.org/stalder-projected-sections/",
+        "mined_dna": [
+          "sectional/axonometric reading of residential relations",
+          "inside/outside threshold",
+          "single-frame apartment relation"
+        ],
+        "use": [
+          "P07"
+        ]
+      },
+      {
+        "source": "Drawing Matter",
+        "url": "https://drawingmatter.org/on-axonometric-drawing/",
+        "mined_dna": [
+          "plan/axon/perspective as complementary analytical modes",
+          "line or collage depending purpose"
+        ],
+        "use": [
+          "P01",
+          "P02",
+          "P05",
+          "P06"
+        ]
+      },
+      {
+        "source": "BIG",
+        "url": "https://cdn.big.dk/projects/yongsan-hashtag-tower-5703",
+        "mined_dna": [
+          "base-condition optimization",
+          "light/view logic",
+          "repeatable condition before exception"
+        ],
+        "use": [
+          "P01",
+          "P05",
+          "P06",
+          "P09"
+        ]
+      },
+      {
+        "source": "ArchDaily",
+        "url": "https://www.archdaily.com/1037623/decomposition-as-expression-disassembled-axonometry-as-design-tool",
+        "mined_dna": [
+          "layer decomposition",
+          "exploded axon for systems/material/process explanation"
+        ],
+        "use": [
+          "P02",
+          "P04"
+        ]
+      }
+    ],
+    "forbidden": [
+      "copy office/site graphic identity literally",
+      "replace source geometry with reference geometry",
+      "invent landscape or material not supported by source/project intent",
+      "use case visuals as factual evidence for current project"
+    ]
+  },
+  "page_presentation_rules": {
+    "P01": [
+      "main message first",
+      "one key diagram",
+      "key numbers compact",
+      "no decorative hero image"
+    ],
+    "P02": [
+      "site/road/level relations as 3-5 one-move diagrams",
+      "one accent family only"
+    ],
+    "P03": [
+      "table-first",
+      "status/evidence visually stronger than prose"
+    ],
+    "P04": [
+      "B1 source plan dominates",
+      "vehicle/pedestrian/access/retaining-ground diagrams subordinate",
+      "no geometry redraw"
+    ],
+    "P05": [
+      "1F source plan dominates",
+      "outdoor/private/circulation relations by transparent overlays only"
+    ],
+    "P06": [
+      "2F source plan dominates",
+      "no invented landscaping",
+      "privacy/view relations only if source-supported"
+    ],
+    "P07": [
+      "cut plane strongest",
+      "soil/ground readable",
+      "background quiet",
+      "human scale minimal"
+    ],
+    "P08": [
+      "same metrics across cases",
+      "current project column visually distinct",
+      "comparability limitations visible"
+    ],
+    "P09": [
+      "product metrics not legal-compliance claims",
+      "parking/exclusive/outdoor-space emphasized"
+    ],
+    "P10": [
+      "issue-evidence-response-status-next action grid",
+      "committee logic without copied project-specific requirements"
+    ],
+    "P11": [
+      "confirmed/calculation/coordination/design queues",
+      "decision clarity over decoration"
+    ]
   }
 }
