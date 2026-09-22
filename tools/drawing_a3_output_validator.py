@@ -101,7 +101,9 @@ def validate_xlsx(path: str | Path, orientation: str = "landscape") -> Dict[str,
     checked = 0
     for ws in wb.worksheets:
         checked += 1
-        if ws.page_setup.paperSize != ws.PAPERSIZE_A3:
+        # openpyxl may surface OOXML paperSize as int or string depending on
+        # write/read path. ISO A3 is code 8; compare normalized values.
+        if str(ws.page_setup.paperSize) != str(ws.PAPERSIZE_A3):
             findings.append({"code":"XLSX_NOT_A3","sheet":ws.title,"actual":ws.page_setup.paperSize})
         if ws.page_setup.orientation != orientation:
             findings.append({"code":"XLSX_ORIENTATION_MISMATCH","sheet":ws.title,"actual":ws.page_setup.orientation,"expected":orientation})
