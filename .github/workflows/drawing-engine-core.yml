@@ -1,0 +1,26 @@
+name: drawing-engine-core
+
+on:
+  push:
+    paths:
+      - 'runtime/drawing-engine-core.js'
+      - 'runtime/drawing-engine-core.test.js'
+      - 'DRAWING/**'
+      - 'ROUTERS/DRAWING_ROUTER.md'
+  pull_request:
+    paths:
+      - 'runtime/drawing-engine-core.js'
+      - 'runtime/drawing-engine-core.test.js'
+      - 'DRAWING/**'
+      - 'ROUTERS/DRAWING_ROUTER.md'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - run: node runtime/drawing-engine-core.test.js
+      - run: node -e "JSON.parse(require('fs').readFileSync('DRAWING/PRESENTATION_PRESET_REGISTRY.json','utf8')); console.log('preset-registry: PASS')"
