@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """TAKY Drawing Engine - presentation mask manifest builder.
 
-Builds mask-ready geometry manifests only from already mapped semantic candidates.
-It does not perform rasterization and does not infer missing room/material boundaries.
+Builds mask-ready manifests only from VERIFIED semantic candidates.
+It does not infer missing room/material boundaries.
 """
 
 from __future__ import annotations
@@ -20,6 +20,13 @@ DEFAULT_MAP = {
     "ANNOTATION": "ANNOTATION",
 }
 
+TRUSTED_VERIFICATION = {
+    "CAD_RULE_VERIFIED",
+    "USER_CONFIRMED",
+    "SOURCE_EXPLICIT",
+    "VERIFIED_SEMANTIC",
+}
+
 
 def build_manifest(payload: Dict[str, Any], semantic_to_mask: Dict[str, str] | None = None) -> Dict[str, Any]:
     mapping = dict(DEFAULT_MAP)
@@ -30,36 +37,72 @@ def build_manifest(payload: Dict[str, Any], semantic_to_mask: Dict[str, str] | N
     rejected: List[Dict[str, Any]] = []
 
     for record in payload.get("records", []):
-        semantic = record.get("semantic_type")
+        semantic = str(record.get("semantic_type") or "")
         state = record.get("semantic_state")
+        verification = str(record.get("verification_state") or "").upper()
+
         if state != "CANDIDATE" or semantic == "UNKNOWN":
             rejected.append({"handle": record.get("handle"), "reason": "SEMANTIC_NOT_CONFIRMED_CANDIDATE"})
             continue
+        if verification not in TRUSTED_VERIFICATION:
+            rejected.append({"handle": record.get("handle"), "reason": "SEMANTIC_RULE_NOT_VERIFIED", "verification_state": verification})
+            continue
 
-        mask_id = mapping.get(str(semantic))
+        mask_id = mapping.get(semantic)
         if not mask_id:
             rejected.append({"handle": record.get("handle"), "reason": "NO_MASK_MAPPING", "semantic_type": semantic})
             continue
 
         geometry = record.get("geometry")
-        if not geometry:
-            rejected.append({"handle": record.get("handle"), "reason": "GEOMETRY_REQUIRED", "semantic_type": semantic})
-            continue
+        annotation = record.get("annotation")
+
+        if semantic == "ANNOTATION":
+            if not annotation:
+                rejected.append({"handle": record.get("handle"), "reason": "ANNOTATION_PAYLOAD_REQUIRED", "semantic_type": semantic})
+                continue
+        else:
+            if not geometry:
+                rejected.append({"handle": record.get("handle"), "reason": "GEOMETRY_REQUIRED", "semantic_type": semantic})
+                continue
+
+        if semantic == "ROOM_BOUNDARY":
+            if geometry.get("type") == "LineString" and geometry.get("closed") is not True:
+                rejected.append({"handle": record.get("handle"), "reason": "ROOM_BOUNDARY_NOT_CLOSED", "semantic_type": semantic})
+                continue
 
         masks.setdefault(mask_id, []).append(
             {
                 "handle": record.get("handle"),
                 "semantic_type": semantic,
+                "verification_state": verification,
                 "geometry": geometry,
+                "annotation": annotation,
                 "source_layer": record.get("layer"),
                 "rule_id": record.get("rule_id"),
             }
         )
 
+    summaries=[]
+    for mask_id, records in sorted(masks.items()):
+        states={str(x.get("verification_state","")).upper() for x in records}
+        validation_state="CAD_RULE_VERIFIED" if states and states.issubset(TRUSTED_VERIFICATION) else "UNVERIFIED"
+        summaries.append({
+            "mask_id":mask_id,
+            "record_count":len(records),
+            "validation_state":validation_state,
+            "source_trace":{
+                "layers":sorted({str(x.get("source_layer","")) for x in records if x.get("source_layer")}),
+                "rule_ids":sorted({str(x.get("rule_id","")) for x in records if x.get("rule_id")}),
+            },
+            "presentation_only":False,
+        })
+
     return {
-        "schema": "TAKY_PRESENTATION_MASK_MANIFEST_V1",
+        "schema": "TAKY_PRESENTATION_MASK_MANIFEST_V2",
         "canonical_promotion": False,
+        "trusted_verification_states": sorted(TRUSTED_VERIFICATION),
         "masks": masks,
+        "mask_summaries": summaries,
         "rejected": rejected,
     }
 
