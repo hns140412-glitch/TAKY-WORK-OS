@@ -32,7 +32,14 @@
       "forbidden": [
         "auto-joining unrelated segments",
         "claiming CAD semantics"
-      ]
+      ],
+      "fragmented_line_fallback": {
+        "route_id": "PDF_LINE_NETWORK_POLYGONIZE",
+        "executable": "tools/drawing_pdf_vector_polygonizer.py",
+        "authority": "DERIVED_TOPOLOGY",
+        "purpose": "generate closed face candidates when the PDF stores boundaries as separate vector segments",
+        "warning": "Polygonized faces may come from dimensions, furniture, hatches or other graphics. Never assign area semantics automatically."
+      }
     }
   },
   "area_pipeline": [
@@ -40,6 +47,7 @@
     "UNIT_OR_SCALE_VERIFY",
     "BLOCK_INSTANCE_EXPANSION_IF_DXF",
     "CLOSED_BOUNDARY_CANDIDATES",
+    "PDF_LINE_NETWORK_POLYGONIZE_IF_NEEDED",
     "EXPLICIT_ROLE_ASSIGNMENT",
     "AREA_RULE_PROFILE",
     "AGGREGATE_AND_RATIO",
