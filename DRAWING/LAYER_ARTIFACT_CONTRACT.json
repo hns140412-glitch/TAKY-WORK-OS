@@ -1,0 +1,58 @@
+{
+  "schema_version": "2026-09-23.1",
+  "purpose": "Keep each layer independently replaceable, traceable and cacheable while preserving one source/key lineage.",
+  "artifact_identity": "source_key + view_id(optional) + layer_id + revision",
+  "shared_artifacts": {
+    "L0_SOURCE": [
+      "source_id",
+      "source_digest",
+      "revision",
+      "source_uri"
+    ],
+    "L1_GEOMETRY": [
+      "geometry_digest",
+      "source_line_artifact",
+      "geometry_objects_artifact"
+    ],
+    "L2_SEMANTIC": [
+      "semantic_state",
+      "semantic_candidates_artifact",
+      "unknown_set_artifact",
+      "mask_manifest_artifact"
+    ]
+  },
+  "view_artifacts": {
+    "L3_PRESENTATION": [
+      "artifact_uri",
+      "preset_id",
+      "input_digests"
+    ],
+    "L4_ENTOURAGE": [
+      "artifact_uri",
+      "input_digests"
+    ],
+    "L5_ANNOTATION": [
+      "artifact_uri",
+      "source_trace"
+    ],
+    "L6_AI_ATMOSPHERE": [
+      "artifact_uri",
+      "recipe_id",
+      "model_or_provider",
+      "input_digests"
+    ],
+    "L7_FINAL_OVERLAY_VALIDATION": [
+      "artifact_uri",
+      "validation_state",
+      "validation_report_uri"
+    ]
+  },
+  "cache_rules": [
+    "reuse L0-L2 when source digest, geometry digest and semantic rule-set digest are unchanged",
+    "reuse individual L3-L6 artifact when its own input digests and preset/recipe are unchanged",
+    "never reuse L7 if any contributing L3-L6 artifact changed",
+    "source or geometry change invalidates all downstream artifacts",
+    "annotation change does not invalidate AI atmosphere unless annotation was part of the AI input"
+  ],
+  "failure_isolation": "A failed view-specific layer must not force re-extraction of source geometry or semantic state."
+}
