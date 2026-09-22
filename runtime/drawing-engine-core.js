@@ -49,6 +49,7 @@
     const source_id=clean(input.source_id||input.source?.source_id);
     const source_authority=clean(input.source_authority||input.source?.authority).toUpperCase();
     const revision=clean(input.revision||input.revision_id)||'REV_UNSPECIFIED';
+    const source_digest=clean(input.source_digest||input.source?.digest)||null;
     const user_intent=clone(input.user_intent||null);
     if(!source_id) return {ok:false,reason:'SOURCE_ID_REQUIRED'};
     if(!AUTHORITIES.includes(source_authority)) return {ok:false,reason:'INVALID_SOURCE_AUTHORITY'};
@@ -69,6 +70,7 @@
       source_id,
       source_authority,
       revision,
+      source_digest,
       user_intent,
       objects:Object.freeze(objects)
     })};
@@ -94,6 +96,7 @@
     return 'ks_'+fnv1a(canonicalize({
       source_id:keyState?.source_id||null,
       source_authority:keyState?.source_authority||null,
+      source_digest:keyState?.source_digest||null,
       geometry_key:geometryFingerprint(keyState),
       semantic_key:semanticFingerprint(keyState)
     }));
@@ -116,6 +119,7 @@
     const issues=[];
     if(!before||!after) return {ok:false,issues:[{code:'KEY_STATE_REQUIRED',severity:'CRITICAL'}]};
     if(before.source_id!==after.source_id) issues.push({code:'SOURCE_ID_CHANGED',severity:'CRITICAL'});
+    if(before.source_digest && before.source_digest!==after.source_digest) issues.push({code:'SOURCE_DIGEST_CHANGED_OR_MISSING',severity:'CRITICAL'});
     const bMap=new Map((before.objects||[]).map(o=>[o.object_id,o]));
     const aMap=new Map((after.objects||[]).map(o=>[o.object_id,o]));
 
@@ -146,6 +150,8 @@
       semantic_key_after:semanticFingerprint(after),
       key_state_before:keyStateFingerprint(before),
       key_state_after:keyStateFingerprint(after),
+      fingerprint_strength:'NON_CRYPTOGRAPHIC_REGRESSION_KEY',
+      source_digest_present:Boolean(before.source_digest),
       issues:Object.freeze(issues)
     };
   }
@@ -158,7 +164,7 @@
   }
 
   return Object.freeze({
-    version:'1.1.0',
+    version:'1.2.0',
     POLICIES,
     MODES,
     AUTHORITIES,
