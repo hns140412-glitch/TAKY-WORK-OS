@@ -27,6 +27,8 @@ const styled=ks([
 ]);
 assert.equal(engine.validateKeyPreservation(base,styled).ok,true);
 assert.equal(engine.geometryFingerprint(base),engine.geometryFingerprint(styled));
+assert.equal(engine.semanticFingerprint(base),engine.semanticFingerprint(styled));
+assert.equal(engine.keyStateFingerprint(base),engine.keyStateFingerprint(styled));
 
 const drift=ks([
   {object_id:'WALL-1',object_type:'WALL',policy:'KEEP',geometry:{a:[0,0],b:[11,0]},semantics:{role:'wall'},presentation:{weight:5}},
