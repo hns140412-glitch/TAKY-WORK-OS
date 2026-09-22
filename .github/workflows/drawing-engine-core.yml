@@ -23,4 +23,6 @@ jobs:
         with:
           node-version: '22'
       - run: node runtime/drawing-engine-core.test.js
-      - run: node -e "JSON.parse(require('fs').readFileSync('DRAWING/PRESENTATION_PRESET_REGISTRY.json','utf8')); console.log('preset-registry: PASS')"
+      - name: Validate presentation preset registry
+        run: |
+          node -e "JSON.parse(require('fs').readFileSync('DRAWING/PRESENTATION_PRESET_REGISTRY.json','utf8')); console.log('preset registry PASS')"
