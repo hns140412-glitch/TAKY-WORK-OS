@@ -1,0 +1,97 @@
+{
+  "schema_version": "2026-09-23.1",
+  "rule": "Masks are presentation/selection artifacts. They never become geometry authority.",
+  "mask_types": [
+    {
+      "mask_id": "SOURCE_LINE",
+      "authority": "SOURCE_DERIVED",
+      "purpose": "final line overlay and edge regression",
+      "may_change": false
+    },
+    {
+      "mask_id": "ROOM_MATERIAL",
+      "authority": "DERIVED",
+      "purpose": "floor/material application inside already-known room/surface boundaries",
+      "may_change": true,
+      "forbidden": [
+        "change wall boundary",
+        "bridge opening",
+        "erase structural object"
+      ]
+    },
+    {
+      "mask_id": "FURNITURE",
+      "authority": "PRESENTATION",
+      "purpose": "scale/use communication",
+      "may_change": true,
+      "constraints": [
+        "realistic scale",
+        "do not fake room size",
+        "do not block critical circulation"
+      ]
+    },
+    {
+      "mask_id": "LANDSCAPE",
+      "authority": "PRESENTATION_OR_SOURCE_DERIVED",
+      "purpose": "site readability / scale / depth",
+      "may_change": true,
+      "constraints": [
+        "do not cover access",
+        "do not invent forbidden planting",
+        "respect source boundary"
+      ]
+    },
+    {
+      "mask_id": "ANNOTATION",
+      "authority": "SOURCE_DERIVED",
+      "purpose": "room labels, key dimensions, notes",
+      "may_change": true,
+      "constraints": [
+        "semantic value must stay traceable to source or explicit user input"
+      ]
+    },
+    {
+      "mask_id": "UNKNOWN",
+      "authority": "UNKNOWN",
+      "purpose": "protect unresolved source content from accidental cleanup",
+      "may_change": false
+    }
+  ],
+  "output_profiles": {
+    "SALES_PLAN": {
+      "required": [
+        "SOURCE_LINE",
+        "ROOM_MATERIAL",
+        "FURNITURE",
+        "ANNOTATION"
+      ],
+      "optional": [
+        "LANDSCAPE"
+      ],
+      "completion_checks": [
+        "layout readable",
+        "room relationships readable",
+        "geometry preserved",
+        "furniture scale plausible",
+        "critical labels readable"
+      ]
+    },
+    "SECTION_PRESENTATION": {
+      "required": [
+        "SOURCE_LINE",
+        "ANNOTATION"
+      ],
+      "optional": [
+        "ROOM_MATERIAL",
+        "LANDSCAPE"
+      ],
+      "completion_checks": [
+        "cut hierarchy clear",
+        "ground/soil readable",
+        "level relationships preserved",
+        "background subordinate",
+        "geometry preserved"
+      ]
+    }
+  }
+}
