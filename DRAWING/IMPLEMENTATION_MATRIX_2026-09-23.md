@@ -35,6 +35,12 @@ This matrix separates ideas from executable capability.
 | direct vs derived geometry status | source router | CODED |
 | presentation preset registry | `DRAWING/PRESENTATION_PRESET_REGISTRY.json` | CODED DATA CONTRACT |
 | source-line-last SVG compositor | `runtime/svg-presentation-compositor.js` | CODED |
+| source snapshot Multiply compositor | `tools/drawing_multiply_compositor.py` | CODED + real fixture benchmarked |
+| PDF source snapshot rasterizer | `tools/drawing_pdf_raster_overlay.py` | CODED |
+| PDF source-line SVG exporter | `tools/drawing_pdf_svg_exporter.py` | CODED + real fixture benchmarked |
+| raster edge preservation diff | `tools/drawing_edge_diff.py` | CODED |
+| compact result-first prompt compiler | `runtime/drawing-prompt-compiler.js` | CODED |
+| output evaluation contract | `DRAWING/OUTPUT_EVALUATION_CONTRACT.json` | CODED DATA CONTRACT |
 | unsafe SVG fragment rejection | SVG compositor | CODED minimum gate |
 | vector PDF adapter | `tools/drawing_pdf_vector_adapter.py` | CODED + CI synthetic fixture verified; real architectural PDFs probed locally |
 | utilization-first source router | `runtime/drawing-reference-router.js` | CODED |
@@ -151,3 +157,21 @@ V1 is not a renderer. It is an executable control spine that can:
 - keep user-intent completion explicit.
 
 DXF parsing and deterministic geometry comparison remain P1 implementation. Vector-PDF extraction is now coded, but PDF semantics are not claimed equivalent to CAD.
+
+
+## Real fixture preservation finding
+
+Three real A3 drawing classes (plan / basement / section) were benchmarked without publishing private file IDs or source hashes.
+
+- vector PDF path extraction is strong for clean line guides and deterministic fingerprints;
+- vector reconstruction alone does not reproduce the complete rendered drawing appearance;
+- full source snapshot Multiply composition preserved rendered edges substantially better in the tested fixtures;
+- therefore Work OS now treats VECTOR_OVERLAY and SOURCE_SNAPSHOT_MULTIPLY as complementary paths, not competitors;
+- CAD/source authority remains separate from both presentation overlays.
+
+## Prompt / evaluation implementation finding
+
+The mining pass also reduced the runtime prompt burden:
+- workflow mechanics and tuning values stay in recipes/runtime;
+- prompts carry goal, output, preserve/change boundary, preset and completion criteria;
+- final output review uses source-fidelity hard gates first, then legibility/hierarchy/material scale/color/layout and purpose-specific human usefulness.
