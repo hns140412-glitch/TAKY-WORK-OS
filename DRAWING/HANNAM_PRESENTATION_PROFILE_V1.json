@@ -1,0 +1,155 @@
+{
+  "profile_version": "2026-09-23.1",
+  "profile_id": "HANNAM_SCALE_REVIEW_PRESENTATION_V1",
+  "goal": "Enhance source-preserved Work drawings into a decision-ready A3 scale-review report.",
+  "source_authority": "WORK_PDF_DWG",
+  "reference_inputs": {
+    "drive": [
+      "M-017 SOURCE_WEIGHT_HIERARCHY",
+      "M-018 POCHE_LAYER",
+      "M-021 PAPER_GRAIN_AND_PRINT_TEXTURE",
+      "M-023 HUMAN_SCALE_SILHOUETTE",
+      "M-025 SOURCE_SNAPSHOT_MULTIPLY",
+      "TREND_LEADER_MINING_2026-09-23",
+      "GLOBAL_OFFICE_DNA_2026-09-23"
+    ],
+    "external": [
+      "ArchDaily section layering / human scale",
+      "OMA relation-first diagrams",
+      "Drawing Matter axonometric / projected section",
+      "BIG one-move / repeatable base-condition",
+      "ArchDaily disassembled axonometry"
+    ]
+  },
+  "a3": {
+    "orientation": "landscape",
+    "width_mm": 420,
+    "height_mm": 297,
+    "margin_mm": 12,
+    "layout": {
+      "hero_ratio": 0.74,
+      "support_ratio": 0.26,
+      "max_support_diagrams": 3,
+      "one_page_one_message": true
+    }
+  },
+  "drawing_tokens": {
+    "line_weight_mm": {
+      "SOURCE_HEAVY": 0.4,
+      "SOURCE_PRIMARY": 0.28,
+      "SOURCE_SECONDARY": 0.18,
+      "SOURCE_BASE": 0.13,
+      "SOURCE_LIGHT": 0.09
+    },
+    "rules": [
+      "source geometry cannot move",
+      "source line remains final authority",
+      "poche requires verified cut/closed mask",
+      "context may fade but protected anchors remain",
+      "entourage never obscures critical architecture",
+      "paper grain is atmosphere-only and removable"
+    ]
+  },
+  "pages": {
+    "P04": {
+      "title": "B1 Parking / Access",
+      "hero": "B1_SOURCE_DRAWING",
+      "methods": [
+        "M-017",
+        "M-025",
+        "RELATION_FIRST"
+      ],
+      "presentation": [
+        "parking field neutral warm gray",
+        "core/vertical circulation darker neutral",
+        "retaining/ground condition separate tonal family",
+        "vehicle and pedestrian access use one accent family",
+        "dimensions remain readable but subordinate"
+      ],
+      "hard_gates": [
+        "site boundary preserved",
+        "retaining wall / soil / basement wall relationship not invented",
+        "vehicle and pedestrian openings remain open where source shows"
+      ]
+    },
+    "P05": {
+      "title": "1F Plan",
+      "hero": "1F_SOURCE_DRAWING",
+      "methods": [
+        "M-017",
+        "M-025",
+        "EDITORIAL_RESTRAINT",
+        "RELATION_FIRST"
+      ],
+      "presentation": [
+        "A/B buildings maintain source color distinction",
+        "context roads reduced",
+        "outdoor/indoor threshold emphasized by light wash only",
+        "access arrows and labels remain supporting"
+      ],
+      "hard_gates": [
+        "A/B geometry unchanged",
+        "source roads and boundaries unchanged",
+        "no unverified program reassignment"
+      ]
+    },
+    "P06": {
+      "title": "2F Plan",
+      "hero": "2F_SOURCE_DRAWING",
+      "methods": [
+        "M-017",
+        "M-025",
+        "EDITORIAL_RESTRAINT"
+      ],
+      "presentation": [
+        "same A/B color family as 1F for continuity",
+        "no landscape layer added",
+        "context boundary lighter than building linework",
+        "room/furniture remain subordinate to primary wall hierarchy"
+      ],
+      "hard_gates": [
+        "no invented landscaping",
+        "A/B geometry unchanged",
+        "vertical relation with 1F stays traceable"
+      ]
+    },
+    "P07": {
+      "title": "Section / Height / Ground",
+      "hero": "SECTION_SOURCE_DRAWING",
+      "methods": [
+        "M-017",
+        "M-018",
+        "M-023",
+        "M-025",
+        "SECTION_LAYERED"
+      ],
+      "hierarchy": [
+        "CUT",
+        "GROUND_SOIL",
+        "STRUCTURE",
+        "SPACE",
+        "BACKGROUND"
+      ],
+      "presentation": [
+        "cut plane dominant",
+        "soil/ground readable but not decorative",
+        "level labels remain exact source evidence",
+        "human scale optional and minimal",
+        "background context reduced"
+      ],
+      "hard_gates": [
+        "levels unchanged",
+        "ground profile unchanged",
+        "cut geometry unchanged"
+      ]
+    }
+  },
+  "validation": [
+    "source overlay / snapshot parity",
+    "geometry fingerprint equality where vector source available",
+    "A3 readability at print scale",
+    "main drawing identifiable within 2 seconds",
+    "support diagrams do not compete with hero",
+    "unknown semantic content remains unknown"
+  ]
+}
