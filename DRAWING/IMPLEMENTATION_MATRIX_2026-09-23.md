@@ -303,3 +303,40 @@ Google Drive probe on 2026-09-23:
 - this does not claim that no CAD exists elsewhere in Drive.
 
 Synthetic end-to-end fixture is used only to verify runtime mechanics, not office layer semantics.
+
+
+## Area Engine — BLOCK-AWARE / SCALE-AWARE
+
+Implemented:
+- block-aware DXF area-candidate extraction;
+- nested INSERT virtual expansion without write-back EXPLODE;
+- translation / rotation / scale / mirror-aware area calculation;
+- DXF unit-to-metric conversion for known INSUNITS;
+- explicit-scale vector PDF area candidates;
+- verified role assignment ledger;
+- project rule-profile aggregation into design-overview values;
+- area source router for DXF / DWG / vector PDF.
+
+TAKY boundaries:
+- geometry candidate != legal/architectural area role;
+- block/layer name never assigns a legal area automatically;
+- residential inside-face area requires verified `INTERIOR_FACE_BOUNDARY`;
+- centerline auto-offset is forbidden without verified wall build-up;
+- PDF area is derived evidence and requires confirmed drawing scale;
+- DWG remains source-preserved + conversion-required until a decoder produces DXF;
+- UNKNOWN stays UNKNOWN rather than being estimated.
+
+Synthetic CI verifies:
+- nested blocks;
+- rotated block;
+- mirrored block;
+- scaled block;
+- metric area conversion;
+- scaled PDF area conversion;
+- verified assignment and coverage/FAR-style ratio formulas.
+
+Actual Work DWG probe:
+- source exists in `Work`;
+- header = AC1032 (AutoCAD 2018/2019/2020 family);
+- current local runtime has no ODAFileConverter / LibreDWG decoder;
+- therefore no direct area claim was made from the DWG.
