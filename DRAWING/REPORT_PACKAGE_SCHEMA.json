@@ -1,0 +1,167 @@
+{
+  "schema_version": "2026-09-23.1",
+  "package_id": "string",
+  "project": {
+    "project_id": "string",
+    "title": "string",
+    "location": "string|null",
+    "report_type": "SCALE_REVIEW_AND_CASE_STUDY",
+    "status": "WORKING|REVIEW|ISSUED"
+  },
+  "governance": {
+    "slogans": [
+      "Think Again, Keep Your Key.",
+      "Think Again, You’re The Key."
+    ],
+    "source_geometry_mutation": "FORBIDDEN",
+    "unknown_policy": "PRESERVE_UNKNOWN",
+    "human_final_authority": true
+  },
+  "sources": [
+    {
+      "source_id": "SRC-*",
+      "title": "string",
+      "role": "CURRENT_GEOMETRY_SOURCE|FORMAT_REFERENCE|REVIEW_STANDARD|CASE_DATASET|INFO_STRUCTURE_REFERENCE|PRESENTATION_METHOD",
+      "authority": "HIGHEST_GEOMETRY|FACT_SOURCE|REFERENCE_ONLY|REVIEW_STANDARD",
+      "uri": "string|null",
+      "revision": "string|null",
+      "allowed_use": [
+        "string"
+      ],
+      "forbidden_use": [
+        "string"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "FACT-*",
+      "label": "string",
+      "value": "number|string|null",
+      "unit": "string|null",
+      "evidence_state": "CONFIRMED|CALCULATED|PENDING|CONFLICT|REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-*"
+      ],
+      "calculation_ref": "string|null",
+      "notes": "string|null"
+    }
+  ],
+  "review_items": [
+    {
+      "review_id": "REV-*",
+      "axis": "ARCHITECTURE|TRAFFIC_PARKING|LANDSCAPE_EXTERNAL|STRUCTURE_GROUND|MEP_FIRE|PERMIT_OTHER",
+      "topic": "string",
+      "current_evidence_refs": [
+        "FACT-*",
+        "SRC-*"
+      ],
+      "response": "string|null",
+      "state": "PASS|NEEDS_REVIEW|PENDING|NOT_APPLICABLE",
+      "next_action": "string|null"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "CASE-*",
+      "name": "string",
+      "class": "DIRECT_COMPARABLE|LUXURY_BENCHMARK|INFO_STRUCTURE_REFERENCE",
+      "fact_refs": [
+        "FACT-*"
+      ],
+      "comparison_dimensions": [
+        "string"
+      ],
+      "limitations": [
+        "string"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "method_id": "M-*",
+      "purpose": "string",
+      "source_ref": "string|null",
+      "keep": [
+        "string"
+      ],
+      "change": [
+        "string"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG",
+        "SVG"
+      ],
+      "validation": [
+        "string"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page_id": "P01",
+      "title": "string",
+      "purpose": "string",
+      "primary_message": "string",
+      "fact_refs": [
+        "FACT-*"
+      ],
+      "review_refs": [
+        "REV-*"
+      ],
+      "case_refs": [
+        "CASE-*"
+      ],
+      "method_refs": [
+        "M-*"
+      ],
+      "source_visual_refs": [
+        "SRC-*"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "SOURCE_DRAWING|DIAGRAM|TABLE|TEXT|CASE_MATRIX",
+          "content_ref": "string|null"
+        }
+      ],
+      "completion_gate": [
+        "string"
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "TBL-*",
+      "title": "string",
+      "column_ids": [
+        "string"
+      ],
+      "row_refs": [
+        "FACT-*|CASE-*|REV-*"
+      ]
+    }
+  ],
+  "outputs": {
+    "primary": "A3_PDF",
+    "visual_canonical": "A3_SVG_BOARD_STATE",
+    "derivative": [
+      "HTML",
+      "PPTX",
+      "PNG",
+      "PDF"
+    ],
+    "data_export": [
+      "XLSX"
+    ]
+  },
+  "validation": {
+    "source_fidelity": "PENDING|PASS|FAIL",
+    "report_comprehension": "PENDING|PASS|NEEDS_REVISION|FAIL",
+    "output_bundle": "PENDING|PASS|FAIL"
+  }
+}
