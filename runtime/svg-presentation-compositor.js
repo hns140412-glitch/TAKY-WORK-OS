@@ -6,10 +6,18 @@
   'use strict';
   const clean=v=>String(v??'').trim();
 
+  function safeFragment(value){
+    const s=clean(value);
+    if(!s) return true;
+    const unsafe=/<\s*(script|foreignObject|iframe|object|embed)\b|\bon[a-z]+\s*=|javascript\s*:|https?:\/\//i;
+    return !unsafe.test(s);
+  }
+
   function composeSvg({width=1000,height=1000,viewBox=null,background=null,presentation_layers=[],source_linework=''}={}){
     const source=clean(source_linework);
     if(!source) return {ok:false,reason:'SOURCE_LINEWORK_REQUIRED'};
     if(!Array.isArray(presentation_layers)) return {ok:false,reason:'PRESENTATION_LAYERS_NOT_ARRAY'};
+    if(!safeFragment(source) || !safeFragment(background) || presentation_layers.some(x=>!safeFragment(x?.content))) return {ok:false,reason:'UNSAFE_SVG_FRAGMENT'};
     const vb=clean(viewBox)||`0 0 ${Number(width)||1000} ${Number(height)||1000}`;
     const bg=background?`<g id="background-pass">${background}</g>`:'';
     const layers=presentation_layers.map((layer,i)=>{
@@ -21,5 +29,5 @@
     return {ok:true,svg,source_overlay_last:svg.lastIndexOf('source-linework-final')>svg.lastIndexOf('presentation-pass')};
   }
 
-  return Object.freeze({version:'1.0.0',composeSvg});
+  return Object.freeze({version:'1.1.0',safeFragment,composeSvg});
 });
