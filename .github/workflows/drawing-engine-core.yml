@@ -15,6 +15,10 @@ on:
       - 'runtime/svg-presentation-compositor.test.js'
       - 'tools/drawing_pdf_vector_adapter.py'
       - 'tools/drawing_pdf_vector_adapter.test.py'
+      - 'tools/drawing_dxf_adapter.py'
+      - 'tools/drawing_dxf_adapter.test.py'
+      - 'tools/drawing_geometry_diff.py'
+      - 'tools/drawing_geometry_diff.test.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
   pull_request:
@@ -31,6 +35,10 @@ on:
       - 'runtime/svg-presentation-compositor.test.js'
       - 'tools/drawing_pdf_vector_adapter.py'
       - 'tools/drawing_pdf_vector_adapter.test.py'
+      - 'tools/drawing_dxf_adapter.py'
+      - 'tools/drawing_dxf_adapter.test.py'
+      - 'tools/drawing_geometry_diff.py'
+      - 'tools/drawing_geometry_diff.test.py'
       - 'DRAWING/**'
       - 'ROUTERS/DRAWING_ROUTER.md'
 
@@ -45,13 +53,15 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
-      - run: python -m pip install --disable-pip-version-check pymupdf
+      - run: python -m pip install --disable-pip-version-check pymupdf ezdxf
       - run: node runtime/drawing-engine-core.test.js
       - run: node runtime/drawing-source-router.test.js
       - run: node runtime/drawing-reference-router.test.js
       - run: node runtime/drawing-task-contract.test.js
       - run: node runtime/svg-presentation-compositor.test.js
       - run: python tools/drawing_pdf_vector_adapter.test.py
+      - run: python tools/drawing_dxf_adapter.test.py
+      - run: python tools/drawing_geometry_diff.test.py
       - name: Validate drawing registries
         run: |
           node -e "for (const p of ['DRAWING/PRESENTATION_PRESET_REGISTRY.json','DRAWING/GENERATION_RECIPE_REGISTRY.json','DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json']) { JSON.parse(require('fs').readFileSync(p,'utf8')); console.log(p+' PASS'); }"
