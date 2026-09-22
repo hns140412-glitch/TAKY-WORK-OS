@@ -26,12 +26,12 @@ PRESENTATION_ATTRS = {
 }
 
 ROLE_STYLE_DEFAULTS = {
-    "CUT": {"stroke": "#111111", "stroke-width": "0.70", "opacity": "1"},
-    "PRIMARY": {"stroke": "#202020", "stroke-width": "0.38", "opacity": "1"},
-    "SECONDARY": {"stroke": "#555555", "stroke-width": "0.22", "opacity": "0.90"},
-    "CONTEXT": {"stroke": "#999999", "stroke-width": "0.14", "opacity": "0.55"},
-    "FURNITURE": {"stroke": "#777777", "stroke-width": "0.16", "opacity": "0.72"},
-    "LANDSCAPE": {"stroke": "#7d8a7d", "stroke-width": "0.16", "opacity": "0.62"},
+    "CUT": {"stroke": "#111111", "stroke-width": "0.70mm", "opacity": "1"},
+    "PRIMARY": {"stroke": "#202020", "stroke-width": "0.38mm", "opacity": "1"},
+    "SECONDARY": {"stroke": "#555555", "stroke-width": "0.22mm", "opacity": "0.90"},
+    "CONTEXT": {"stroke": "#999999", "stroke-width": "0.14mm", "opacity": "0.55"},
+    "FURNITURE": {"stroke": "#777777", "stroke-width": "0.16mm", "opacity": "0.72"},
+    "LANDSCAPE": {"stroke": "#7d8a7d", "stroke-width": "0.16mm", "opacity": "0.62"},
     "ANNOTATION": {"stroke": "#333333", "opacity": "0.88"},
     "SHADOW": {"fill": "#000000", "fill-opacity": "0.08", "stroke": "none"},
 }
