@@ -275,3 +275,31 @@ Authority boundary:
 - original CAD/PDF remains preserved authority/evidence.
 
 The official PyMuPDF and ezdxf APIs support these routes; implementation does not depend on CloudConvert for PDF or DXF.
+
+
+## DXF semantic onboarding — CODED
+
+Implemented:
+- evidence-only DXF layer/entity profiler;
+- name/entity-composition candidate miner with PROPOSAL_ONLY output;
+- explicit verified rule promoter;
+- verified-rule-only semantic mapper;
+- verified presentation-mask manifest;
+- strict DXF-to-mask pipeline;
+- mask-to-sales-gate bridge;
+- view admission wrapper with automatic PUBLICATION fallback.
+
+Safety gates:
+- unverified active rules are ignored;
+- ambiguous proposals require explicit semantic override during approval;
+- closed room geometry is required for ROOM_MATERIAL;
+- UNKNOWN remains UNKNOWN;
+- no candidate mining step can directly unlock SALES_TEXTURED.
+
+Google Drive probe on 2026-09-23:
+- three discovered folders named `CAD` were inspected;
+- each contained only `.keep` at inspection time;
+- therefore no project DWG/DXF was available for real CAD-layer benchmarking in those folders;
+- this does not claim that no CAD exists elsewhere in Drive.
+
+Synthetic end-to-end fixture is used only to verify runtime mechanics, not office layer semantics.
