@@ -30,12 +30,16 @@ This matrix separates ideas from executable capability.
 | source digest preservation hook | core runtime | CODED; digest must be supplied by source adapter |
 | user-intent outcome gate | core runtime | CODED |
 | source type routing | `runtime/drawing-source-router.js` | CODED |
-| DXF / DWG / vector-PDF / raster route selection | source router | CODED as adapter selection; parser itself not yet implemented |
+| DXF / DWG / vector-PDF / raster route selection | source router | CODED; CAD authority vs PDF snapshot boundary enforced |
 | source authority evidence requirement | source router | CODED |
 | direct vs derived geometry status | source router | CODED |
 | presentation preset registry | `DRAWING/PRESENTATION_PRESET_REGISTRY.json` | CODED DATA CONTRACT |
 | source-line-last SVG compositor | `runtime/svg-presentation-compositor.js` | CODED |
 | unsafe SVG fragment rejection | SVG compositor | CODED minimum gate |
+| vector PDF adapter | `tools/drawing_pdf_vector_adapter.py` | CODED + CI synthetic fixture verified; real architectural PDFs probed locally |
+| utilization-first source router | `runtime/drawing-reference-router.js` | CODED |
+| task outcome contract | `runtime/drawing-task-contract.js` | CODED |
+| external capability registry | `DRAWING/EXTERNAL_TOOL_CAPABILITY_REGISTRY.json` | CODED volatile reference registry |
 | CI tests | `.github/workflows/drawing-engine-core.yml` | CODED |
 
 ## NEXT IMPLEMENTATION — HIGH VALUE
@@ -55,16 +59,26 @@ Required output:
 
 Do not infer wall semantics solely from line presence.
 
-### P1-B Vector PDF adapter
-Candidate stack: PyMuPDF vector drawing extraction.
+### P1-B Vector PDF adapter — IMPLEMENTED FOUNDATION
+Stack: PyMuPDF `Page.get_drawings()`.
 
-Required:
+Implemented:
 - vector-content probe
 - page coordinate normalization
 - path extraction
-- text separation
-- derived-geometry label
-- source-page evidence links
+- SHA-256 source digest
+- geometry-vs-presentation digest separation
+- derived-vector label
+- synthetic CI fixture
+
+Real architectural PDF probe finding:
+- all tested A3 drawing PDFs exposed large vector path sets;
+- extracted text blocks were zero, indicating exported annotations may be outlined/vectorized rather than recoverable semantic text;
+- therefore vector PDF is strong for line preservation, overlay and regression evidence, but weak as a substitute for CAD layer/semantic authority.
+
+Still needed:
+- source-page evidence links in downstream records
+- optional path clustering / structural-guide derivation without claiming semantics
 
 ### P1-C Geometry comparison
 Candidate stack: Shapely or equivalent deterministic geometry library.
@@ -136,4 +150,4 @@ V1 is not a renderer. It is an executable control spine that can:
 - reject key drift;
 - keep user-intent completion explicit.
 
-Real DXF/PDF parsing and geometry computation remain P1 implementation, not claimed complete.
+DXF parsing and deterministic geometry comparison remain P1 implementation. Vector-PDF extraction is now coded, but PDF semantics are not claimed equivalent to CAD.
