@@ -31,5 +31,8 @@ assert(out.svg.includes('DESIGN DEVELOPMENT'));
 assert(out.svg.includes('YKH ASSOCIATES · HANNAM-DONG 737-21'));
 assert(!out.svg.includes('A3 SVG BOARD STATE'));
 assert(out.svg.includes('data-source-geometry="locked"'));
+assert(out.svg.includes('width="420mm"'));
+assert(out.svg.includes('height="297mm"'));
+assert(out.svg.includes('viewBox="0 0 4200 2970"'));
 assert(!out.svg.includes('<img'));
 console.log('drawing-a3-board-renderer PASS');
