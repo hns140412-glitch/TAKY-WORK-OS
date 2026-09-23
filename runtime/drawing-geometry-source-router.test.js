@@ -13,7 +13,11 @@ x=r.route({source_type:'PDF',vector:false});
 assert.equal(x.status,'BLOCKED');
 
 x=r.route({source_type:'DWG'});
-assert.equal(x.status,'CONVERSION_REQUIRED');
-assert.equal(x.next_input,'DXF');
+assert.equal(x.status,'CONDITIONAL_READY');
+assert.equal(x.decoder,'GNU_LIBREDWG_DWGREAD');
+assert.equal(x.blocker_if_unavailable,'LIBREDWG_DWGREAD_RUNTIME_REQUIRED');
+assert.equal(x.authority,'DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE');
+assert.equal(x.production_claimable,false);
+assert.equal(x.semantic_inference,false);
 
 console.log('drawing-geometry-source-router: PASS');
