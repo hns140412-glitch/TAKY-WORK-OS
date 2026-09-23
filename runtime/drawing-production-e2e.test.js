@@ -9,6 +9,7 @@ const cp=require('child_process');
 const Renderer=require('./drawing-a3-board-renderer.js');
 const ReferenceCompiler=require('./reference-compiler.js');
 const ReferenceApplication=require('./reference-application.js');
+const HumanIntent=require('./human-intent-contract.js');
 const TestSigner=require('../tests/validator-test-helper.js');
 const Pipeline=require('./production-pipeline.js');
 const Broker=require('./artifact-broker.js');
@@ -167,6 +168,16 @@ try{
   const candidatePdf=candidateBundle.outputs.pdf;
   const digest=Broker.sha256File(candidatePdf);
 
+  const humanIntent=HumanIntent.compileHumanIntent({
+    desired_outcome:'Produce a source-faithful A3 architectural report whose reference-driven hierarchy is clear enough for human decision.',
+    success_criteria:[
+      'source geometry remains unchanged',
+      'reference effect is visibly attributable',
+      'final PDF is suitable for decision review'
+    ]
+  });
+  assert.equal(humanIntent.ok,true);
+
   const metrics=JSON.parse(run(PYTHON,[
     path.join(ROOT,'tools/drawing_visual_metric_extractor.py'),
     candidatePdf,
@@ -203,6 +214,7 @@ try{
 
   const vision=TestSigner.signVisionReview({
     artifact_digest:digest,
+    intent_digest:humanIntent.intent_digest,
     professional_family_pass:true,
     reference_effect_visible_without_explanation:true,
     generic_layout_detected:false,
@@ -230,6 +242,10 @@ try{
     },
     semantics:[],
     claims:[],
+    human_intent:{
+      desired_outcome:humanIntent.desired_outcome,
+      success_criteria:[...humanIntent.success_criteria]
+    },
     reference:{
       reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
