@@ -13,21 +13,34 @@
     'CONTROLLED_PRESENTATION_ENGINE'
   ]);
   const REQUIRED_GATES=[
-    'SOURCE_GATE',
-    'GEOMETRY_GATE',
-    'FACT_GATE',
-    'SEMANTIC_GATE',
-    'REFERENCE_EFFECT_GATE',
-    'ARCHITECTURAL_READABILITY_GATE',
-    'A3_GATE',
-    'USER_EFFECT_GATE'
+    'SOURCE_GATE','GEOMETRY_GATE','FACT_GATE','SEMANTIC_GATE',
+    'REFERENCE_EFFECT_GATE','ARCHITECTURAL_READABILITY_GATE','A3_GATE','USER_EFFECT_GATE'
   ];
+  const EXPECTED_VALIDATORS=Object.freeze({
+    SOURCE_GATE:'SOURCE_VALIDATOR',
+    GEOMETRY_GATE:'GEOMETRY_VALIDATOR',
+    FACT_GATE:'FACT_VALIDATOR',
+    SEMANTIC_GATE:'SEMANTIC_VALIDATOR',
+    REFERENCE_EFFECT_GATE:'REFERENCE_EFFECT_VALIDATOR',
+    ARCHITECTURAL_READABILITY_GATE:'READABILITY_VALIDATOR',
+    A3_GATE:'A3_VALIDATOR',
+    USER_EFFECT_GATE:'USER_EFFECT_VALIDATOR'
+  });
 
   function normalizeGateMap(gates={}){
     const out={};
     for(const id of REQUIRED_GATES){
-      const v=String(gates[id]||'PENDING').toUpperCase();
-      out[id]=['PASS','FAIL','PENDING','NOT_APPLICABLE'].includes(v)?v:'PENDING';
+      const raw=gates[id];
+      if(raw && typeof raw==='object'){
+        const state=String(raw.state||'PENDING').toUpperCase();
+        out[id]=Object.freeze({
+          state:['PASS','FAIL','PENDING','NOT_APPLICABLE'].includes(state)?state:'PENDING',
+          validator_id:String(raw.validator_id||'').toUpperCase(),
+          evidence_ref:String(raw.evidence_ref||'').trim()
+        });
+      }else{
+        out[id]=Object.freeze({state:String(raw||'PENDING').toUpperCase(),validator_id:'',evidence_ref:''});
+      }
     }
     return out;
   }
@@ -47,8 +60,13 @@
         findings.push({code:'PRODUCTION_BYPASS_PATH_FORBIDDEN',execution_path:executionPath});
       }
       for(const id of REQUIRED_GATES){
-        if(gates[id]!=='PASS' && gates[id]!=='NOT_APPLICABLE'){
-          findings.push({code:'PRE_USER_GATE_NOT_PASS',gate:id,state:gates[id]});
+        const record=gates[id];
+        if(record.state!=='PASS' && record.state!=='NOT_APPLICABLE'){
+          findings.push({code:'PRE_USER_GATE_NOT_PASS',gate:id,state:record.state});
+          continue;
+        }
+        if(record.validator_id!==EXPECTED_VALIDATORS[id] || !record.evidence_ref){
+          findings.push({code:'UNATTESTED_GATE_STATUS',gate:id,validator_id:record.validator_id,evidence_ref:record.evidence_ref||null});
         }
       }
     }
@@ -95,6 +113,7 @@
   return Object.freeze({
     version:'2.0.0',
     REQUIRED_GATES:Object.freeze([...REQUIRED_GATES]),
+    EXPECTED_VALIDATORS,
     AUTHORIZED_ENGINES:Object.freeze([...AUTHORIZED_ENGINES]),
     evaluate,
     classifyOneOff
