@@ -119,22 +119,21 @@
 
     const sb=parseViewBox(source_viewbox);
     if(!sb) return {ok:false,reason:'SOURCE_VIEWBOX_REQUIRED'};
-    const body=sourceBody(source_svg);
-    if(!body) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
+    const sourceDoc=String(source_svg||'').trim();
+    if(!sourceDoc || !/^<svg\b/i.test(sourceDoc)) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
 
     const fit=fitTransform(sb,{
       x:hero.x+8,y:hero.y+8,width:hero.width-16,height:hero.height-16
     });
 
+    // Keep the source SVG root intact. Stripping it breaks source-local namespaces,
+    // clip paths, xlink references, and can leak content outside the intended crop.
+    // Geometry is never rewritten: crop is achieved only by outer clip + transform.
     const sourcePlaced=
       '<defs><clipPath id="source-a3-clip" clipPathUnits="userSpaceOnUse"><rect x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" width="'+(hero.width-16)+'" height="'+(hero.height-16)+'"/></clipPath></defs>'+
-      '<g clip-path="url(#source-a3-clip)">'+
-      '<svg id="source-slot" data-source-geometry="locked" '+
-      'x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" '+
-      'width="'+(hero.width-16)+'" height="'+(hero.height-16)+'" '+
-      'viewBox="'+sb.x+' '+sb.y+' '+sb.width+' '+sb.height+'" '+
-      'preserveAspectRatio="xMidYMid meet">'+
-      body+'</svg></g>';
+      '<g id="source-slot" data-source-geometry="locked" clip-path="url(#source-a3-clip)" '+
+      'transform="translate('+fit.x.toFixed(4)+' '+fit.y.toFixed(4)+') scale('+fit.scale.toFixed(8)+')">'+
+      sourceDoc+'</g>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
