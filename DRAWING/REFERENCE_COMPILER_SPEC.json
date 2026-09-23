@@ -1,0 +1,77 @@
+{
+  "schema_version": "2026-09-23.1",
+  "pipeline": [
+    "REFERENCE_NAME",
+    "MINED_DNA",
+    "DESIGN_TOKEN",
+    "ENGINE_PARAMETER",
+    "OUTPUT_EFFECT",
+    "BEFORE_AFTER_VALIDATION"
+  ],
+  "hard_rule": "REFERENCE NAME WITHOUT COMPILED OUTPUT EFFECT = FAIL",
+  "mappings": [
+    {
+      "reference_family": "ArchDaily",
+      "dna": "PLAN_LINE_HIERARCHY",
+      "parameters": {
+        "wall_lineweight": 0.4,
+        "primary_lineweight": 0.28,
+        "secondary_lineweight": 0.18,
+        "annotation_lineweight": 0.09
+      }
+    },
+    {
+      "reference_family": "Divisare",
+      "dna": "EDITORIAL_RESTRAINT",
+      "parameters": {
+        "whitespace_ratio_min": 0.28,
+        "caption_density": "LOW",
+        "palette_saturation": "LOW",
+        "hero_dominance_min": 0.55
+      }
+    },
+    {
+      "reference_family": "OMA/AMO",
+      "dna": "RELATION_FIRST",
+      "parameters": {
+        "diagram_relation_max": 1,
+        "decorative_duplication": false
+      }
+    },
+    {
+      "reference_family": "BIG",
+      "dna": "ONE_MOVE",
+      "parameters": {
+        "sequence": [
+          "CONSTRAINT",
+          "MOVE",
+          "RESULT"
+        ],
+        "diagram_move_max": 1
+      }
+    },
+    {
+      "reference_family": "MVRDV",
+      "dna": "TYPE_COMPARISON",
+      "parameters": {
+        "same_scale_required": true,
+        "same_metric_required": true,
+        "exception_visibility_required": true
+      }
+    },
+    {
+      "reference_family": "SOM/Foster",
+      "dna": "TECHNICAL_CLARITY",
+      "parameters": {
+        "structure_program_envelope_separation": true,
+        "critical_annotation_priority": "HIGH"
+      }
+    }
+  ],
+  "validation": {
+    "clarity_gain_is_not_reference_effect": true,
+    "explanatory_only_improvement": "FAIL",
+    "generic_layout": "FAIL",
+    "before_after_required": true
+  }
+}
