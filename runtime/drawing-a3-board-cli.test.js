@@ -41,4 +41,22 @@ assert(fs.existsSync(outSvg));
 assert(fs.existsSync(outHtml));
 assert(fs.readFileSync(outSvg,'utf8').includes('source-linework-final'));
 assert(fs.readFileSync(outHtml,'utf8').includes('<main class="sheet">'));
+
+const finalSvg=path.join(dir,'final.svg');
+const finalHtml=path.join(dir,'final.html');
+const blocked=cp.spawnSync(process.execPath,[
+  path.join(__dirname,'drawing-a3-board-cli.js'),
+  '--package',path.join(dir,'pkg.json'),
+  '--profile',path.join(dir,'profile.json'),
+  '--page','P06',
+  '--source-svg',path.join(dir,'source.svg'),
+  '--source-viewbox','0 0 100 50',
+  '--out-svg',finalSvg,
+  '--out-html',finalHtml,
+  '--artifact-class','FINAL'
+],{encoding:'utf8'});
+assert.equal(blocked.status,4,blocked.stderr);
+assert(!fs.existsSync(finalSvg));
+assert(!fs.existsSync(finalHtml));
+assert(blocked.stderr.includes('PRODUCTION_ADMISSION_FAILED'));
 console.log('drawing-a3-board-cli PASS');
