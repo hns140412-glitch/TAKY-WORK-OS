@@ -193,12 +193,37 @@ function minimalPackage(){
 
 (function testEndToEndProductionPipeline(){
   const pass=true;
+  const primitives=[
+    {id:'W1',role:'WALL',type:'LINE',x1:0,y1:0,x2:10,y2:0},
+    {id:'C1',role:'CORE',type:'RECT',x:2,y:2,w:2,h:3},
+    {id:'E1',role:'ENTRY',type:'OPENING',x:5,y:0,w:1}
+  ];
+  const pkg={
+    package_id:'TEST',
+    project:{title:'Test project'},
+    sources:[{
+      source_id:'SRC-1',
+      role:'CURRENT_GEOMETRY_SOURCE'
+    }],
+    facts:[],
+    review_items:[],
+    cases:[],
+    methods:[],
+    pages:[]
+  };
+
   const r=Pipeline.runProduction({
     task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
     validator_id:'VALIDATION_ENGINE_V1',
+    source_identity:{
+      current_content:'same-source-content',
+      previous_content:'same-source-content',
+      current_modified_at:'2026-09-23T10:00:00+09:00',
+      previous_modified_at:'2026-09-23T09:00:00+09:00'
+    },
     geometry:{
-      source_fingerprint:'GEO-LOCK-1',
-      output_fingerprint:'GEO-LOCK-1',
+      source:{primitives},
+      output:{primitives},
       protected_anchors_source:['WALL','CORE','ENTRY'],
       protected_anchors_output:['WALL','CORE','ENTRY'],
       crop_source:[0,0,100,100],
@@ -226,20 +251,37 @@ function minimalPackage(){
       FIDELITY_PASS:pass,
       REFERENCE_ABLATION_TEST_PASS:pass
     },
-    external_gates:{
-      SOURCE_GATE:'PASS',
-      FACT_GATE:'PASS',
-      ARCHITECTURAL_READABILITY_GATE:'PASS',
-      A3_GATE:'PASS',
-      PROVENANCE_GATE:'PASS',
-      USER_EFFECT_GATE:'PASS'
+    visual_metrics:{
+      a3:{
+        width_mm:420,
+        height_mm:297,
+        margin_mm:12,
+        hero_ratio:0.74,
+        support_diagram_count:2,
+        text_clipped:false
+      },
+      readability:{
+        main_drawing_identifiable_ms:1000,
+        hierarchy_score:0.85,
+        figure_ground_score:0.82,
+        support_competition_score:0.20
+      },
+      user_effect:{
+        reference_effect_visible_without_explanation:true,
+        decision_value_score:0.82,
+        generic_layout_detected:false
+      }
     },
-    report_package:minimalPackage(),
+    provenance:{
+      source_ids:['SRC-1'],
+      module_ids:['REPORT_ENGINE_V2','VALIDATION_ENGINE_V1']
+    },
+    report_package:pkg,
     exposure_target:'FINAL_APPROVABLE'
   });
   assert.equal(r.ok,true);
   assert.equal(r.status,'FINAL_APPROVABLE');
-})();
+})();;
 
 
 (function testSignedAuthorizationIsSerializable(){
@@ -319,6 +361,52 @@ function minimalPackage(){
     exposure_grant:tampered
   });
   assert.equal(r.ok,false);
+})();
+
+
+(function testTimestampAloneDoesNotChangeContentRevision(){
+  const SourceIdentity=require('../runtime/source-identity-validator.js');
+  const r=SourceIdentity.classifyRevision({
+    current_content:'identical',
+    previous_content:'identical',
+    current_modified_at:'2026-09-23T12:00:00+09:00',
+    previous_modified_at:'2026-09-22T12:00:00+09:00'
+  });
+  assert.equal(r.ok,true);
+  assert.equal(r.classification,'SAME_CONTENT_REVISION');
+  assert.equal(r.date_changed,true);
+})();
+
+(function testVisualPassCannotBeInjected(){
+  const primitives=[{id:'W1',role:'WALL',type:'LINE',x1:0,y1:0,x2:10,y2:0}];
+  const r=Pipeline.runProduction({
+    task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
+    validator_id:'VALIDATION_ENGINE_V1',
+    source_identity:{current_content:'source'},
+    geometry:{source:{primitives},output:{primitives}},
+    semantics:[],
+    claims:[],
+    reference:{
+      reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+      context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
+    },
+    reference_effect_proof:{
+      TRACEABILITY_PASS:true,EFFECT_PASS:true,FIT_PASS:true,FIDELITY_PASS:true,REFERENCE_ABLATION_TEST_PASS:true
+    },
+    external_gates:{
+      SOURCE_GATE:'PASS',
+      FACT_GATE:'PASS',
+      ARCHITECTURAL_READABILITY_GATE:'PASS',
+      A3_GATE:'PASS',
+      PROVENANCE_GATE:'PASS',
+      USER_EFFECT_GATE:'PASS'
+    },
+    report_package:minimalPackage(),
+    provenance:{source_ids:['SRC-X'],module_ids:['REPORT_ENGINE_V2']},
+    visual_metrics:{}
+  });
+  assert.equal(r.ok,false);
+  assert.equal(r.stage,'VALIDATION');
 })();
 
 console.log('TAKY enforcement regression: PASS');
