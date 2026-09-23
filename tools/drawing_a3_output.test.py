@@ -30,6 +30,14 @@ with tempfile.TemporaryDirectory() as tmp:
     b.new_pptx(pptx)
     b.new_xlsx(xlsx)
 
+    for fn, path in [(b.new_pdf,root/"blocked.pdf"),(b.new_png,root/"blocked.png"),(b.new_pptx,root/"blocked.pptx"),(b.new_xlsx,root/"blocked.xlsx")]:
+        try:
+            fn(path, artifact_class="FINAL")
+            raise AssertionError("low-level builder must not create production artifacts")
+        except RuntimeError as exc:
+            assert str(exc)=="PRODUCTION_OUTPUT_FORBIDDEN_USE_DRAWING_A3_BUNDLE_EXPORTER_WITH_ADMISSION"
+        assert not path.exists()
+
     for p in [html,pdf,png,pptx,xlsx]:
         r=v.validate(p)
         assert r["ok"], (p,r)
