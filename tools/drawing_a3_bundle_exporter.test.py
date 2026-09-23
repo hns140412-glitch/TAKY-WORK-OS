@@ -26,6 +26,11 @@ with tempfile.TemporaryDirectory() as tmp:
         assert Path(result["outputs"][key]).exists()
         assert result["validation"]["results"][key]["ok"] is True
 
+    prod=result=bundle.export_verified(svg,root/"prodout",orientation="landscape",dpi=300,max_attempts=1,artifact_class="FINAL")
+    assert prod["status"]=="BLOCKED_PRODUCTION_ADMISSION", prod
+    assert prod["outputs"]=={}
+    assert not (root/"prodout").exists()
+
     bad=root/"bad.svg"
     bad.write_text(SVG.replace('width="420mm"','width="400mm"'),encoding="utf-8")
     try:
