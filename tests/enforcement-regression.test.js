@@ -428,10 +428,12 @@ function minimalPackage(){
     requested_output:'USER_FACING'
   });
   const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const digest=ArtifactBroker.sha256File(path.join(staging,'candidate.pdf'));
   const v=Validator.validateForExposure({
     authorization:routed.authorization,
     validator_id:'VALIDATION_ENGINE_V1',
-    gate_results:gates
+    gate_results:gates,
+    artifact_digest:digest
   });
   const e=Exposure.authorizeExposure({
     authorization:routed.authorization,
@@ -467,6 +469,103 @@ function minimalPackage(){
   assert.equal(denied.ok,false);
   assert.equal(denied.reason,'STAGING_PATH_OUTSIDE_ALLOWED_ROOT');
 
+  fs.rmSync(tmp,{recursive:true,force:true});
+})();
+
+
+(function testUntrustedValidatorRejected(){
+  const routed=Router.routeProductionTask({
+    task_type:'ARCH_REPORT_ASSEMBLY',
+    requested_output:'USER_FACING'
+  });
+  const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const v=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'FAKE_VALIDATOR',
+    gate_results:gates
+  });
+  assert.equal(v.ok,false);
+  assert.equal(v.reason,'UNTRUSTED_VALIDATOR');
+})();
+
+(function testDigestlessGrantCannotPublish(){
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'taky-digestless-'));
+  const staging=path.join(tmp,'staging');
+  const production=path.join(tmp,'production');
+  fs.mkdirSync(staging,{recursive:true});
+  const candidate=path.join(staging,'candidate.pdf');
+  fs.writeFileSync(candidate,'bytes');
+
+  process.env.TAKY_STAGING_ROOT=staging;
+  process.env.TAKY_PRODUCTION_ROOT=production;
+
+  const routed=Router.routeProductionTask({task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'});
+  const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const v=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results:gates
+  });
+  const e=Exposure.authorizeExposure({
+    authorization:routed.authorization,
+    validation_receipt:v.receipt,
+    target:'USER_VISIBLE'
+  });
+  const auth=Contract.verifyProductionAuthorization(routed.authorization);
+  const pub=ArtifactBroker.publishProductionArtifact({
+    artifact_id:'DIGESTLESS',
+    artifact_type:'PDF',
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    staging_path:candidate,
+    file_name:'final.pdf',
+    exposure_grant:e.grant
+  });
+  assert.equal(pub.ok,false);
+  assert.equal(pub.reason,'ARTIFACT_DIGEST_BOUND_VALIDATION_REQUIRED');
+  fs.rmSync(tmp,{recursive:true,force:true});
+})();
+
+(function testArtifactMutationAfterValidationRejected(){
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'taky-toctou-'));
+  const staging=path.join(tmp,'staging');
+  const production=path.join(tmp,'production');
+  fs.mkdirSync(staging,{recursive:true});
+  const candidate=path.join(staging,'candidate.pdf');
+  fs.writeFileSync(candidate,'validated-version');
+
+  process.env.TAKY_STAGING_ROOT=staging;
+  process.env.TAKY_PRODUCTION_ROOT=production;
+
+  const routed=Router.routeProductionTask({task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'});
+  const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const digest=ArtifactBroker.sha256File(candidate);
+  const v=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results:gates,
+    artifact_digest:digest
+  });
+  const e=Exposure.authorizeExposure({
+    authorization:routed.authorization,
+    validation_receipt:v.receipt,
+    target:'USER_VISIBLE'
+  });
+
+  fs.writeFileSync(candidate,'changed-after-validation');
+
+  const auth=Contract.verifyProductionAuthorization(routed.authorization);
+  const pub=ArtifactBroker.publishProductionArtifact({
+    artifact_id:'TOCTOU',
+    artifact_type:'PDF',
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    staging_path:candidate,
+    file_name:'final.pdf',
+    exposure_grant:e.grant
+  });
+  assert.equal(pub.ok,false);
+  assert.equal(pub.reason,'ARTIFACT_CHANGED_AFTER_VALIDATION');
   fs.rmSync(tmp,{recursive:true,force:true});
 })();
 
