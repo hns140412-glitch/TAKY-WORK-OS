@@ -106,6 +106,24 @@ export function buildServer(){
   );
 
   server.registerTool(
+    'publish-production-artifact',
+    {
+      description:'Copy a validated artifact from TAKY staging into the protected production directory. Requires a valid signed exposure grant matching producer and execution graph.',
+      inputSchema:z.object({
+        artifact_id:z.string().min(1),
+        artifact_type:z.string().min(1),
+        producer_id:z.string().min(1),
+        execution_graph_id:z.string().min(1),
+        source_ids:z.array(z.string()).default([]),
+        staging_path:z.string().min(1),
+        file_name:z.string().min(1),
+        exposure_grant:z.string()
+      })
+    },
+    async(input)=>result(ArtifactBroker.publishProductionArtifact(input))
+  );
+
+  server.registerTool(
     'register-production-artifact',
     {
       description:'Register a production artifact only when a valid signed exposure grant matches its producer and execution graph.',
