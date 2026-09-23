@@ -55,9 +55,9 @@ Do not create a competing parallel router/validator/compiler.
 - ENGINE_PASS != VISUAL_PASS
 
 ## NEXT EXECUTION
-1. Live refresh PR #7 and current branch HEAD.
-2. Verify both Drawing Governance Surgery CI and drawing-engine-core CI at that exact HEAD.
-3. If red, fix central governance runtime/tests only.
+1. Implementation checkpoint `22839994750d8c0f5582f347b3a6dfc41b4d8f51` is GREEN: Surgery run #71 PASS; drawing-engine-core run #528 PASS including JS/Python/JSON contracts.
+2. Live refresh PR #7 and verify both workflows again on the final documentation-only HEAD.
+3. If final-head CI is red, fix central governance runtime/tests only.
 4. Attack-test bypass routes again.
 5. Cross-validate central TAKY PR #90 against Work OS implementation.
 6. Update C2S/Handoff only for actual state changes.
