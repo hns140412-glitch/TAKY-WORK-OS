@@ -24,6 +24,7 @@ const ReferenceApplication=require('../../runtime/reference-application.js');
 const CIGate=require('../../runtime/ci-attestation-gate.js');
 const Capability=require('../../runtime/capability-token.js');
 const Readiness=require('../../runtime/readiness-evaluator.js');
+const ValidationReadiness=require('../../runtime/validation-readiness-receipt.js');
 
 function runPython(args){
   return new Promise((resolve,reject)=>{
@@ -137,10 +138,12 @@ export function buildServer(){
   server.registerTool(
     'get-production-readiness',
     {
-      description:'Report live production readiness from current git HEAD, exact-head CI, verification public keys and capability-key mode without exposing secrets.',
-      inputSchema:z.object({})
+      description:'Report live production readiness from current git HEAD, exact-head CI, durable keys and an optional signed validator-readiness attestation without exposing secrets.',
+      inputSchema:z.object({
+        validation_readiness_receipt:z.string().min(1).optional()
+      })
     },
-    async()=>{
+    async(input)=>{
       try{
         const ci=await verifyCurrentCIGreen();
         const measurementPem=process.env.TAKY_MEASUREMENT_PUBLIC_KEY_PEM||'';
@@ -155,9 +158,28 @@ export function buildServer(){
           persistent_capability_key:persistentCapability
         });
 
+        const validatorReadiness=input.validation_readiness_receipt
+          ? ValidationReadiness.verifyValidationReadiness(
+              input.validation_readiness_receipt,
+              {expected_vision_public_fingerprint:visionFp}
+            )
+          : Object.freeze({ok:false,reason:'VALIDATION_READINESS_RECEIPT_REQUIRED'});
+
+        const overallUserFacingReady=Boolean(
+          evaluated.production_ready &&
+          validatorReadiness.ok
+        );
+
+        const warnings=[
+          ...evaluated.warnings,
+          ...(validatorReadiness.ok?[]:[validatorReadiness.reason||'VALIDATION_READINESS_NOT_READY'])
+        ];
+
         return result({
           ok:true,
-          production_ready:evaluated.production_ready,
+          production_gateway_ready:evaluated.production_ready,
+          production_ready:overallUserFacingReady,
+          overall_user_facing_ready:overallUserFacingReady,
           staging_ready:evaluated.staging_ready,
           current_git_head:ci.commit_sha||null,
           exact_head_ci:ci,
@@ -167,9 +189,14 @@ export function buildServer(){
             vision_present:Boolean(visionFp),
             vision_fingerprint:visionFp
           },
+          validator_readiness:{
+            attested:validatorReadiness.ok,
+            reason:validatorReadiness.ok?null:validatorReadiness.reason||null,
+            payload:validatorReadiness.ok?validatorReadiness.payload:null
+          },
           capability_key_mode:Capability.key_mode,
           persistent_capability_key:persistentCapability,
-          warnings:[...evaluated.warnings]
+          warnings
         });
       }catch(error){
         return result({
