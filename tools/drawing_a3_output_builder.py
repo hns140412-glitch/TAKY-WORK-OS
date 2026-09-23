@@ -9,6 +9,13 @@ from typing import Iterable
 MM_PER_INCH = 25.4
 EMU_PER_INCH = 914400
 A3 = {"portrait": (297.0, 420.0), "landscape": (420.0, 297.0)}
+PRODUCTION_CLASSES = {"PREVIEW", "FINAL", "USER_FACING"}
+
+def _assert_internal_primitive(artifact_class: str = "EXPERIMENT"):
+    cls = str(artifact_class or "EXPERIMENT").upper()
+    if cls in PRODUCTION_CLASSES:
+        raise RuntimeError("PRODUCTION_OUTPUT_FORBIDDEN_USE_DRAWING_A3_BUNDLE_EXPORTER_WITH_ADMISSION")
+    return cls
 
 
 def dims(orientation: str = "landscape", dpi: int = 300):
@@ -61,7 +68,8 @@ html, body {{ margin:0; padding:0; background:#e9e9e9; }}
 </html>"""
 
 
-def new_pdf(path: str | Path, orientation: str = "landscape"):
+def new_pdf(path: str | Path, orientation: str = "landscape", artifact_class: str = "EXPERIMENT"):
+    _assert_internal_primitive(artifact_class)
     import fitz
     w_mm, h_mm = A3[orientation]
     w_pt = w_mm / MM_PER_INCH * 72.0
@@ -71,14 +79,16 @@ def new_pdf(path: str | Path, orientation: str = "landscape"):
     doc.save(path)
 
 
-def new_png(path: str | Path, orientation: str = "landscape", dpi: int = 300, background="white"):
+def new_png(path: str | Path, orientation: str = "landscape", dpi: int = 300, background="white", artifact_class: str = "EXPERIMENT"):
+    _assert_internal_primitive(artifact_class)
     from PIL import Image
     w, h = dims(orientation, dpi)["px"]
     img = Image.new("RGB", (w, h), background)
     img.save(path, dpi=(dpi, dpi))
 
 
-def new_pptx(path: str | Path, orientation: str = "landscape"):
+def new_pptx(path: str | Path, orientation: str = "landscape", artifact_class: str = "EXPERIMENT"):
+    _assert_internal_primitive(artifact_class)
     from pptx import Presentation
     prs = Presentation()
     w, h = dims(orientation)["emu"]
@@ -87,7 +97,8 @@ def new_pptx(path: str | Path, orientation: str = "landscape"):
     prs.save(path)
 
 
-def new_xlsx(path: str | Path, orientation: str = "landscape", print_area: str = "A1:Z60"):
+def new_xlsx(path: str | Path, orientation: str = "landscape", print_area: str = "A1:Z60", artifact_class: str = "EXPERIMENT"):
+    _assert_internal_primitive(artifact_class)
     from openpyxl import Workbook
     wb = Workbook()
     ws = wb.active
