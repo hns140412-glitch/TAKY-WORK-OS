@@ -12,7 +12,7 @@ import json
 from pathlib import Path
 from typing import Any, Dict
 
-import fitz
+import pymupdf as fitz
 import numpy as np
 from PIL import Image
 
