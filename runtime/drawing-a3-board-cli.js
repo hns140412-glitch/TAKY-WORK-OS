@@ -23,6 +23,7 @@ function main(){
   const pageId=arg('page',true);
   const sourceSvgPath=arg('source-svg',true);
   const sourceViewBox=arg('source-viewbox',true);
+  const sourceHref=arg('source-href',false);
   const outSvg=arg('out-svg',true);
   const outHtml=arg('out-html',false);
 
@@ -35,7 +36,8 @@ function main(){
     page_id:pageId,
     presentation_profile:profile,
     source_svg:sourceSvg,
-    source_viewbox:sourceViewBox
+    source_viewbox:sourceViewBox,
+    source_href:sourceHref
   });
   if(!board.ok){
     process.stderr.write(JSON.stringify(board,null,2)+'\n');
