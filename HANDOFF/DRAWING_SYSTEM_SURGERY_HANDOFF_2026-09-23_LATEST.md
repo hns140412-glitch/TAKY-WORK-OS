@@ -4,25 +4,40 @@ Mode: SURGERY
 Production report work: FROZEN
 Hannam P06/report continuation: FORBIDDEN until surgery closure.
 
-Read first:
+## Read first
 1. DRAWING/SYSTEM_SURGERY_2026-09-23/FAILURE_LEDGER.json
-2. ROOT_CAUSE_MATRIX.json
-3. ENGINE_BYPASS_MAP.json
-4. GOVERNANCE_GAP_MATRIX.json
-5. REFERENCE_COMPILER_SPEC.json
-6. PRE_USER_VALIDATION_SPEC.json
-7. REGRESSION_TEST_MATRIX.json
-8. DRAWING_ENGINE_ARCHITECTURE_REVISION.md
-9. runtime/drawing-production-router.js
-10. runtime/reference-compiler.js
-11. runtime/pre-user-validation.js
+2. DRAWING/SYSTEM_SURGERY_2026-09-23/ROOT_CAUSE_MATRIX.json
+3. DRAWING/ENGINE_BYPASS_MAP_2026-09-23.json
+4. DRAWING/DRAWING_ENGINE_ARCHITECTURE_REVISION_V3.md
+5. DRAWING/PRE_USER_VALIDATION_SPEC_V1.json
+6. DRAWING/REFERENCE_COMPILER_SPEC_V1.json
+7. runtime/drawing-execution-receipt.js
+8. runtime/drawing-production-authority-gate.js
+9. runtime/drawing-pre-user-validation.js
+10. runtime/drawing-finalization-orchestrator.js
+11. runtime/drawing-production-admission-cli.js
+12. C2S/DRAWING_SYSTEM_SURGERY_C2S_CLOSURE_2026-09-23.md
 
-Current correction:
-- Production artifacts require registered engine authorization.
-- One-off scripts are EXPERIMENT/DIAGNOSTIC only.
-- L7/L8 are blocking.
-- NO PASS -> NO SHOW.
-- Reference use requires compiler receipt + detectable effect.
-- Handoff supports RESUME/RETROSPECTIVE/SURGERY.
+## Current correction
+V3 already had strong gate semantics. The actual defect was that some writers/exporters did not invoke them.
 
-Do not return to report production merely because files exist. First prove regression suite and route integration.
+Now wired:
+- A3 board CLI -> production admission before user-facing write.
+- A3 multi-format exporter -> production admission before fanout.
+- low-level A3 output builder -> production classes forbidden.
+- report package -> plan-only unless canonical finalizer admits.
+- central TAKY router -> drawing production routing + RESUME/RETROSPECTIVE/SURGERY distinction.
+
+Deleted during surgery:
+- weaker duplicate V4 production-router / pre-user-validator / reference-compiler.
+Reason: they created a second weaker authority beside existing V3 modules.
+
+## Hard lock
+NO PASS -> NO SHOW.
+ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE.
+USER != DEBUGGER.
+
+## Open boundary
+Repo enforcement does not prove platform/host interception. A file created outside the governed route has no production authority regardless of visual appearance.
+
+Do not return to report production until latest exact-head CI and remaining writer inventory/attack tests are closed.
