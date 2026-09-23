@@ -1,63 +1,61 @@
 # DRAWING ENGINE ARCHITECTURE REVISION V2
 
-Status: ACTIVE CANDIDATE — SYSTEM SURGERY
 Date: 2026-09-23
+Branch: surgery/enforcement-v1-2026-09-23
 
-## Root correction
-V1 had many gates but production authority was non-exclusive. A result could be created outside the engine and therefore outside its gates. Governance described the right path without denying the wrong path.
+## TAKY FILTER
+- Think Again, Keep Your Key.
+- Think Again, You’re The Key.
+- HUMAN IS THE KEY != HUMAN IS THE DEBUGGER.
+- USER != DEBUGGER.
+- SYSTEM PROVES. HUMAN CHOOSES.
 
-## Authority stack
-L0 SOURCE AUTHORITY
-→ L1 GEOMETRY
-→ L2 SEMANTIC
-→ L3 PRESENTATION
-→ L4 ENTOURAGE
-→ L5 ANNOTATION
-→ L6 AI / ATMOSPHERE
-→ L7 FINAL VALIDATION
-→ L8 USER EXPOSURE GATE
+## ROOT CORRECTION
+The prior system had rules but insufficient runtime enforcement.
+The revised production path is:
 
-NO PASS -> NO SHOW.
-
-## Production route
 TASK
-→ DRAWING_ROUTER
-→ AUTHORIZED_ENGINE
-→ SOURCE/GEOMETRY/FACT/SEMANTIC VALIDATION
-→ REFERENCE COMPILER
-→ PRESENTATION LAYERS
-→ PRE-USER VALIDATION
-→ PRODUCTION AUTHORITY GATE
-→ USER EXPOSURE
+→ WORK OS ROUTER
+→ AUTHORIZED EXECUTION GRAPH
+→ AUTHORIZED ENGINE
+→ LOGIC GUARDS
+→ INDEPENDENT VALIDATOR
+→ EXPOSURE GATE
+→ HUMAN APPROVAL
 
-Any other path is EXPERIMENT/DIAGNOSTIC only.
+## HARD INVARIANTS
+1. NO AUTHORIZATION → NO PRODUCTION.
+2. ENGINE CANNOT CERTIFY ITSELF.
+3. NO PASS → NO SHOW.
+4. L(n) CANNOT MUTATE L(<n) AUTHORITY.
+5. UNKNOWN SEMANTIC → NO VERIFIED PRESENTATION TOKEN.
+6. NO EVIDENCE → NO USER-FACING CLAIM.
+7. NO REFERENCE COMPILE + EFFECT PROOF → NO REFERENCE CLAIM.
+8. ONE-OFF PYTHON / GENERIC HTML / REPORTLAB / DIRECT IMAGE GENERATION are DIAGNOSTIC ONLY for production routing.
 
-## Non-destructive authority
-The geometry-bearing source layer is immutable during presentation enhancement.
-DESTRUCTIVE_RASTER_MASK and GENERATIVE_GEOMETRY_REDRAW are prohibited production operations.
-Raster/AI may exist only as downstream presentation layers and cannot replace geometry authority.
+## EXECUTABLE MODULES
+- runtime/execution-contract.js
+- runtime/work-os-router.js
+- runtime/independent-validator.js
+- runtime/exposure-gate.js
+- runtime/geometry-guard.js
+- runtime/semantic-gate.js
+- runtime/narrative-evidence-gate.js
+- runtime/reference-compiler.js
+- runtime/production-pipeline.js
+- runtime/drawing-report-package.js (authorization now required)
 
-## Quality dimensions
-SOURCE_FIDELITY != PRESENTATION_QUALITY
-CLARITY_GAIN != REFERENCE_EFFECT
-CODE_PASS != PRODUCT_PASS
-ENGINE_PASS != VISUAL_PASS
+## REQUIRED VALIDATION
+SOURCE_GATE
+GEOMETRY_GATE
+FACT_GATE
+SEMANTIC_GATE
+REFERENCE_EFFECT_GATE
+ARCHITECTURAL_READABILITY_GATE
+A3_GATE
+NARRATIVE_EVIDENCE_GATE
+PROVENANCE_GATE
+USER_EFFECT_GATE
 
-Minimum final dimensions:
-- TECHNICAL ACCURACY
-- ARCHITECTURAL PRESENTATION
-- UNIT / PRODUCT PRESENTATION
-- REPORT DECISION VALUE
-- REFERENCE EFFECT
-- USER EFFECT
-
-## Reference compiler
-Reference knowledge is not applied until the chain is complete:
-REFERENCE NAME → MINED DNA → DESIGN TOKEN → ENGINE PARAMETER → OUTPUT EFFECT → BEFORE/AFTER VALIDATION.
-
-## Human approval
-Human approval chooses among already-valid alternatives.
-It must not discover deleted walls, deleted cores, bad crops, unsupported semantics or unsupported narrative.
-
-HUMAN IS THE KEY != HUMAN IS THE DEBUGGER.
-USER != DEBUGGER.
+## CURRENT LIMIT
+This is application/runtime enforcement inside TAKY-WORK-OS. Host-level tool permission enforcement must additionally ensure that external artifact creation cannot bypass this production pipeline.

@@ -1,0 +1,29 @@
+{
+  "policy_version": "2026-09-23.1",
+  "mode": "DEFAULT_DENY_PRODUCTION",
+  "principles": [
+    "NO_AUTHORIZATION_NO_PRODUCTION",
+    "ENGINE_CANNOT_CERTIFY_ITSELF",
+    "NO_PASS_NO_SHOW",
+    "SYSTEM_PROVES_HUMAN_CHOOSES"
+  ],
+  "production_artifact_broker": "runtime/artifact-broker.js",
+  "allowed_production_producers": [
+    "DRAWING_ENGINE_V2",
+    "REPORT_ENGINE_V2"
+  ],
+  "diagnostic_only_producers": [
+    "PYTHON_ONE_OFF",
+    "GENERIC_HTML",
+    "REPORTLAB_ONE_OFF",
+    "IMAGE_GENERATOR_DIRECT"
+  ],
+  "host_requirement": {
+    "description": "The host must expose production artifact publishing only through the TAKY artifact broker. Direct file-generation tools may remain available only for diagnostic/internal outputs.",
+    "required": true
+  },
+  "mcp_requirement": {
+    "description": "Cross-process authorization, validation receipts, and exposure grants must use signed serializable capability tokens.",
+    "required": true
+  }
+}

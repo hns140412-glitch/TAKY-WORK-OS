@@ -43,7 +43,7 @@ def _result(fmt: str, ok: bool, findings: list[dict], **extra: Any) -> Dict[str,
 
 
 def validate_pdf(path: str | Path, orientation: str = "landscape", tolerance_pt: float = 0.75) -> Dict[str, Any]:
-    import fitz
+    import pymupdf as fitz
     t = target(orientation)
     doc = fitz.open(path)
     findings = []
@@ -64,11 +64,22 @@ def validate_png(path: str | Path, orientation: str = "landscape", dpi: int = 30
     t = target(orientation, dpi)
     img = Image.open(path)
     findings = []
-    if img.size != (t["width_px"], t["height_px"]):
+    dx=abs(img.size[0]-t["width_px"])
+    dy=abs(img.size[1]-t["height_px"])
+    if dx>1 or dy>1:
         findings.append({
             "code": "PNG_PIXEL_SIZE_MISMATCH",
             "actual_px": list(img.size),
             "expected_px": [t["width_px"], t["height_px"]],
+            "tolerance_px": 1,
+        })
+    elif dx or dy:
+        findings.append({
+            "code": "PNG_PIXEL_ROUNDING_TOLERANCE",
+            "severity": "WARNING",
+            "actual_px": list(img.size),
+            "expected_px": [t["width_px"], t["height_px"]],
+            "tolerance_px": 1,
         })
     recorded = img.info.get("dpi")
     if recorded:

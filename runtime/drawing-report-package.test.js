@@ -1,5 +1,7 @@
+process.env.TAKY_ENFORCEMENT_SECRET='test-only-enforcement-secret-20260923';
 const assert=require('assert');
 const r=require('./drawing-report-package');
+const router=require('./work-os-router');
 
 const pkg={
   package_id:'P1',
@@ -21,7 +23,9 @@ const pkg={
 };
 
 assert.equal(r.validate(pkg).ok,true);
-const plan=r.buildOutputPlan(pkg);
+const auth=router.routeProductionTask({task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'INTERNAL_PREVIEW'});
+assert.equal(auth.ok,true);
+const plan=r.buildOutputPlan(pkg,auth.authorization);
 assert.equal(plan.ok,true);
 assert.equal(plan.outputs.SVG.role,'VISUAL_CANONICAL');
 assert.equal(plan.outputs.XLSX.role,'DATA_EXPORT');

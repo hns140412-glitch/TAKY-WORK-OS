@@ -2,25 +2,7 @@ name: drawing-engine-core
 
 on:
   push:
-    paths:
-      - 'runtime/drawing-*.js'
-      - 'runtime/drawing-*.test.js'
-      - 'runtime/svg-presentation-compositor.js'
-      - 'runtime/svg-presentation-compositor.test.js'
-      - 'tools/drawing_*.py'
-      - 'DRAWING/**'
-      - 'ROUTERS/DRAWING_ROUTER.md'
-      - '.github/workflows/drawing-engine-core.yml'
   pull_request:
-    paths:
-      - 'runtime/drawing-*.js'
-      - 'runtime/drawing-*.test.js'
-      - 'runtime/svg-presentation-compositor.js'
-      - 'runtime/svg-presentation-compositor.test.js'
-      - 'tools/drawing_*.py'
-      - 'DRAWING/**'
-      - 'ROUTERS/DRAWING_ROUTER.md'
-      - '.github/workflows/drawing-engine-core.yml'
 
 jobs:
   test:

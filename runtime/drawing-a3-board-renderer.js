@@ -145,24 +145,23 @@
     const sourceDoc=String(source_svg||'').trim();
     if(!sourceDoc || !/^<svg\b/i.test(sourceDoc)) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
     const rootBox=sourceRootViewBox(sourceDoc)||sb;
-    const sourceUri=String(source_href||'').trim() || svgDataUri(sourceDoc);
-    if(!sourceUri) return {ok:false,reason:'SOURCE_SVG_ENCODING_FAILED'};
+    const sourceVectorBody=sourceBody(sourceDoc);
+    if(!sourceVectorBody) return {ok:false,reason:'SOURCE_SVG_BODY_REQUIRED'};
 
     const fit=fitTransform(sb,{
       x:hero.x+8,y:hero.y+8,width:hero.width-16,height:hero.height-16
     });
 
-    // Isolate the complete source SVG as an embedded SVG image. This preserves
-    // its own namespaces, clip paths and defs and prevents ID collisions or
-    // viewport leakage into the A3 board. The outer viewBox performs crop only.
+    // Keep source geometry as real inline vectors inside the canonical A3 SVG.
+    // A data-URI <image> is intentionally not used because PDF/SVG converters
+    // may ignore embedded external images, silently dropping the source drawing.
     const sourcePlaced=
       '<svg id="source-slot" data-source-geometry="locked" '+
       'x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" '+
       'width="'+(hero.width-16)+'" height="'+(hero.height-16)+'" '+
       'viewBox="'+sb.x+' '+sb.y+' '+sb.width+' '+sb.height+'" '+
       'preserveAspectRatio="xMidYMid meet" overflow="hidden">'+
-        '<image x="'+rootBox.x+'" y="'+rootBox.y+'" width="'+rootBox.width+'" height="'+rootBox.height+'" '+
-        'href="'+sourceUri+'" preserveAspectRatio="none"/>'+
+        '<g id="source-inline-vector" data-authority="source">'+sourceVectorBody+'</g>'+
       '</svg>';
 
     const project=package_data.project||{};
@@ -171,6 +170,20 @@
     const subtitle=String(pageProfile.subtitle||pageProfile.hero||'SOURCE DRAWING').replace(/_/g,' ');
     const projectTitle=project.title||'';
     const scaleLabel=String(pageProfile.scale_label||'').trim();
+    const footerProfile=profile.footer||{};
+    const footerLeft=String(
+      footerProfile.left||
+      project.footer_label||
+      [project.organization||project.firm||'',project.location||''].filter(Boolean).join(' · ')||
+      projectTitle
+    ).trim();
+    const footerRight=String(
+      footerProfile.right||
+      project.issue_date||
+      project.report_date||
+      project.revision_date||
+      ''
+    ).trim();
     const debugLabels=profile.debug_labels===true;
 
     const ink='#151515';
@@ -237,8 +250,8 @@
         (narrativeState.status==='NO_NARRATIVE_BLOCK'?fallbackSupport:'')+
 
         '<line x1="'+margin+'" y1="'+(height-margin-footerH)+'" x2="'+(width-margin)+'" y2="'+(height-margin-footerH)+'" stroke="'+hair+'" stroke-width="2"/>'+
-        '<text x="'+margin+'" y="'+(height-margin-12)+'" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">YKH ASSOCIATES · HANNAM-DONG 737-21</text>'+
-        '<text x="'+(width-margin)+'" y="'+(height-margin-12)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">2026.09</text>'+
+        (footerLeft?'<text x="'+margin+'" y="'+(height-margin-12)+'" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">'+esc(footerLeft)+'</text>':'')+
+        (footerRight?'<text x="'+(width-margin)+'" y="'+(height-margin-12)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">'+esc(footerRight)+'</text>':'')+
       '</g>';
 
     const background='<rect x="0" y="0" width="'+width+'" height="'+height+'" fill="'+paper+'"/>';
@@ -260,6 +273,11 @@
 
     if(!composed.ok) return composed;
 
+    const physicalSvg=composed.svg.replace(
+      'width="'+width+'" height="'+height+'"',
+      'width="'+widthMm+'mm" height="'+heightMm+'mm"'
+    );
+
     return Object.freeze({
       ok:true,
       schema:'A3_SVG_BOARD_STATE_V2',
@@ -273,7 +291,7 @@
       source_slot_transform:Object.freeze(fit),
       source_overlay_last:composed.source_overlay_last,
       debug_labels:debugLabels,
-      svg:composed.svg
+      svg:physicalSvg
     });
   }
 
