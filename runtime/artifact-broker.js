@@ -5,6 +5,8 @@ const path=require('path');
 const crypto=require('crypto');
 const Capability=require('./capability-token.js');
 
+const consumedExposureGrants=new Set();
+
 function inside(root,candidate){
   const r=path.resolve(root);
   const c=path.resolve(candidate);
@@ -39,6 +41,7 @@ function verifyScope(input={}){
   return Object.freeze({
     ok:true,
     grant,
+    token_jti:verified.body?.jti||null,
     record:Object.freeze({
       artifact_id,
       artifact_type,
@@ -63,6 +66,10 @@ function registerProductionArtifact(input={}){
 function publishProductionArtifact(input={}){
   const checked=verifyScope(input);
   if(!checked.ok) return checked;
+  if(!checked.token_jti) return Object.freeze({ok:false,reason:'EXPOSURE_GRANT_JTI_REQUIRED'});
+  if(consumedExposureGrants.has(checked.token_jti)){
+    return Object.freeze({ok:false,reason:'EXPOSURE_GRANT_REPLAYED'});
+  }
 
   const stagingRoot=path.resolve(process.env.TAKY_STAGING_ROOT||'artifacts/staging');
   const productionRoot=path.resolve(process.env.TAKY_PRODUCTION_ROOT||'artifacts/production');
@@ -101,6 +108,8 @@ function publishProductionArtifact(input={}){
     return Object.freeze({ok:false,reason:'PRODUCTION_COPY_DIGEST_MISMATCH'});
   }
 
+  consumedExposureGrants.add(checked.token_jti);
+
   return Object.freeze({
     ok:true,
     record:Object.freeze({
@@ -114,7 +123,7 @@ function publishProductionArtifact(input={}){
 }
 
 module.exports=Object.freeze({
-  version:'3.0.0',
+  version:'4.0.0',
   sha256File,
   registerProductionArtifact,
   publishProductionArtifact
