@@ -617,4 +617,51 @@ function minimalPackage(){
   assert.equal(v.reason,'VISION_REVIEW_DIGEST_MISMATCH');
 })();
 
+
+(function testExposureGrantReplayRejected(){
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'taky-replay-'));
+  const staging=path.join(tmp,'staging');
+  const production=path.join(tmp,'production');
+  fs.mkdirSync(staging,{recursive:true});
+  const candidate=path.join(staging,'candidate.pdf');
+  fs.writeFileSync(candidate,'same-validated-bytes');
+
+  process.env.TAKY_STAGING_ROOT=staging;
+  process.env.TAKY_PRODUCTION_ROOT=production;
+
+  const routed=Router.routeProductionTask({task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'});
+  const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const digest=ArtifactBroker.sha256File(candidate);
+  const v=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results:gates,
+    artifact_digest:digest
+  });
+  const e=Exposure.authorizeExposure({
+    authorization:routed.authorization,
+    validation_receipt:v.receipt,
+    target:'USER_VISIBLE'
+  });
+  const auth=Contract.verifyProductionAuthorization(routed.authorization);
+  const input={
+    artifact_id:'REPLAY',
+    artifact_type:'PDF',
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    staging_path:candidate,
+    file_name:'first.pdf',
+    exposure_grant:e.grant
+  };
+
+  const first=ArtifactBroker.publishProductionArtifact(input);
+  assert.equal(first.ok,true);
+
+  const second=ArtifactBroker.publishProductionArtifact({...input,file_name:'second.pdf'});
+  assert.equal(second.ok,false);
+  assert.equal(second.reason,'EXPOSURE_GRANT_REPLAYED');
+
+  fs.rmSync(tmp,{recursive:true,force:true});
+})();
+
 console.log('TAKY enforcement regression: PASS');
