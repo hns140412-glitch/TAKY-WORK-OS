@@ -1,6 +1,7 @@
 'use strict';
 
 process.env.TAKY_ENFORCEMENT_SECRET='test-only-enforcement-secret-20260923';
+process.env.TAKY_VISION_VALIDATOR_SECRET='test-only-vision-validator-secret-20260923';
 
 const assert=require('assert');
 const Router=require('../runtime/work-os-router.js');
@@ -15,6 +16,8 @@ const NarrativeGate=require('../runtime/narrative-evidence-gate.js');
 const Pipeline=require('../runtime/production-pipeline.js');
 const ArtifactBroker=require('../runtime/artifact-broker.js');
 const Capability=require('../runtime/capability-token.js');
+const Measurement=require('../runtime/visual-measurement-receipt.js');
+const VisionReview=require('../runtime/vision-review-receipt.js');
 const fs=require('fs');
 const os=require('os');
 const path=require('path');
@@ -195,7 +198,6 @@ function minimalPackage(){
 })();
 
 (function testEndToEndProductionPipeline(){
-  const pass=true;
   const primitives=[
     {id:'W1',role:'WALL',type:'LINE',x1:0,y1:0,x2:10,y2:0},
     {id:'C1',role:'CORE',type:'RECT',x:2,y:2,w:2,h:3},
@@ -204,20 +206,57 @@ function minimalPackage(){
   const pkg={
     package_id:'TEST',
     project:{title:'Test project'},
-    sources:[{
-      source_id:'SRC-1',
-      role:'CURRENT_GEOMETRY_SOURCE'
-    }],
-    facts:[],
-    review_items:[],
-    cases:[],
-    methods:[],
-    pages:[]
+    sources:[{source_id:'SRC-1',role:'CURRENT_GEOMETRY_SOURCE'}],
+    facts:[],review_items:[],cases:[],methods:[],pages:[]
   };
+  const artifactDigest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+
+  const visual=Measurement.issueVisualMeasurement({
+    artifact_digest:artifactDigest,
+    metrics:{
+      schema:'TAKY_OBJECTIVE_VISUAL_METRICS_V1',
+      measurement_scope:'OBJECTIVE_ONLY',
+      professional_quality_claim:false,
+      metrics:{
+        width_mm:420,
+        height_mm:297,
+        landscape:true,
+        text_bbox_outside_page:false,
+        ink_ratio:0.18,
+        contrast_std_norm:0.22,
+        edge_density:0.06
+      }
+    }
+  });
+  assert.equal(visual.ok,true);
+
+  const ref=Measurement.issueReferenceEffect({
+    baseline_digest:'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
+    candidate_digest:artifactDigest,
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY','OMA_RELATION_FIRST'],
+    comparison:{
+      schema:'TAKY_OBJECTIVE_REFERENCE_DELTA_V1',
+      measurement_scope:'OBJECTIVE_ONLY',
+      objective_effect_detected:true,
+      clarity_only_suspected:false,
+      combined_effect_score:0.08,
+      professional_family_claim:false
+    }
+  });
+  assert.equal(ref.ok,true);
+
+  const vision=VisionReview.signReview({
+    artifact_digest:artifactDigest,
+    professional_family_pass:true,
+    reference_effect_visible_without_explanation:true,
+    generic_layout_detected:false,
+    decision_value_pass:true
+  });
+  assert.equal(vision.ok,true);
 
   const r=Pipeline.runProduction({
     task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
-    validator_id:'VALIDATION_ENGINE_V1',
+    artifact_digest:artifactDigest,
     source_identity:{
       current_content:'same-source-content',
       previous_content:'same-source-content',
@@ -225,66 +264,30 @@ function minimalPackage(){
       previous_modified_at:'2026-09-23T09:00:00+09:00'
     },
     geometry:{
-      source:{primitives},
-      output:{primitives},
+      source:{primitives},output:{primitives},
       protected_anchors_source:['WALL','CORE','ENTRY'],
       protected_anchors_output:['WALL','CORE','ENTRY'],
-      crop_source:[0,0,100,100],
-      crop_output:[0,0,100,100],
-      rotation_source:0,
-      rotation_output:0,
-      scale_source:'1:200',
-      scale_output:'1:200',
+      crop_source:[0,0,100,100],crop_output:[0,0,100,100],
+      rotation_source:0,rotation_output:0,
+      scale_source:'1:200',scale_output:'1:200',
       mask_intersections:[]
     },
-    semantics:[
-      {region_id:'ROAD-1',state:'VERIFIED',presentation_token:'ROAD'}
-    ],
-    claims:[
-      {claim_id:'C1',evidence_refs:['SRC-1'],evidence_state:'SUPPORTED',strength:'SUPPORTED',text:'도면상 독립성이 강화된 구성으로 읽힌다'}
-    ],
+    semantics:[{region_id:'ROAD-1',state:'VERIFIED',presentation_token:'ROAD'}],
+    claims:[{claim_id:'C1',evidence_refs:['SRC-1'],evidence_state:'SUPPORTED',strength:'SUPPORTED',text:'도면상 독립성이 강화된 구성으로 읽힌다'}],
     reference:{
       reference_ids:['ARCHDAILY_PLAN_HIERARCHY','OMA_RELATION_FIRST'],
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
     },
-    reference_effect_proof:{
-      TRACEABILITY_PASS:pass,
-      EFFECT_PASS:pass,
-      FIT_PASS:pass,
-      FIDELITY_PASS:pass,
-      REFERENCE_ABLATION_TEST_PASS:pass
-    },
-    visual_metrics:{
-      a3:{
-        width_mm:420,
-        height_mm:297,
-        margin_mm:12,
-        hero_ratio:0.74,
-        support_diagram_count:2,
-        text_clipped:false
-      },
-      readability:{
-        main_drawing_identifiable_ms:1000,
-        hierarchy_score:0.85,
-        figure_ground_score:0.82,
-        support_competition_score:0.20
-      },
-      user_effect:{
-        reference_effect_visible_without_explanation:true,
-        decision_value_score:0.82,
-        generic_layout_detected:false
-      }
-    },
-    provenance:{
-      source_ids:['SRC-1'],
-      module_ids:['REPORT_ENGINE_V2','VALIDATION_ENGINE_V1']
-    },
+    visual_measurement_receipt:visual.receipt,
+    reference_effect_receipt:ref.receipt,
+    vision_review_receipt:vision.receipt,
+    provenance:{source_ids:['SRC-1'],module_ids:['REPORT_ENGINE_V2','VALIDATION_ENGINE_V1']},
     report_package:pkg,
     exposure_target:'FINAL_APPROVABLE'
   });
   assert.equal(r.ok,true);
   assert.equal(r.status,'FINAL_APPROVABLE');
-})();;
+})();;;
 
 
 (function testSignedAuthorizationIsSerializable(){
@@ -567,6 +570,51 @@ function minimalPackage(){
   assert.equal(pub.ok,false);
   assert.equal(pub.reason,'ARTIFACT_CHANGED_AFTER_VALIDATION');
   fs.rmSync(tmp,{recursive:true,force:true});
+})();
+
+
+(function testRawVisualSelfReportIgnored(){
+  const primitives=[{id:'W1',role:'WALL',type:'LINE',x1:0,y1:0,x2:10,y2:0}];
+  const r=Pipeline.runProduction({
+    task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
+    artifact_digest:'cccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccccc',
+    source_identity:{current_content:'source'},
+    geometry:{source:{primitives},output:{primitives}},
+    semantics:[],claims:[],
+    reference:{
+      reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+      context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
+    },
+    reference_effect_proof:{
+      TRACEABILITY_PASS:true,EFFECT_PASS:true,FIT_PASS:true,FIDELITY_PASS:true,REFERENCE_ABLATION_TEST_PASS:true
+    },
+    visual_metrics:{
+      a3:{width_mm:420,height_mm:297},
+      readability:{hierarchy_score:1},
+      user_effect:{reference_effect_visible_without_explanation:true,decision_value_score:1,generic_layout_detected:false}
+    },
+    provenance:{source_ids:['SRC-X'],module_ids:['REPORT_ENGINE_V2']},
+    report_package:minimalPackage()
+  });
+  assert.equal(r.ok,false);
+  assert.equal(r.stage,'VALIDATION');
+  assert.equal(r.evidence.visualMeasurement.ok,false);
+})();
+
+(function testVisionReceiptBoundToArtifactDigest(){
+  const signed=VisionReview.signReview({
+    artifact_digest:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
+    professional_family_pass:true,
+    reference_effect_visible_without_explanation:true,
+    generic_layout_detected:false,
+    decision_value_pass:true
+  });
+  const v=VisionReview.verifyReview(
+    signed.receipt,
+    'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+  );
+  assert.equal(v.ok,false);
+  assert.equal(v.reason,'VISION_REVIEW_DIGEST_MISMATCH');
 })();
 
 console.log('TAKY enforcement regression: PASS');
