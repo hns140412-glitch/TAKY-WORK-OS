@@ -31,7 +31,8 @@ const compliantGate=Application.validateApplication(compliant,compiled);
 assert.equal(compliantGate.ok,false);
 assert.equal(compliantGate.reason,'REFERENCE_NOT_CAUSALLY_APPLIED');
 
-// A reference requiring verified source roles stays deferred rather than inventing semantics.
+// A role-dependent reference may emit a semantic-free source-style fallback request,
+ // but it must not falsely count that request as already applied.
 const archdaily=Compiler.compileReferenceProfile({
   reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
   context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
@@ -41,7 +42,10 @@ const deferred=Application.applyToPresentationProfile({
 },archdaily);
 assert.equal(deferred.ok,true);
 assert.equal(deferred.applied_parameters.length,0);
-assert(deferred.deferred.some(x=>x.reason==='VERIFIED_PRESENTATION_ROLES_REQUIRED'));
+assert.equal(deferred.deferred.length,0);
+assert.equal(deferred.source_style_requests.length,1);
+assert.equal(deferred.source_style_requests[0].mode,'SOURCE_STYLE_RANK');
+assert.equal(deferred.source_style_requests[0].policy.semantic_inference,false);
 assert.equal(Application.validateApplication(deferred,archdaily).ok,false);
 
 console.log('reference-application: PASS');
