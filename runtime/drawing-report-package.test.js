@@ -21,7 +21,7 @@ const pkg={
   ]
 };
 
-const allPass=()=>Object.fromEntries(g.REQUIRED_GATES.map(x=>[x,'PASS']));
+const allPass=()=>Object.fromEntries(g.REQUIRED_GATES.map(x=>[x,{state:'PASS',validator_id:g.EXPECTED_VALIDATORS[x],evidence_ref:'TEST:'+x}]));
 assert.equal(r.validate(pkg).ok,true);
 
 const blocked=r.buildOutputPlan(pkg);
