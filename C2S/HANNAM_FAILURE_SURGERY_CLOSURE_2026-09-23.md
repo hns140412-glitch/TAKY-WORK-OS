@@ -37,8 +37,8 @@ The structural defect was that real work could still bypass that central path an
 ## Status semantics
 - STRUCTURAL CONTRACT: CLOSED baseline.
 - IMPLEMENTATION: APPLIED on surgery branches.
-- CI: MUST BE LIVE-VERIFIED AT FINAL HEAD.
-- MERGE: HUMAN APPROVAL POINT / NOT AUTOMATIC.
+- CI: GREEN at implementation checkpoint `22839994750d8c0f5582f347b3a6dfc41b4d8f51` — Drawing Governance Surgery run #71 PASS; drawing-engine-core run #528 PASS (JS / Python / JSON contracts all green). Final documentation-only head must be reverified before merge.
+- MERGE: IMPLEMENTATION IS MERGE-CANDIDATE; final documentation-only head recheck required, then HUMAN APPROVAL POINT / NOT AUTOMATIC.
 - HANNAM REPORT PRODUCTION: FORBIDDEN in this surgery conversation.
 
 ## Superseded / Deprecated
