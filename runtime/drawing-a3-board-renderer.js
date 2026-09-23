@@ -260,6 +260,11 @@
 
     if(!composed.ok) return composed;
 
+    const physicalSvg=composed.svg.replace(
+      'width="'+width+'" height="'+height+'"',
+      'width="'+widthMm+'mm" height="'+heightMm+'mm"'
+    );
+
     return Object.freeze({
       ok:true,
       schema:'A3_SVG_BOARD_STATE_V2',
@@ -273,7 +278,7 @@
       source_slot_transform:Object.freeze(fit),
       source_overlay_last:composed.source_overlay_last,
       debug_labels:debugLabels,
-      svg:composed.svg
+      svg:physicalSvg
     });
   }
 
