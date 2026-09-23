@@ -54,12 +54,12 @@ const receipt={
 
 assert.equal(r.executeUserExposure({
   unit:saleL8,
-  production_context:{artifact_class:'FINAL',operations:['VECTOR_STYLE_LAYER'],execution_receipt:receipt,validation_evidence:validation}
+  production_context:{artifact_class:'FINAL',executor_type:'AUTHORIZED_DRAWING_ENGINE',operations:['VECTOR_STYLE_LAYER'],execution_receipt:receipt,validation_evidence:validation}
 }).decision,'SHOW');
 
 assert.equal(r.executeUserExposure({
   unit:saleL8,
-  production_context:{artifact_class:'FINAL',one_off:true,operations:['ONE_OFF_RENDERER'],execution_receipt:receipt,validation_evidence:validation}
+  production_context:{artifact_class:'FINAL',executor_type:'AUTHORIZED_DRAWING_ENGINE',one_off:true,operations:['ONE_OFF_RENDERER'],execution_receipt:receipt,validation_evidence:validation}
 }).decision,'HOLD');
 
 console.log('drawing-work-unit-runner: PASS');
