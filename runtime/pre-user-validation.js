@@ -1,8 +1,10 @@
 (function(root,factory){
-  const api=factory();
+  const api=factory(
+    typeof require==='function' ? require('./protected-geometry-fingerprint.js') : root.TakyProtectedGeometryFingerprint
+  );
   if(typeof module==='object'&&module.exports) module.exports=api;
   else root.TakyPreUserValidation=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(ProtectedGeometryFingerprint){
   'use strict';
 
   const REQUIRED_GATES=Object.freeze([
@@ -21,6 +23,22 @@
     }
 
     if(input.geometry_diff!==0) findings.push({gate:'GEOMETRY_GATE',code:'GEOMETRY_DIFF_NONZERO',value:input.geometry_diff});
+
+    const proof=input.geometry_proof||{};
+    if(proof.status!=='PASS'){
+      findings.push({gate:'GEOMETRY_GATE',code:'GEOMETRY_PROOF_REQUIRED',state:proof.status||'MISSING'});
+    }
+
+    if(input.protected_geometry_fingerprint){
+      const fp=ProtectedGeometryFingerprint.compare(
+        input.protected_geometry_fingerprint.source||{},
+        input.protected_geometry_fingerprint.candidate||{}
+      );
+      if(!fp.ok) findings.push(...fp.findings.map(x=>({gate:'GEOMETRY_GATE',...x})));
+    }else{
+      findings.push({gate:'GEOMETRY_GATE',code:'PROTECTED_GEOMETRY_FINGERPRINT_REQUIRED'});
+    }
+
     for(const protectedElement of ['wall','core','entry']){
       if(input.protected_geometry?.[protectedElement]===false){
         findings.push({gate:'GEOMETRY_GATE',code:'PROTECTED_GEOMETRY_MISSING',element:protectedElement});
@@ -54,5 +72,5 @@
     });
   }
 
-  return Object.freeze({version:'1.0.0',REQUIRED_GATES,run});
+  return Object.freeze({version:'1.1.0',REQUIRED_GATES,run});
 });
