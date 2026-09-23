@@ -25,7 +25,7 @@ function verifyVisualMeasurement(receipt,expectedDigest){
   return Object.freeze({ok:true,payload:p,validator_id:MEASURER_ID});
 }
 
-function verifyReferenceEffect(receipt,expectedCandidateDigest,expectedReferenceIds=[],expectedCompileDigest=null){
+function verifyReferenceEffect(receipt,expectedCandidateDigest,expectedReferenceIds=[],expectedCompileDigest=null,expectedEffectSchemas=[]){
   const verified=Verifier.verifySignedReceipt(receipt,{
     expected_type:'TAKY_REFERENCE_EFFECT_RECEIPT',
     public_key_pem:publicKey(),
@@ -38,6 +38,18 @@ function verifyReferenceEffect(receipt,expectedCandidateDigest,expectedReference
   }
   if(expectedCompileDigest && p.reference_compile_digest!==expectedCompileDigest){
     return Object.freeze({ok:false,reason:'REFERENCE_COMPILE_DIGEST_MISMATCH'});
+  }
+  const expectedSchemas=[...(expectedEffectSchemas||[])].filter(Boolean);
+  if(expectedSchemas.length>1){
+    return Object.freeze({ok:false,reason:'MULTI_EFFECT_RECEIPT_SET_REQUIRED',expected_effect_schemas:Object.freeze(expectedSchemas)});
+  }
+  if(expectedSchemas.length===1 && p.effect_schema!==expectedSchemas[0]){
+    return Object.freeze({
+      ok:false,
+      reason:'REFERENCE_EFFECT_SCHEMA_MISMATCH',
+      expected:expectedSchemas[0],
+      actual:p.effect_schema||null
+    });
   }
   const actual=new Set(p.reference_ids||[]);
   for(const id of expectedReferenceIds||[]){
