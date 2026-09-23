@@ -129,7 +129,8 @@
     const sourcePlaced=
       '<g id="source-slot" data-source-geometry="locked" '+
       'transform="translate('+fit.x.toFixed(4)+' '+fit.y.toFixed(4)+') scale('+fit.scale.toFixed(8)+')">'+
-      body+'</g>';
+      '<defs><clipPath id="source-slot-clip" clipPathUnits="userSpaceOnUse"><rect x="'+sb.x+'" y="'+sb.y+'" width="'+sb.width+'" height="'+sb.height+'"/></clipPath></defs>'+
+      '<g clip-path="url(#source-slot-clip)">'+body+'</g></g>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
