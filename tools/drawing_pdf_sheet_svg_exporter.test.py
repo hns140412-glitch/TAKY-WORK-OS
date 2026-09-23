@@ -19,7 +19,9 @@ class PdfSheetSvgExporterTests(unittest.TestCase):
 
             out=export_sheet(pdf,0,[10,10,190,90])
             self.assertIn("DIM 3500",out["svg"])
-            self.assertIn('viewBox="10.0000 10.0000 180.0000 80.0000"',out["svg"])
+            self.assertIn('viewBox="0 0 180 80"',out["svg"])
+            self.assertEqual(out["manifest"]["crop_mode"],"PAGE_CLIP")
+            self.assertEqual(out["manifest"]["display_translation"],[-10.0,-10.0])
             self.assertFalse(out["manifest"]["geometry_mutated"])
             self.assertTrue(out["manifest"]["text_preserved"])
 
