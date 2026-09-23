@@ -17,6 +17,7 @@ const visualAdapter=path.resolve(projectRoot,'tools/drawing_visual_metric_extrac
 const reviewImageExporter=path.resolve(projectRoot,'tools/drawing_review_image_exporter.py');
 const sourceFidelityAdapter=path.resolve(projectRoot,'tools/drawing_source_fidelity_validator.py');
 const lineHierarchyAdapter=path.resolve(projectRoot,'tools/drawing_line_hierarchy_metric.py');
+const diagramReferenceMetric=path.resolve(projectRoot,'tools/drawing_diagram_reference_effect_metric.py');
 
 const Signer=require('./receipt-signer.cjs');
 const VisionParser=require('../../runtime/vision-review-parser.js');
@@ -343,6 +344,58 @@ export function buildServer(){
         });
       }catch(error){
         return result({ok:false,reason:'LINE_HIERARCHY_EFFECT_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
+
+  server.registerTool(
+    'measure-diagram-reference-effect',
+    {
+      description:'Measure declared-role OMA/BIG diagram effect on canonical SVG and bind the signed result to the final candidate artifact digest.',
+      inputSchema:z.object({
+        baseline_svg_path:z.string().min(1),
+        candidate_svg_path:z.string().min(1),
+        candidate_artifact_path:z.string().min(1),
+        reference_id:z.enum(['OMA_RELATION_FIRST','BIG_ONE_MOVE']),
+        reference_compile_digest:z.string().min(16)
+      })
+    },
+    async(input)=>{
+      try{
+        const paths=[input.baseline_svg_path,input.candidate_svg_path,input.candidate_artifact_path];
+        if(paths.some(p=>!projectSafe(p))){
+          return result({ok:false,reason:'DIAGRAM_REFERENCE_PATH_OUTSIDE_PROJECT'});
+        }
+        const comparison=await runJsonPython(diagramReferenceMetric,[
+          input.baseline_svg_path,
+          input.candidate_svg_path,
+          '--reference-id',input.reference_id
+        ]);
+        if(comparison.ok!==true){
+          return result({ok:false,reason:'DIAGRAM_REFERENCE_MEASUREMENT_FAILED',comparison});
+        }
+        const baselineDigest=sha256File(input.baseline_svg_path);
+        const effectInputDigest=sha256File(input.candidate_svg_path);
+        const candidateDigest=sha256File(input.candidate_artifact_path);
+        const receipt=Signer.signReferenceEffect({
+          baseline_digest:baselineDigest,
+          candidate_digest:candidateDigest,
+          effect_input_digest:effectInputDigest,
+          reference_ids:[input.reference_id],
+          reference_compile_digest:input.reference_compile_digest,
+          comparison
+        });
+        return result({
+          ok:true,
+          receipt,
+          baseline_digest:baselineDigest,
+          effect_input_digest:effectInputDigest,
+          candidate_digest:candidateDigest,
+          reference_compile_digest:input.reference_compile_digest,
+          comparison
+        });
+      }catch(error){
+        return result({ok:false,reason:'DIAGRAM_REFERENCE_EFFECT_FAILED',error:String(error?.message||error)});
       }
     }
   );

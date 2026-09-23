@@ -144,12 +144,11 @@ function minimalPackage(){
   });
   assert.equal(c.ok,true);
   assert.equal(c.status,'COMPILED');
-  assert.equal(c.applicability_status,'HAS_DEFERRED');
+  assert.equal(c.applicability_status,'CLAIMABLE');
   assert(c.claimable_reference_ids.includes('ARCHDAILY_PLAN_HIERARCHY'));
-  assert(c.deferred_reference_ids.includes('OMA_RELATION_FIRST'));
+  assert(c.claimable_reference_ids.includes('OMA_RELATION_FIRST'));
   const claimability=ReferenceCompiler.validateClaimability(c);
-  assert.equal(claimability.ok,false);
-  assert.equal(claimability.reason,'REFERENCE_NOT_PRODUCTION_CLAIMABLE');
+  assert.equal(claimability.ok,true);
 
   const weak=ReferenceCompiler.validateReferenceEffect({
     APPLICATION_TRACE_PASS:true,
@@ -189,16 +188,48 @@ function minimalPackage(){
   assert.equal(partial.compiled[0].applicability.claim_scope,'SOURCE_LINE_HIERARCHY_ONLY');
   assert.equal(ReferenceCompiler.validateClaimability(partial).ok,true);
 
+  const diagramPartial=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['OMA_RELATION_FIRST','BIG_ONE_MOVE'],
+    context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+  });
+  assert.equal(diagramPartial.compiled.every(x=>x.applicability.status==='PARTIAL'),true);
+  assert.equal(ReferenceCompiler.validateClaimability(diagramPartial).ok,true);
+  assert.deepEqual(
+    [...diagramPartial.effect_metrics].sort(),
+    ['TAKY_ONE_MOVE_EMPHASIS_DELTA_V1','TAKY_RELATION_FOCUS_DELTA_V1'].sort()
+  );
+  const application=ReferenceApplication.applyToPresentationProfile({},diagramPartial);
+  assert.equal(application.diagram_style_requests.length,2);
+  assert.equal(application.deferred.length,0);
+  const diagramProofs=application.diagram_style_requests.map((request,index)=>({
+    schema:'TAKY_DIAGRAM_REFERENCE_APPLICATION_V1',
+    reference_id:request.reference_id,
+    mode:request.mode,
+    compile_digest:diagramPartial.compile_digest,
+    semantic_inference:false,
+    role_contract:'DECLARED_ONLY',
+    presentation_only:true,
+    geometry_preserved:true,
+    applied:true,
+    changed_elements:index+1,
+    candidate_svg_sha256:'c'.repeat(64)
+  }));
+  assert.equal(
+    ReferenceApplication.validateApplicationCoverage(application,[],diagramProofs,diagramPartial).ok,
+    true
+  );
+
   const deferred=ReferenceCompiler.compileReferenceProfile({
     reference_ids:['BIG_ONE_MOVE','SOM_FOSTER_TECHNICAL_CLARITY'],
     context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
   });
-  assert.equal(deferred.compiled.every(x=>x.applicability.status==='DEFERRED'),true);
+  assert.equal(deferred.compiled[0].applicability.status,'PARTIAL');
+  assert.equal(deferred.compiled[1].applicability.status,'DEFERRED');
   const checked=ReferenceCompiler.validateClaimability(deferred);
   assert.equal(checked.ok,false);
   assert.deepEqual(
     [...checked.deferred_reference_ids].sort(),
-    ['BIG_ONE_MOVE','SOM_FOSTER_TECHNICAL_CLARITY'].sort()
+    ['SOM_FOSTER_TECHNICAL_CLARITY']
   );
 })();
 
@@ -711,7 +742,7 @@ function minimalPackage(){
   );
 
   const unimplemented=ReferenceCompiler.compileReferenceProfile({
-    reference_ids:['ARCHDAILY_PLAN_HIERARCHY','DIVISARE_EDITORIAL_RESTRAINT','OMA_RELATION_FIRST'],
+    reference_ids:['SOM_FOSTER_TECHNICAL_CLARITY'],
     context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
   });
   const unsupported=Measurement.verifyReferenceEffectSet(
@@ -721,7 +752,7 @@ function minimalPackage(){
   );
   assert.equal(unsupported.ok,false);
   assert.equal(unsupported.reason,'REFERENCE_EFFECT_METRIC_NOT_IMPLEMENTED');
-  assert(unsupported.reference_ids.includes('OMA_RELATION_FIRST'));
+  assert(unsupported.reference_ids.includes('SOM_FOSTER_TECHNICAL_CLARITY'));
 })();
 
 (function testSignedAuthorizationIsSerializable(){

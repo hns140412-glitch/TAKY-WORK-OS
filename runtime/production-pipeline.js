@@ -96,11 +96,50 @@ function runProduction(input={}){
         ok:refSourceStyleList.length>0 && refSourceStyleList.every(x=>x.ok),
         results:Object.freeze(refSourceStyleList)
       });
+  const diagramStyleApplications=
+    input.reference_diagram_applications||
+    input.reference_diagram_application||
+    [];
+  const refDiagramStyleList=(Array.isArray(diagramStyleApplications)
+    ? diagramStyleApplications
+    : [diagramStyleApplications])
+    .filter(x=>x && typeof x==='object' && Object.keys(x).length)
+    .map(x=>ReferenceApplication.validateDiagramStyleApplication(x,refCompile));
+  const refDiagramStyle=refDiagramStyleList.length===1
+    ? refDiagramStyleList[0]
+    : Object.freeze({
+        ok:refDiagramStyleList.length>0 && refDiagramStyleList.every(x=>x.ok),
+        results:Object.freeze(refDiagramStyleList)
+      });
+
   const refCoverage=ReferenceApplication.validateApplicationCoverage(
     input.reference_application||{},
     sourceStyleApplications,
+    diagramStyleApplications,
     refCompile
   );
+
+  const expectedCanonical=sourceFidelity.ok
+    ? sourceFidelity.payload?.canonical_svg_sha256
+    : null;
+  const applicationLineageFindings=[];
+  for(const checked of refDiagramStyleList){
+    if(!checked.ok) continue;
+    if(!expectedCanonical || checked.candidate_svg_sha256!==expectedCanonical){
+      applicationLineageFindings.push(Object.freeze({
+        reason:'DIAGRAM_REFERENCE_APPLICATION_LINEAGE_MISMATCH',
+        reference_id:checked.reference_id||null,
+        expected_canonical_svg_sha256:expectedCanonical||null,
+        actual_candidate_svg_sha256:checked.candidate_svg_sha256||null
+      }));
+    }
+  }
+  const refApplicationLineage=Object.freeze({
+    ok:applicationLineageFindings.length===0,
+    status:refDiagramStyleList.length ? (applicationLineageFindings.length?'FAIL':'PASS') : 'NOT_REQUIRED',
+    canonical_svg_sha256:expectedCanonical||null,
+    findings:Object.freeze(applicationLineageFindings)
+  });
 
   const visualMeasurement=Measurement.verifyVisualMeasurement(
     input.visual_measurement_receipt,
@@ -127,14 +166,26 @@ function runProduction(input={}){
     const expectedControlled=sourceFidelity.ok?sourceFidelity.payload?.controlled_svg_sha256:null;
     const findings=[];
     for(const payload of refEffectSet.payloads||[]){
-      if(payload.effect_schema!=='TAKY_LINE_HIERARCHY_DELTA_V1') continue;
-      if(!expectedControlled || payload.effect_input_digest!==expectedControlled){
-        findings.push(Object.freeze({
-          reason:'REFERENCE_EFFECT_SOURCE_FIDELITY_LINEAGE_MISMATCH',
-          expected_controlled_svg_sha256:expectedControlled||null,
-          actual_effect_input_digest:payload.effect_input_digest||null,
-          reference_ids:Object.freeze([...(payload.reference_ids||[])])
-        }));
+      if(payload.effect_schema==='TAKY_LINE_HIERARCHY_DELTA_V1'){
+        if(!expectedControlled || payload.effect_input_digest!==expectedControlled){
+          findings.push(Object.freeze({
+            reason:'REFERENCE_EFFECT_SOURCE_FIDELITY_LINEAGE_MISMATCH',
+            expected_controlled_svg_sha256:expectedControlled||null,
+            actual_effect_input_digest:payload.effect_input_digest||null,
+            reference_ids:Object.freeze([...(payload.reference_ids||[])])
+          }));
+        }
+        continue;
+      }
+      if(payload.effect_schema==='TAKY_RELATION_FOCUS_DELTA_V1' || payload.effect_schema==='TAKY_ONE_MOVE_EMPHASIS_DELTA_V1'){
+        if(!expectedCanonical || payload.effect_input_digest!==expectedCanonical){
+          findings.push(Object.freeze({
+            reason:'REFERENCE_EFFECT_CANONICAL_LINEAGE_MISMATCH',
+            expected_canonical_svg_sha256:expectedCanonical||null,
+            actual_effect_input_digest:payload.effect_input_digest||null,
+            reference_ids:Object.freeze([...(payload.reference_ids||[])])
+          }));
+        }
       }
     }
     refEffectLineage=Object.freeze({
@@ -167,7 +218,7 @@ function runProduction(input={}){
     GEOMETRY_GATE:sourceFidelity.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:refCompile.ok && refClaimability.ok && refCoverage.ok && refEffectSet.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
+    REFERENCE_EFFECT_GATE:refCompile.ok && refClaimability.ok && refCoverage.ok && refApplicationLineage.ok && refEffectSet.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
     ARCHITECTURAL_READABILITY_GATE:visualMeasurement.ok && readability.ok?'PASS':'FAIL',
     A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
@@ -188,7 +239,9 @@ function runProduction(input={}){
     refClaimability,
     refApplication,
     refSourceStyle,
+    refDiagramStyle,
     refCoverage,
+    refApplicationLineage,
     visualMeasurement,
     refEffectSet,
     refEffectLineage,

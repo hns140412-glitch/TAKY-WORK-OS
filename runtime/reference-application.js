@@ -14,6 +14,7 @@ function applyToPresentationProfile(profile={},compiled={}){
   const applied=[];
   const deferred=[];
   const sourceStyleRequests=[];
+  const diagramStyleRequests=[];
 
   for(const item of compiled.compiled||[]){
     const patch=item.engine_patch||{};
@@ -72,11 +73,21 @@ function applyToPresentationProfile(profile={},compiled={}){
       }
     }
     if(patch.diagram_policy){
-      deferred.push(Object.freeze({
-        reference_id:item.reference_id,
-        component:'diagram_policy',
-        reason:'DIAGRAM_COMPONENT_ADAPTER_NOT_ACTIVE'
-      }));
+      if(patch.diagram_policy.adapter_mode){
+        diagramStyleRequests.push(Object.freeze({
+          reference_id:item.reference_id,
+          mode:patch.diagram_policy.adapter_mode,
+          compile_digest:compiled.compile_digest,
+          policy:Object.freeze(clone(patch.diagram_policy)),
+          semantic_inference:false
+        }));
+      }else{
+        deferred.push(Object.freeze({
+          reference_id:item.reference_id,
+          component:'diagram_policy',
+          reason:'DIAGRAM_COMPONENT_ADAPTER_NOT_ACTIVE'
+        }));
+      }
     }
   }
 
@@ -86,6 +97,7 @@ function applyToPresentationProfile(profile={},compiled={}){
     compile_digest:compiled.compile_digest,
     applied_parameters:Object.freeze(applied),
     source_style_requests:Object.freeze(sourceStyleRequests),
+    diagram_style_requests:Object.freeze(diagramStyleRequests),
     deferred:Object.freeze(deferred),
     presentation_only:true,
     geometry_mutation:false,
@@ -126,7 +138,55 @@ function validateSourceStyleApplication(application={},compiled={}){
   });
 }
 
-function validateApplicationCoverage(application={},sourceStyleApplications=[],compiled={}){
+function validateDiagramStyleApplication(application={},compiled={}){
+  if(!application || application.schema!=='TAKY_DIAGRAM_REFERENCE_APPLICATION_V1'){
+    return Object.freeze({ok:false,reason:'DIAGRAM_REFERENCE_APPLICATION_REQUIRED'});
+  }
+  if(application.compile_digest!==compiled?.compile_digest){
+    return Object.freeze({ok:false,reason:'REFERENCE_COMPILE_DIGEST_MISMATCH'});
+  }
+  if(application.semantic_inference!==false){
+    return Object.freeze({ok:false,reason:'DIAGRAM_REFERENCE_SEMANTIC_INFERENCE_FORBIDDEN'});
+  }
+  if(application.role_contract!=='DECLARED_ONLY'){
+    return Object.freeze({ok:false,reason:'DECLARED_DIAGRAM_ROLE_CONTRACT_REQUIRED'});
+  }
+  if(application.presentation_only!==true || application.geometry_preserved!==true){
+    return Object.freeze({ok:false,reason:'DIAGRAM_REFERENCE_PRESENTATION_ONLY_REQUIRED'});
+  }
+  if(application.applied!==true || Number(application.changed_elements||0)<=0){
+    return Object.freeze({ok:false,reason:'DIAGRAM_REFERENCE_EFFECT_NOT_APPLIED'});
+  }
+  if(!application.candidate_svg_sha256){
+    return Object.freeze({ok:false,reason:'DIAGRAM_REFERENCE_CANDIDATE_DIGEST_REQUIRED'});
+  }
+  const item=(compiled?.compiled||[]).find(x=>x.reference_id===application.reference_id);
+  if(!item){
+    return Object.freeze({ok:false,reason:'DIAGRAM_REFERENCE_ID_MISMATCH'});
+  }
+  const expectedMode=item.engine_patch?.diagram_policy?.adapter_mode||null;
+  if(!expectedMode || application.mode!==expectedMode){
+    return Object.freeze({
+      ok:false,
+      reason:'DIAGRAM_REFERENCE_MODE_MISMATCH',
+      expected_mode:expectedMode,
+      actual_mode:application.mode||null
+    });
+  }
+  return Object.freeze({
+    ok:true,
+    reference_id:application.reference_id,
+    mode:application.mode,
+    changed_elements:Number(application.changed_elements||0),
+    candidate_svg_sha256:application.candidate_svg_sha256
+  });
+}
+
+function validateApplicationCoverage(application={},sourceStyleApplications=[],diagramStyleApplications=[],compiled=null){
+  if(compiled===null){
+    compiled=diagramStyleApplications||{};
+    diagramStyleApplications=[];
+  }
   if(!compiled?.ok) return Object.freeze({ok:false,reason:'COMPILED_REFERENCE_REQUIRED'});
 
   const covered=new Set();
@@ -152,6 +212,21 @@ function validateApplicationCoverage(application={},sourceStyleApplications=[],c
       findings.push(Object.freeze({
         reason:checked.reason||'SOURCE_STYLE_APPLICATION_INVALID',
         reference_id:style.reference_id||null
+      }));
+    }
+  }
+
+  const diagramList=Array.isArray(diagramStyleApplications)
+    ? diagramStyleApplications
+    : (diagramStyleApplications && typeof diagramStyleApplications==='object' ? [diagramStyleApplications] : []);
+  for(const diagram of diagramList){
+    const checked=validateDiagramStyleApplication(diagram,compiled);
+    if(checked.ok && checked.reference_id){
+      covered.add(checked.reference_id);
+    }else if(diagram && Object.keys(diagram).length){
+      findings.push(Object.freeze({
+        reason:checked.reason||'DIAGRAM_REFERENCE_APPLICATION_INVALID',
+        reference_id:diagram.reference_id||null
       }));
     }
   }
@@ -185,9 +260,10 @@ function validateApplication(application={},compiled={}){
 }
 
 module.exports=Object.freeze({
-  version:'1.0.0',
+  version:'1.1.0',
   applyToPresentationProfile,
   validateApplication,
   validateApplicationCoverage,
-  validateSourceStyleApplication
+  validateSourceStyleApplication,
+  validateDiagramStyleApplication
 });

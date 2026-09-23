@@ -15,6 +15,7 @@ const geometryAdapter=path.resolve(__dirname,'../../tools/drawing_geometry_primi
 const controlledPresentationPipeline=path.resolve(__dirname,'../../tools/drawing_controlled_presentation_pipeline.py');
 const a3BundleExporter=path.resolve(__dirname,'../../tools/drawing_a3_bundle_exporter.py');
 const a3BoardCli=path.resolve(__dirname,'../../runtime/drawing-a3-board-cli.js');
+const diagramReferenceAdapter=path.resolve(__dirname,'../../tools/drawing_diagram_reference_adapter.py');
 
 const Router=require('../../runtime/work-os-router.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
@@ -483,6 +484,8 @@ export function buildServer(){
         reference_application:z.record(z.string(),z.any()),
         reference_source_style_application:z.record(z.string(),z.any()).optional(),
         reference_source_style_applications:z.array(z.record(z.string(),z.any())).optional(),
+        reference_diagram_application:z.record(z.string(),z.any()).optional(),
+        reference_diagram_applications:z.array(z.record(z.string(),z.any())).optional(),
         visual_measurement_receipt:z.string().min(1),
         reference_effect_receipt:z.string().min(1).optional(),
         reference_effect_receipts:z.array(z.string().min(1)).min(1).optional(),
@@ -522,6 +525,49 @@ export function buildServer(){
       })
     },
     async(input)=>result(ArtifactBroker.publishProductionArtifact(input))
+  );
+
+  server.registerTool(
+    'apply-diagram-reference-to-svg',
+    {
+      description:'Apply declared-role OMA/BIG diagram reference policies to a staging canonical SVG without semantic inference or geometry mutation.',
+      inputSchema:z.object({
+        input_svg_path:z.string().min(1),
+        job_id:z.string().min(1),
+        requests:z.array(z.object({
+          reference_id:z.enum(['OMA_RELATION_FIRST','BIG_ONE_MOVE']),
+          mode:z.enum(['DECLARED_PRIMARY_RELATION_FOCUS','DECLARED_BASE_MOVE_RESULT_EMPHASIS']),
+          compile_digest:z.string().min(16)
+        })).min(1)
+      })
+    },
+    async(input)=>{
+      try{
+        const root=stagingRoot();
+        const source=path.resolve(input.input_svg_path);
+        if(!inside(root,source)) return result({ok:false,reason:'DIAGRAM_REFERENCE_INPUT_MUST_BE_IN_STAGING'});
+        if(path.extname(source).toLowerCase()!=='.svg') return result({ok:false,reason:'DIAGRAM_REFERENCE_SVG_REQUIRED'});
+        const dir=stagingJobDir(input.job_id);
+        const out=path.join(dir,'diagram-reference-applied.svg');
+        const policyPath=path.join(dir,'diagram-reference-policy.json');
+        fs.writeFileSync(policyPath,JSON.stringify({requests:input.requests},null,2));
+        const python=process.env.TAKY_PYTHON||'python3';
+        const applied=await execJson(python,[diagramReferenceAdapter,source,out,'--policy',policyPath]);
+        if(applied.ok!==true || applied.geometry_preserved!==true){
+          return result({ok:false,reason:'DIAGRAM_REFERENCE_APPLICATION_FAILED',detail:applied});
+        }
+        return result({
+          ok:true,
+          staging_only:true,
+          out_svg:out,
+          applications:applied.applications||[],
+          geometry_preserved:true,
+          adapter_result:applied
+        });
+      }catch(error){
+        return result({ok:false,reason:'DIAGRAM_REFERENCE_APPLICATION_FAILED',error:String(error?.message||error)});
+      }
+    }
   );
 
   server.registerTool(

@@ -49,9 +49,9 @@ function signReferenceEffect({baseline_digest,candidate_digest,effect_input_dige
   if(!baseline_digest || !candidate_digest) throw new Error('REFERENCE_DIGESTS_REQUIRED');
   if(!Array.isArray(reference_ids)||!reference_ids.length) throw new Error('REFERENCE_IDS_REQUIRED');
   if(!reference_compile_digest) throw new Error('REFERENCE_COMPILE_DIGEST_REQUIRED');
-  const allowed=new Set(['TAKY_OBJECTIVE_REFERENCE_DELTA_V1','TAKY_LINE_HIERARCHY_DELTA_V1']);
+  const allowed=new Set(['TAKY_OBJECTIVE_REFERENCE_DELTA_V1','TAKY_LINE_HIERARCHY_DELTA_V1','TAKY_RELATION_FOCUS_DELTA_V1','TAKY_ONE_MOVE_EMPHASIS_DELTA_V1']);
   if(!comparison || !allowed.has(comparison.schema)) throw new Error('OBJECTIVE_REFERENCE_COMPARISON_REQUIRED');
-  if(comparison.schema==='TAKY_LINE_HIERARCHY_DELTA_V1' && !effect_input_digest){
+  if(comparison.schema!=='TAKY_OBJECTIVE_REFERENCE_DELTA_V1' && !effect_input_digest){
     throw new Error('REFERENCE_EFFECT_INPUT_DIGEST_REQUIRED');
   }
   return sign('TAKY_REFERENCE_EFFECT_RECEIPT','OBJECTIVE_VISUAL_MEASURER_V1',{

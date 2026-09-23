@@ -53,33 +53,39 @@ const REFERENCE_DNA=Object.freeze({
   OMA_RELATION_FIRST:Object.freeze({
     intent:'RELATION_FIRST',
     applicability:Object.freeze({
-      status:'DEFERRED',
-      production_claimable:false,
-      claim_scope:null,
-      limitation:'DIAGRAM_COMPONENT_ADAPTER_NOT_ACTIVE'
+      status:'PARTIAL',
+      production_claimable:true,
+      claim_scope:'DECLARED_PRIMARY_RELATION_FOCUS_ONLY',
+      limitation:'DECLARED_DIAGRAM_ROLES_REQUIRED_NO_SEMANTIC_INFERENCE'
     }),
     relation:Object.freeze(['ONE_RELATION_PER_DIAGRAM','DECORATION_SUPPRESSED']),
-    expected_effect:Object.freeze(['DECISION_CLARITY']),
+    expected_effect:Object.freeze(['PRIMARY_RELATION_FOCUS']),
+    effect_metric:'TAKY_RELATION_FOCUS_DELTA_V1',
     engine_patch:Object.freeze({
       diagram_policy:Object.freeze({
+        adapter_mode:'DECLARED_PRIMARY_RELATION_FOCUS',
         relation_per_diagram_max:1,
-        decoration:'SUPPRESS'
+        decoration:'SUPPRESS',
+        semantic_inference:false
       })
     })
   }),
   BIG_ONE_MOVE:Object.freeze({
     intent:'ONE_MOVE',
     applicability:Object.freeze({
-      status:'DEFERRED',
-      production_claimable:false,
-      claim_scope:null,
-      limitation:'DIAGRAM_COMPONENT_ADAPTER_NOT_ACTIVE'
+      status:'PARTIAL',
+      production_claimable:true,
+      claim_scope:'DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY',
+      limitation:'DECLARED_DIAGRAM_ROLES_REQUIRED_NO_SEMANTIC_INFERENCE'
     }),
     relation:Object.freeze(['BASE_CONDITION','MOVE','RESULT']),
-    expected_effect:Object.freeze(['SEQUENCE_CLARITY']),
+    expected_effect:Object.freeze(['MOVE_EMPHASIS_WITH_DECLARED_SEQUENCE_ROLES']),
+    effect_metric:'TAKY_ONE_MOVE_EMPHASIS_DELTA_V1',
     engine_patch:Object.freeze({
       diagram_policy:Object.freeze({
-        sequence:Object.freeze(['BASE_CONDITION','MOVE','RESULT'])
+        adapter_mode:'DECLARED_BASE_MOVE_RESULT_EMPHASIS',
+        sequence:Object.freeze(['BASE_CONDITION','MOVE','RESULT']),
+        semantic_inference:false
       })
     })
   }),
@@ -214,7 +220,7 @@ function validateReferenceEffect(proof={}) {
 }
 
 module.exports=Object.freeze({
-  version:'2.0.0',
+  version:'2.1.0',
   REFERENCE_DNA,
   stable,
   digest,
