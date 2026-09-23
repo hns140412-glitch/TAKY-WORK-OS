@@ -1,8 +1,10 @@
 (function(root,factory){
-  const api=factory();
-  if(typeof module==='object'&&module.exports) module.exports=api;
-  else root.TakyReportPackage=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  if(typeof module==='object'&&module.exports){
+    module.exports=factory(require('./execution-contract.js'));
+  } else {
+    root.TakyReportPackage=Object.freeze(factory(root.TakyExecutionContract));
+  }
+})(typeof globalThis!=='undefined'?globalThis:this,function(ExecutionContract){
   'use strict';
 
   const SOURCE_ROLES=new Set([
@@ -56,7 +58,19 @@
     });
   }
 
-  function buildOutputPlan(pkg={}){
+  function buildOutputPlan(pkg={},productionAuthorization=null){
+    if(!ExecutionContract){
+      return Object.freeze({ok:false,reason:'EXECUTION_CONTRACT_UNAVAILABLE'});
+    }
+    const authorization=ExecutionContract.verifyProductionAuthorization(productionAuthorization);
+    if(!authorization.ok){
+      return Object.freeze({
+        ok:false,
+        reason:'PRODUCTION_AUTHORIZATION_REQUIRED',
+        detail:authorization
+      });
+    }
+
     const v=validate(pkg);
     if(!v.ok) return Object.freeze({ok:false,reason:'PACKAGE_INVALID',findings:v.findings});
 
@@ -103,7 +117,7 @@
   }
 
   return Object.freeze({
-    version:'1.0.0',
+    version:'2.0.0',
     validate,
     buildOutputPlan,
     applyFactPatch
