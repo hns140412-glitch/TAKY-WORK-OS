@@ -259,6 +259,49 @@ GitHub Actions on that HEAD:
 
 The exact closure-document commit created after this point must be revalidated because both workflows run on every push.
 
+## LIVE AUTHORITY / READINESS CORRECTION
+
+Problem found:
+embedding `LAST VERIFIED HEAD` in a handoff/document is structurally stale as soon as that document itself is committed.
+
+Correction:
+- added production MCP tool `get-production-readiness`
+- added validator MCP tool `get-validation-readiness`
+- removed `TAKY_SKIP_CI_ATTESTATION` production bypass
+- added pure `runtime/readiness-evaluator.js`
+- added readiness regression to enforcement CI
+
+Production readiness semantics:
+- exact-head CI green
+- measurement public key ready
+- vision public key ready
+- persistent capability key configured
+
+If those are not all true:
+- `production_ready=false`
+- `staging_ready=true`
+
+Validation readiness separates:
+- objective measurement readiness
+- independent vision review readiness
+- full user-facing validation readiness
+
+No private key or API secret values are exposed.
+
+Latest pre-document-update checkpoint:
+`d2bdf78f2efdfabe82c25613e20639092cd9546a`
+- TAKY Enforcement Regression #352 — SUCCESS
+- drawing-engine-core #808 — SUCCESS
+
+This checkpoint is historical after the current document commit.
+Future resume MUST query live readiness/current HEAD instead of treating this SHA as current authority.
+
+Repository branch protection:
+- surgery branch currently not protected
+- connector has no administration write capability
+- runtime exact-head CI gate remains the production compensating control
+- status: `REPOSITORY_BRANCH_PROTECTION = ADMIN_REQUIRED / OPEN`
+
 ## OPEN — REAL-WORLD / OPERATIONAL
 
 - live validator secrets must be provisioned outside the repo:
