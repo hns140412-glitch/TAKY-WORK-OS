@@ -1,0 +1,70 @@
+{
+  "schema": "C2S_ATOMS_V1",
+  "scope": "HANNAM_FAILURE_RETROSPECTIVE",
+  "atoms": [
+    {
+      "id": "HS-001",
+      "type": "CORRECTION",
+      "statement": "Production artifacts may only be created through an authorized engine route.",
+      "owner": "DRAWING_ENGINE",
+      "destination": "runtime/drawing-production-authority-gate.js",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-002",
+      "type": "DECISION",
+      "statement": "L8 USER EXPOSURE GATE is required and uses NO PASS -> NO SHOW.",
+      "owner": "TAKY_GOVERNANCE",
+      "destination": "drawing-finalization-orchestrator + central TAKY",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-003",
+      "type": "CORRECTION",
+      "statement": "One-off Python/HTML/ReportLab is EXPERIMENT/DIAGNOSTIC only.",
+      "owner": "WORK_OS_ROUTING",
+      "destination": "ENGINE_BYPASS_MAP",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-004",
+      "type": "CORRECTION",
+      "statement": "Destructive raster masking and generative geometry redraw are forbidden production operations.",
+      "owner": "DRAWING_ENGINE",
+      "destination": "production authority gate",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-005",
+      "type": "DECISION",
+      "statement": "Reference mining must compile into tokens/parameters/effect probes.",
+      "owner": "REFERENCE_COMPILER",
+      "destination": "runtime/drawing-reference-compiler.js",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-006",
+      "type": "CORRECTION",
+      "statement": "DATE != CONTENT CHANGE; content digest controls equivalence.",
+      "owner": "SOURCE_AUTHORITY",
+      "destination": "runtime/drawing-source-equivalence.js",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-007",
+      "type": "DECISION",
+      "statement": "Resume continuity and retrospective/surgery are distinct handoff modes.",
+      "owner": "TAKY_HANDOFF",
+      "destination": "central governance correction",
+      "disposition": "OPEN_CENTRAL_TAKY_MERGE"
+    },
+    {
+      "id": "HS-008",
+      "type": "CORRECTION",
+      "statement": "Source fidelity pass cannot satisfy reference effect or user effect.",
+      "owner": "QUALITY_GATE",
+      "destination": "pre-user validation",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    }
+  ]
+}
