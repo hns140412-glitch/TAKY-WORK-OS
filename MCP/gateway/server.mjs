@@ -386,6 +386,7 @@ export function buildServer(){
         }),
         reference:z.record(z.string(),z.any()),
         reference_application:z.record(z.string(),z.any()),
+        reference_source_style_application:z.record(z.string(),z.any()).optional(),
         visual_measurement_receipt:z.string().min(1),
         reference_effect_receipt:z.string().min(1),
         vision_review_receipt:z.string().min(1),
