@@ -149,18 +149,24 @@ Applicability classes:
 
 - `PARTIAL`
   - only a safe subset is implemented
-  - current example: `ARCHDAILY_PLAN_HIERARCHY`
-  - safe claim scope: `SOURCE_LINE_HIERARCHY_ONLY`
-  - current implementation uses measured source stroke-width rank only
-  - it does NOT claim verified CUT / PRIMARY / SECONDARY architectural semantics
+  - `ARCHDAILY_PLAN_HIERARCHY`
+    - safe claim scope: `SOURCE_LINE_HIERARCHY_ONLY`
+    - measured source stroke-width rank only
+    - no verified CUT / PRIMARY / SECONDARY architectural semantics are inferred
+  - `OMA_RELATION_FIRST`
+    - safe claim scope: `DECLARED_PRIMARY_RELATION_FOCUS_ONLY`
+    - only explicit `data-taky-role-source="DECLARED"` diagram roles may be used
+    - effect metric: `TAKY_RELATION_FOCUS_DELTA_V1`
+  - `BIG_ONE_MOVE`
+    - safe claim scope: `DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY`
+    - only explicit declared BASE_CONDITION / MOVE / RESULT roles may be used
+    - effect metric: `TAKY_ONE_MOVE_EMPHASIS_DELTA_V1`
 
 - `DEFERRED`
   - mined knowledge remains available
   - production claim is forbidden until an executable adapter + effect metric exists
-  - current examples:
-    - `OMA_RELATION_FIRST` — diagram component adapter not active
-    - `BIG_ONE_MOVE` — diagram component adapter not active
-    - `SOM_FOSTER_TECHNICAL_CLARITY` — verified presentation roles required
+  - current example:
+    - `SOM_FOSTER_TECHNICAL_CLARITY` — verified architectural presentation roles required
 
 Multi-reference production requires:
 
@@ -177,6 +183,24 @@ Defensive balance:
 - DEFERRED references remain available for mining, study and staging
 - they are not deleted or treated as useless
 - only the unsupported production claim is blocked
+
+## DECLARED DIAGRAM ROLE — SAFE PARTIAL ADAPTERS
+
+OMA / BIG diagram reference execution is allowed only on canonical SVG diagram elements whose roles are explicitly declared by the diagram authoring path.
+
+Hard locks:
+- `data-taky-role-source="DECLARED"` is required
+- no architectural or diagram semantic role may be inferred from source geometry
+- geometry-bearing SVG attributes remain unchanged
+- application proof is bound to the final canonical SVG SHA-256
+- independent effect receipt is also bound to that canonical SVG through artifact-bound source fidelity
+- already-compliant diagrams are not changed merely to manufacture an effect
+
+Current safe scopes:
+- `OMA_RELATION_FIRST` → `DECLARED_PRIMARY_RELATION_FOCUS_ONLY`
+- `BIG_ONE_MOVE` → `DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY`
+
+This does not promote `SOM_FOSTER_TECHNICAL_CLARITY`; STRUCTURE / PROGRAM / ENVELOPE remain architectural semantic roles requiring verified-role authority.
 
 ## SOURCE-STYLE RANK — SAFE PARTIAL LINE-HIERARCHY ADAPTER
 

@@ -88,8 +88,8 @@ LIVE AUTHORITY 복원 순서:
 Reference applicability:
 - DIVISARE_EDITORIAL_RESTRAINT = FULL
 - ARCHDAILY_PLAN_HIERARCHY = PARTIAL / SOURCE_LINE_HIERARCHY_ONLY
-- OMA_RELATION_FIRST = DEFERRED
-- BIG_ONE_MOVE = DEFERRED
+- OMA_RELATION_FIRST = PARTIAL / DECLARED_PRIMARY_RELATION_FOCUS_ONLY
+- BIG_ONE_MOVE = PARTIAL / DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY
 - SOM_FOSTER_TECHNICAL_CLARITY = DEFERRED
 
 ArchDaily partial implementation:
@@ -107,6 +107,13 @@ source stroke width
 - reference 하나의 PASS가 다른 reference claim을 승인하게 하지 마.
 - DEFERRED reference는 지식/연구/staging에는 유지하되 production claim에는 쓰지 마.
 
+Declared diagram-role adapter rule:
+- OMA/BIG은 canonical SVG의 명시적 `data-taky-role-source="DECLARED"` 역할만 사용
+- source geometry에서 diagram/architectural semantics를 추론하지 않음
+- geometry-bearing SVG attribute 변경 금지
+- application/effect proof는 final canonical SVG digest에 bind
+- 이미 compliant한 diagram을 effect 생성 목적으로 왜곡하지 않음
+
 Readiness:
 - API key 존재만으로 Vision READY 처리하지 마.
 - configured Vision model live health probe까지 PASS해야 user-facing Vision readiness=true.
@@ -117,7 +124,7 @@ Readiness:
 - live validator/gateway secrets provisioning
 - live user-facing real-project production pilot
 - trusted direct DWG decoder
-- OMA/BIG/SOM-Foster executable adapters/effect metrics
+- SOM/Foster verified-role executable adapter/effect metric
 - repository branch protection = ADMIN_REQUIRED / OPEN
 
 재개 직후 closed surgery를 반복 검토하지 말고,

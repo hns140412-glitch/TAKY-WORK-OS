@@ -330,6 +330,33 @@ Latest code validation before this document update:
 Do not use those run numbers as future authority after this commit.
 Live authority is always the result of current HEAD + readiness/exact-head CI.
 
+## DEFERRED REFERENCE OPEN REDUCTION — 2026-09-24
+
+New executable staging/production proof plumbing was added for two previously deferred diagram references without widening their semantic authority.
+
+- `OMA_RELATION_FIRST`
+  - status: PARTIAL / production-claimable only within `DECLARED_PRIMARY_RELATION_FOCUS_ONLY`
+  - adapter: declared-role canonical SVG opacity focus
+  - semantic inference: false
+  - geometry mutation: false
+  - effect metric: `TAKY_RELATION_FOCUS_DELTA_V1`
+- `BIG_ONE_MOVE`
+  - status: PARTIAL / production-claimable only within `DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY`
+  - adapter: declared BASE_CONDITION / MOVE / RESULT emphasis
+  - semantic inference: false
+  - geometry mutation: false
+  - effect metric: `TAKY_ONE_MOVE_EMPHASIS_DELTA_V1`
+
+Both application proof and objective effect proof are bound to the final canonical SVG digest. Production cross-checks that digest against the artifact-bound source-fidelity receipt.
+
+Negative behavior preserved:
+- undeclared diagram roles do not pass
+- missing/ambiguous primary relation does not pass
+- geometry mutation does not pass
+- already-compliant SVG does not manufacture causal effect
+
+`SOM_FOSTER_TECHNICAL_CLARITY` remains DEFERRED because STRUCTURE / PROGRAM / ENVELOPE are architectural semantic roles and require verified presentation-role authority.
+
 ## OPEN — REAL-WORLD / OPERATIONAL
 
 - live validator secrets must be provisioned outside the repo:
@@ -339,7 +366,7 @@ Live authority is always the result of current HEAD + readiness/exact-head CI.
   - ANTHROPIC_API_KEY for live independent visual review
 - user-facing real-project production pilot has not been run; read-only/staging real-source pilots have passed
 - DWG remains conversion-required unless a trusted DWG decoder is connected
-- source-role-dependent references such as plan line hierarchy remain deferred when verified presentation roles are unavailable
+- SOM/Foster technical-clarity reference remains deferred until verified STRUCTURE / PROGRAM / ENVELOPE presentation roles are available
 - CI synthetic Vision receipt proves trust plumbing, not a live Anthropic API quality judgment
 
 ## STATUS

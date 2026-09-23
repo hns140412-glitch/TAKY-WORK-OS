@@ -200,13 +200,28 @@ Therefore:
 SOURCE STYLE RANK is a safe micro-hierarchy mechanism.
 It is NOT standalone proof of full professional-family reference effect.
 
+### PARTIAL — DECLARED DIAGRAM ROLE ONLY
+`OMA_RELATION_FIRST`
+- safe claim scope: `DECLARED_PRIMARY_RELATION_FOCUS_ONLY`
+- canonical SVG roles must carry `data-taky-role-source="DECLARED"`
+- exactly one declared primary relation is required per target diagram
+- effect metric: `TAKY_RELATION_FOCUS_DELTA_V1`
+- semantic inference false / geometry mutation false
+
+`BIG_ONE_MOVE`
+- safe claim scope: `DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY`
+- declared BASE_CONDITION / MOVE / RESULT roles are required
+- effect metric: `TAKY_ONE_MOVE_EMPHASIS_DELTA_V1`
+- semantic inference false / geometry mutation false
+
+For both:
+- application proof is bound to final canonical SVG digest
+- objective effect receipt is bound to the same canonical SVG lineage
+- already-compliant diagrams are not distorted to manufacture effect
+
 ### DEFERRED
-- `OMA_RELATION_FIRST`
-  - diagram component adapter not active
-- `BIG_ONE_MOVE`
-  - diagram component adapter not active
 - `SOM_FOSTER_TECHNICAL_CLARITY`
-  - verified presentation roles required
+  - verified STRUCTURE / PROGRAM / ENVELOPE presentation roles required
 
 DEFERRED means:
 - mined knowledge is preserved
@@ -304,7 +319,7 @@ user-facing production refuses a non-green exact HEAD.
 1. provision real validator / gateway secrets outside the repo
 2. live user-facing real-project production pilot — NOT RUN
 3. trusted direct DWG decoding — NOT CONNECTED
-4. implement executable adapters + effect metrics for DEFERRED references if needed
+4. implement SOM/Foster verified-role adapter + effect metric if/when verified architectural presentation-role authority is available
 5. repository branch protection — ADMIN REQUIRED
 6. run actual live Vision review only when readiness says configured model is healthy
 
