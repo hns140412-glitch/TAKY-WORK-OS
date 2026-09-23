@@ -14,8 +14,12 @@
   function safeFragment(value){
     const s=clean(value);
     if(!s) return true;
+    // Intact nested SVG roots legitimately carry W3C namespace URLs.
+    // Remove only namespace declarations from the safety scan; external network
+    // URLs, scripts, event handlers and embedded foreign content remain blocked.
+    const scan=s.replace(/\sxmlns(?::[A-Za-z0-9_-]+)?="https?:\/\/www\.w3\.org\/[^"]+"/gi,'');
     const unsafe=/<\s*(script|foreignObject|iframe|object|embed)\b|\bon[a-z]+\s*=|javascript\s*:|https?:\/\//i;
-    return !unsafe.test(s);
+    return !unsafe.test(scan);
   }
 
   function normalizeLayer(layer,index){
