@@ -168,6 +168,21 @@ try{
   const candidatePdf=candidateBundle.outputs.pdf;
   const digest=Broker.sha256File(candidatePdf);
 
+  const fidelityEvidence=JSON.parse(run(PYTHON,[
+    path.join(ROOT,'tools/drawing_source_fidelity_validator.py'),
+    sourcePdf,
+    controlledSvg,
+    candidateSvg,
+    candidatePdf,
+    '--page','0'
+  ]));
+  assert.equal(fidelityEvidence.ok,true,JSON.stringify(fidelityEvidence,null,2));
+  assert.equal(fidelityEvidence.semantic_inference,false);
+  assert.equal(fidelityEvidence.candidate_sha256,digest);
+
+  const sourceFidelity=TestSigner.signSourceFidelity({evidence:fidelityEvidence});
+  assert.equal(sourceFidelity.ok,true);
+
   const humanIntent=HumanIntent.compileHumanIntent({
     desired_outcome:'Produce a source-faithful A3 architectural report whose reference-driven hierarchy is clear enough for human decision.',
     success_criteria:[
@@ -226,20 +241,11 @@ try{
   const finalized=Pipeline.finalizeStagedProduction({
     staging_path:candidatePdf,
     task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
-    source_identity:{current_content:'synthetic-source-v1',previous_content:'synthetic-source-v1'},
-    geometry:{
-      source:{primitives},
-      output:{primitives},
-      protected_anchors_source:[],
-      protected_anchors_output:[],
-      crop_source:[0,0,400,240],
-      crop_output:[0,0,400,240],
-      rotation_source:0,
-      rotation_output:0,
-      scale_source:'1:200',
-      scale_output:'1:200',
-      mask_intersections:[]
+    source_identity:{
+      current_hash:fidelityEvidence.source_sha256,
+      previous_hash:fidelityEvidence.source_sha256
     },
+    source_fidelity_receipt:sourceFidelity.receipt,
     semantics:[],
     claims:[],
     human_intent:{
@@ -269,6 +275,8 @@ try{
   assert.equal(finalized.ok,true,JSON.stringify(finalized,null,2));
   assert.equal(finalized.status,'FINAL_APPROVABLE');
   assert.equal(finalized.evidence.refApplication.ok,true);
+  assert.equal(finalized.evidence.sourceFidelity.ok,true);
+  assert.equal(finalized.evidence.geometryCompare,null);
 
   const auth=Contract.verifyProductionAuthorization(finalized.authorization);
   assert.equal(auth.ok,true);
