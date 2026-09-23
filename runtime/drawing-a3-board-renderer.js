@@ -102,6 +102,7 @@
     presentation_profile,
     source_svg,
     source_viewbox,
+    source_href=null,
     support_items=[]
   }={}){
     if(!reportPkg||!compositor||!narrative) return {ok:false,reason:'ENGINE_DEPENDENCY_REQUIRED'};
@@ -144,7 +145,7 @@
     const sourceDoc=String(source_svg||'').trim();
     if(!sourceDoc || !/^<svg\b/i.test(sourceDoc)) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
     const rootBox=sourceRootViewBox(sourceDoc)||sb;
-    const sourceUri=svgDataUri(sourceDoc);
+    const sourceUri=String(source_href||'').trim() || svgDataUri(sourceDoc);
     if(!sourceUri) return {ok:false,reason:'SOURCE_SVG_ENCODING_FAILED'};
 
     const fit=fitTransform(sb,{
