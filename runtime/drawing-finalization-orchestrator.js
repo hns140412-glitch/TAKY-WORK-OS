@@ -2,10 +2,13 @@
   const authority=(typeof module==='object'&&module.exports)
     ? require('./drawing-production-authority-gate')
     : root.TakyDrawingProductionAuthorityGate;
-  const api=factory(authority);
+  const preUser=(typeof module==='object'&&module.exports)
+    ? require('./drawing-pre-user-validation')
+    : root.TakyDrawingPreUserValidation;
+  const api=factory(authority,preUser);
   if(typeof module==='object'&&module.exports) module.exports=api;
   else root.TakyDrawingFinalizer=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(authority){
+})(typeof globalThis!=='undefined'?globalThis:this,function(authority,preUser){
   'use strict';
 
   function buildFinalizationPlan({view_id='VIEW',profile='PUBLICATION',required_formats=['html','pdf','png','pptx','xlsx']}={}){
@@ -44,17 +47,44 @@
   }
 
   function decideUserExposure(input={}){
+    if(!preUser || typeof preUser.evaluate!=='function'){
+      return Object.freeze({ok:false,decision:'HOLD',blocks:Object.freeze(['PRE_USER_VALIDATOR_UNAVAILABLE']),invariant:'NO_PASS_NO_SHOW'});
+    }
     if(!authority || typeof authority.evaluate!=='function'){
       return Object.freeze({ok:false,decision:'HOLD',blocks:Object.freeze(['PRODUCTION_AUTHORITY_GATE_UNAVAILABLE']),invariant:'NO_PASS_NO_SHOW'});
     }
-    const admission=authority.evaluate({...input,user_exposure:true});
+    const evidence=input.validation_evidence;
+    if(!evidence || typeof evidence!=='object'){
+      return Object.freeze({ok:false,decision:'HOLD',blocks:Object.freeze(['PRE_USER_VALIDATION_EVIDENCE_REQUIRED']),invariant:'NO_PASS_NO_SHOW'});
+    }
+    const validation=preUser.evaluate(evidence);
+    if(!validation.ok){
+      return Object.freeze({
+        ok:false,
+        decision:'HOLD',
+        blocks:Object.freeze([
+          ...validation.failed_gates.map(x=>'PRE_USER_GATE_FAIL:'+x),
+          ...validation.blocking_defects.map(x=>'PRE_USER_DEFECT:'+x)
+        ]),
+        validation,
+        invariant:'NO_PASS_NO_SHOW'
+      });
+    }
+    const admission=authority.evaluate({
+      ...input,
+      gates:validation.gates,
+      narrative_present:evidence.narrative_present===true,
+      a3_required:evidence.a3_required===true,
+      user_exposure:true
+    });
     return Object.freeze({
       ok:admission.ok===true && admission.decision==='SHOW',
       decision:admission.ok===true && admission.decision==='SHOW'?'SHOW':'HOLD',
       blocks:admission.blocks,
+      validation,
       invariant:'NO_PASS_NO_SHOW'
     });
   }
 
-  return Object.freeze({version:'2.1.0',buildFinalizationPlan,nextAction,decideUserExposure});
+  return Object.freeze({version:'2.2.0',buildFinalizationPlan,nextAction,decideUserExposure});
 });
