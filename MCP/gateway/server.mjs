@@ -342,6 +342,10 @@ export function buildServer(){
         geometry:z.record(z.string(),z.any()),
         semantics:z.array(z.record(z.string(),z.any())).default([]),
         claims:z.array(z.record(z.string(),z.any())).default([]),
+        human_intent:z.object({
+          desired_outcome:z.string().min(1),
+          success_criteria:z.array(z.string()).default([])
+        }),
         reference:z.record(z.string(),z.any()),
         reference_application:z.record(z.string(),z.any()),
         visual_measurement_receipt:z.string().min(1),
