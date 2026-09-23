@@ -2,12 +2,18 @@
 
 const fs=require('fs');
 const path=require('path');
+const crypto=require('crypto');
 const Capability=require('./capability-token.js');
 
 function inside(root,candidate){
   const r=path.resolve(root);
   const c=path.resolve(candidate);
   return c===r || c.startsWith(r+path.sep);
+}
+
+function sha256File(filePath){
+  const data=fs.readFileSync(filePath);
+  return crypto.createHash('sha256').update(data).digest('hex');
 }
 
 function verifyScope(input={}){
@@ -39,6 +45,8 @@ function verifyScope(input={}){
       producer_id,
       execution_graph_id,
       source_ids:Object.freeze([...source_ids]),
+      validator_id:grant.validator_id||null,
+      artifact_digest:grant.artifact_digest||null,
       exposure_target:grant.target,
       validation_status:grant.validation_status,
       status:'REGISTERED_PRODUCTION_ARTIFACT'
@@ -65,6 +73,20 @@ function publishProductionArtifact(input={}){
   if(!inside(stagingRoot,sourcePath)) return Object.freeze({ok:false,reason:'STAGING_PATH_OUTSIDE_ALLOWED_ROOT'});
   if(!fs.existsSync(sourcePath) || !fs.statSync(sourcePath).isFile()) return Object.freeze({ok:false,reason:'STAGING_ARTIFACT_NOT_FOUND'});
 
+  if(!checked.grant.artifact_digest){
+    return Object.freeze({ok:false,reason:'ARTIFACT_DIGEST_BOUND_VALIDATION_REQUIRED'});
+  }
+
+  const currentDigest=sha256File(sourcePath);
+  if(currentDigest!==checked.grant.artifact_digest){
+    return Object.freeze({
+      ok:false,
+      reason:'ARTIFACT_CHANGED_AFTER_VALIDATION',
+      expected_digest:checked.grant.artifact_digest,
+      actual_digest:currentDigest
+    });
+  }
+
   const safeName=path.basename(fileName);
   if(safeName!==fileName) return Object.freeze({ok:false,reason:'FILE_NAME_PATH_TRAVERSAL_FORBIDDEN'});
   const destination=path.resolve(productionRoot,safeName);
@@ -73,19 +95,27 @@ function publishProductionArtifact(input={}){
   fs.mkdirSync(productionRoot,{recursive:true});
   fs.copyFileSync(sourcePath,destination);
 
+  const destinationDigest=sha256File(destination);
+  if(destinationDigest!==currentDigest){
+    try{ fs.unlinkSync(destination); }catch(e){}
+    return Object.freeze({ok:false,reason:'PRODUCTION_COPY_DIGEST_MISMATCH'});
+  }
+
   return Object.freeze({
     ok:true,
     record:Object.freeze({
       ...checked.record,
       status:'PUBLISHED_PRODUCTION_ARTIFACT',
       staging_path:sourcePath,
-      production_path:destination
+      production_path:destination,
+      artifact_digest:currentDigest
     })
   });
 }
 
 module.exports=Object.freeze({
-  version:'2.0.0',
+  version:'3.0.0',
+  sha256File,
   registerProductionArtifact,
   publishProductionArtifact
 });
