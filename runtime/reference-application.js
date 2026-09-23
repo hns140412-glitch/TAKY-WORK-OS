@@ -13,6 +13,7 @@ function applyToPresentationProfile(profile={},compiled={}){
 
   const applied=[];
   const deferred=[];
+  const sourceStyleRequests=[];
 
   for(const item of compiled.compiled||[]){
     const patch=item.engine_patch||{};
@@ -51,11 +52,24 @@ function applyToPresentationProfile(profile={},compiled={}){
     }
 
     if(patch.source_style_policy?.requires_verified_roles){
-      deferred.push(Object.freeze({
-        reference_id:item.reference_id,
-        component:'source_style_policy',
-        reason:'VERIFIED_PRESENTATION_ROLES_REQUIRED'
-      }));
+      if(patch.source_style_policy.fallback_mode==='SOURCE_STYLE_RANK'){
+        sourceStyleRequests.push(Object.freeze({
+          reference_id:item.reference_id,
+          mode:'SOURCE_STYLE_RANK',
+          compile_digest:compiled.compile_digest,
+          policy:Object.freeze({
+            hierarchy:Object.freeze([...(patch.source_style_policy.fallback_hierarchy||[])]),
+            multipliers:Object.freeze({...patch.source_style_policy.multipliers}),
+            semantic_inference:false
+          })
+        }));
+      }else{
+        deferred.push(Object.freeze({
+          reference_id:item.reference_id,
+          component:'source_style_policy',
+          reason:'VERIFIED_PRESENTATION_ROLES_REQUIRED'
+        }));
+      }
     }
     if(patch.diagram_policy){
       deferred.push(Object.freeze({
@@ -71,6 +85,7 @@ function applyToPresentationProfile(profile={},compiled={}){
     profile:Object.freeze(out),
     compile_digest:compiled.compile_digest,
     applied_parameters:Object.freeze(applied),
+    source_style_requests:Object.freeze(sourceStyleRequests),
     deferred:Object.freeze(deferred),
     presentation_only:true,
     geometry_mutation:false,
