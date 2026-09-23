@@ -21,6 +21,7 @@ const lineHierarchyAdapter=path.resolve(projectRoot,'tools/drawing_line_hierarch
 const Signer=require('./receipt-signer.cjs');
 const VisionParser=require('../../runtime/vision-review-parser.js');
 const HumanIntent=require('../../runtime/human-intent-contract.js');
+const Readiness=require('../../runtime/readiness-evaluator.js');
 
 function result(value){
   return {content:[{type:'text',text:JSON.stringify(value)}]};
@@ -154,22 +155,21 @@ export function buildServer(){
       const apiPresent=Boolean(process.env.ANTHROPIC_API_KEY);
       const model=process.env.TAKY_VISION_MODEL||'claude-sonnet-5';
 
-      const objectiveReady=measurement.valid===true;
-      const visionReady=vision.valid===true && apiPresent;
+      const evaluated=Readiness.evaluateValidationReadiness({
+        measurement_private_key_valid:measurement.valid===true,
+        vision_private_key_valid:vision.valid===true,
+        anthropic_api_key_present:apiPresent
+      });
       return result({
         ok:true,
-        objective_validation_ready:objectiveReady,
-        vision_review_ready:visionReady,
-        user_facing_validation_ready:Boolean(objectiveReady && visionReady),
+        objective_validation_ready:evaluated.objective_validation_ready,
+        vision_review_ready:evaluated.vision_review_ready,
+        user_facing_validation_ready:evaluated.user_facing_validation_ready,
         measurement_key:measurement,
         vision_key:vision,
         anthropic_api_key_present:apiPresent,
         vision_model:model,
-        warnings:[
-          ...(measurement.valid?[]:['MEASUREMENT_PRIVATE_KEY_NOT_READY']),
-          ...(vision.valid?[]:['VISION_PRIVATE_KEY_NOT_READY']),
-          ...(apiPresent?[]:['ANTHROPIC_API_KEY_NOT_READY'])
-        ]
+        warnings:[...evaluated.warnings]
       });
     }
   );
