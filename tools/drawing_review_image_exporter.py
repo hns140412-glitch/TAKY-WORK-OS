@@ -6,7 +6,7 @@ from __future__ import annotations
 import argparse
 from pathlib import Path
 
-import fitz
+import pymupdf as fitz
 from PIL import Image
 
 
