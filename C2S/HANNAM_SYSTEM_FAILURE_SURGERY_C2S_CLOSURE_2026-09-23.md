@@ -357,6 +357,36 @@ Negative behavior preserved:
 
 `SOM_FOSTER_TECHNICAL_CLARITY` remains DEFERRED because STRUCTURE / PROGRAM / ENVELOPE are architectural semantic roles and require verified presentation-role authority.
 
+## SOM/FOSTER TECHNICAL-CLARITY OPEN REDUCTION — 2026-09-24
+
+The missing executable styling path and missing dedicated metric have now been separated from the unresolved semantic-authority problem.
+
+Implemented:
+- staging-only adapter: `tools/drawing_technical_clarity_adapter.py`
+- adapter mode: `VERIFIED_PRESENTATION_ROLE_CLARITY`
+- accepted roles: STRUCTURE / PROGRAM / ENVELOPE only
+- `data-taky-role-source="VERIFIED"` required
+- matching `data-taky-role-proof-sha256` required
+- presentation-only opacity / stroke-width changes
+- original source stroke width retained for idempotent re-application
+- geometry-bearing attributes unchanged
+- semantic inference false
+- adapter output `production_claimable=false`
+- dedicated metric: `TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1`
+- negative tests cover unverified roles, proof mismatch, repeated application and geometry mutation
+
+Authority preserved:
+- compiler applicability remains DEFERRED
+- executable adapter existence does not create STRUCTURE / PROGRAM / ENVELOPE authority
+- production claim remains blocked until independent verified-role authority is admitted and wired into production trust
+
+Pre-document-update code checkpoint, provenance only:
+- HEAD: `c7d30745bf575f30d08f9eeb1abb2fb3072f6a3a`
+- TAKY Enforcement Regression #405 / #406 — SUCCESS
+- drawing-engine-core #861 / #862 — SUCCESS
+
+Future resume must still query live HEAD + exact-head CI.
+
 ## DWG OPEN REDUCTION — 2026-09-24
 
 A strict GNU LibreDWG `dwgread` bridge now exists.
@@ -386,7 +416,7 @@ Therefore the old OPEN “no trusted DWG decoder path” is reduced, not falsely
   - ANTHROPIC_API_KEY for live independent visual review
 - user-facing real-project production pilot has not been run; read-only/staging real-source pilots have passed
 - strict GNU LibreDWG `dwgread` bridge is IMPLEMENTED for staging, but live runtime decoder presence + real DWG→DXF source-equivalence validation remain OPEN; authority stays `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE` and `production_claimable=false`
-- SOM/Foster technical-clarity reference remains deferred until verified STRUCTURE / PROGRAM / ENVELOPE presentation roles are available
+- SOM/Foster staging adapter + dedicated metric are IMPLEMENTED; remaining OPEN is independent verified STRUCTURE / PROGRAM / ENVELOPE role authority admission and production trust wiring
 - CI synthetic Vision receipt proves trust plumbing, not a live Anthropic API quality judgment
 
 ## STATUS

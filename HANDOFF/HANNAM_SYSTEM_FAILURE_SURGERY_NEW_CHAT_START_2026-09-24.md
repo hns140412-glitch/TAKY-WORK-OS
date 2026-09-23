@@ -90,7 +90,7 @@ Reference applicability:
 - ARCHDAILY_PLAN_HIERARCHY = PARTIAL / SOURCE_LINE_HIERARCHY_ONLY
 - OMA_RELATION_FIRST = PARTIAL / DECLARED_PRIMARY_RELATION_FOCUS_ONLY
 - BIG_ONE_MOVE = PARTIAL / DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY
-- SOM_FOSTER_TECHNICAL_CLARITY = DEFERRED
+- SOM_FOSTER_TECHNICAL_CLARITY = DEFERRED / staging adapter + metric implemented, verified-role authority not admitted
 
 ArchDaily partial implementation:
 source stroke width
@@ -114,6 +114,16 @@ Declared diagram-role adapter rule:
 - application/effect proof는 final canonical SVG digest에 bind
 - 이미 compliant한 diagram을 effect 생성 목적으로 왜곡하지 않음
 
+SOM/Foster current state:
+- staging adapter = `VERIFIED_PRESENTATION_ROLE_CLARITY`
+- effect metric = `TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1`
+- STRUCTURE / PROGRAM / ENVELOPE만 허용
+- `data-taky-role-source="VERIFIED"` + matching role-proof SHA-256 required
+- geometry mutation / semantic inference 금지
+- repeated application idempotent
+- production_claimable = false
+- 남은 OPEN = independent verified-role authority admission + production trust wiring
+
 DWG current state:
 - GNU LibreDWG `dwgread` strict bridge code = IMPLEMENTED
 - original DWG SHA-256 preserved
@@ -133,7 +143,7 @@ Readiness:
 - live validator/gateway secrets provisioning
 - live user-facing real-project production pilot
 - DWG live-runtime `dwgread` provisioning + real source-equivalence validation (bridge implemented; `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE`, production claim forbidden)
-- SOM/Foster verified-role executable adapter/effect metric
+- SOM/Foster independent verified-role authority admission + production trust wiring (staging adapter/metric implemented)
 - repository branch protection = ADMIN_REQUIRED / OPEN
 
 재개 직후 closed surgery를 반복 검토하지 말고,

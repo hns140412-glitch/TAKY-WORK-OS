@@ -164,9 +164,11 @@ Applicability classes:
 
 - `DEFERRED`
   - mined knowledge remains available
-  - production claim is forbidden until an executable adapter + effect metric exists
+  - production claim is forbidden until all required authority, executable adapter and effect metric exist
   - current example:
-    - `SOM_FOSTER_TECHNICAL_CLARITY` — verified architectural presentation roles required
+    - `SOM_FOSTER_TECHNICAL_CLARITY`
+      - staging adapter + dedicated effect metric are implemented
+      - production remains deferred because independent verified STRUCTURE / PROGRAM / ENVELOPE role authority is not yet admitted
 
 Multi-reference production requires:
 
@@ -201,6 +203,34 @@ Current safe scopes:
 - `BIG_ONE_MOVE` → `DECLARED_BASE_MOVE_RESULT_EMPHASIS_ONLY`
 
 This does not promote `SOM_FOSTER_TECHNICAL_CLARITY`; STRUCTURE / PROGRAM / ENVELOPE remain architectural semantic roles requiring verified-role authority.
+
+## VERIFIED TECHNICAL ROLE — STAGING-ONLY ADAPTER
+
+SOM/Foster technical-clarity execution now has a staging-only adapter and dedicated objective metric.
+
+Staging adapter:
+- reference: `SOM_FOSTER_TECHNICAL_CLARITY`
+- mode: `VERIFIED_PRESENTATION_ROLE_CLARITY`
+- roles: STRUCTURE / PROGRAM / ENVELOPE
+- requires `data-taky-role-source="VERIFIED"`
+- requires one matching `data-taky-role-proof-sha256`
+- changes presentation-only opacity / stroke-width
+- preserves geometry-bearing SVG attributes
+- stores source stroke width so repeated application is idempotent
+- semantic inference remains false
+
+Effect metric:
+- `TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1`
+- checks geometry preservation
+- checks verified-role proof continuity
+- measures role separation in opacity / stroke width
+- rejects geometry mutation and missing / mismatched role proof
+
+Hard lock:
+- adapter output explicitly remains `production_claimable=false`
+- compiler applicability remains `DEFERRED`
+- executable styling capability does NOT create semantic role authority
+- production claim remains blocked until verified role authority is independently admitted
 
 ## SOURCE-STYLE RANK — SAFE PARTIAL LINE-HIERARCHY ADAPTER
 

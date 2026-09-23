@@ -219,13 +219,22 @@ For both:
 - objective effect receipt is bound to the same canonical SVG lineage
 - already-compliant diagrams are not distorted to manufacture effect
 
-### DEFERRED
+### DEFERRED — EXECUTION SLICE EXISTS, AUTHORITY DOES NOT
 - `SOM_FOSTER_TECHNICAL_CLARITY`
-  - verified STRUCTURE / PROGRAM / ENVELOPE presentation roles required
+  - staging adapter: `VERIFIED_PRESENTATION_ROLE_CLARITY`
+  - dedicated metric: `TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1`
+  - roles accepted: STRUCTURE / PROGRAM / ENVELOPE
+  - every target must carry `data-taky-role-source="VERIFIED"`
+  - matching `data-taky-role-proof-sha256` is required
+  - presentation-only opacity / stroke-width changes
+  - geometry preservation + idempotency regression PASS
+  - adapter output explicitly `production_claimable=false`
+  - remaining blocker: independent verified-role authority admission / production trust wiring
 
 DEFERRED means:
 - mined knowledge is preserved
-- study / staging remains allowed
+- executable staging study is allowed
+- executable capability is not semantic authority
 - user-facing production claim is not allowed yet
 
 ## MULTI-REFERENCE RULE
@@ -319,7 +328,7 @@ user-facing production refuses a non-green exact HEAD.
 1. provision real validator / gateway secrets outside the repo
 2. live user-facing real-project production pilot — NOT RUN
 3. DWG live-runtime `dwgread` provisioning + real-project source-equivalence validation — OPEN; bridge code exists, production authority does not
-4. implement SOM/Foster verified-role adapter + effect metric if/when verified architectural presentation-role authority is available
+4. SOM/Foster adapter + metric are implemented in staging; admit independent verified architectural role authority and production trust wiring before any production claim
 5. repository branch protection — ADMIN REQUIRED
 6. run actual live Vision review only when readiness says configured model is healthy
 
