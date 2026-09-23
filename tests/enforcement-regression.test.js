@@ -15,6 +15,9 @@ const NarrativeGate=require('../runtime/narrative-evidence-gate.js');
 const Pipeline=require('../runtime/production-pipeline.js');
 const ArtifactBroker=require('../runtime/artifact-broker.js');
 const Capability=require('../runtime/capability-token.js');
+const fs=require('fs');
+const os=require('os');
+const path=require('path');
 
 function minimalPackage(){
   return {
@@ -407,6 +410,64 @@ function minimalPackage(){
   });
   assert.equal(r.ok,false);
   assert.equal(r.stage,'VALIDATION');
+})();
+
+
+(function testArtifactBrokerPublishesOnlyFromStaging(){
+  const tmp=fs.mkdtempSync(path.join(os.tmpdir(),'taky-artifact-'));
+  const staging=path.join(tmp,'staging');
+  const production=path.join(tmp,'production');
+  fs.mkdirSync(staging,{recursive:true});
+  fs.writeFileSync(path.join(staging,'candidate.pdf'),'validated-bytes');
+
+  process.env.TAKY_STAGING_ROOT=staging;
+  process.env.TAKY_PRODUCTION_ROOT=production;
+
+  const routed=Router.routeProductionTask({
+    task_type:'ARCH_REPORT_ASSEMBLY',
+    requested_output:'USER_FACING'
+  });
+  const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const v=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results:gates
+  });
+  const e=Exposure.authorizeExposure({
+    authorization:routed.authorization,
+    validation_receipt:v.receipt,
+    target:'USER_VISIBLE'
+  });
+  const auth=Contract.verifyProductionAuthorization(routed.authorization);
+
+  const pub=ArtifactBroker.publishProductionArtifact({
+    artifact_id:'PUB-1',
+    artifact_type:'PDF',
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    source_ids:['SRC-1'],
+    staging_path:path.join(staging,'candidate.pdf'),
+    file_name:'final.pdf',
+    exposure_grant:e.grant
+  });
+  assert.equal(pub.ok,true);
+  assert.equal(fs.existsSync(path.join(production,'final.pdf')),true);
+
+  const outside=path.join(tmp,'outside.pdf');
+  fs.writeFileSync(outside,'bad');
+  const denied=ArtifactBroker.publishProductionArtifact({
+    artifact_id:'PUB-2',
+    artifact_type:'PDF',
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    staging_path:outside,
+    file_name:'bad.pdf',
+    exposure_grant:e.grant
+  });
+  assert.equal(denied.ok,false);
+  assert.equal(denied.reason,'STAGING_PATH_OUTSIDE_ALLOWED_ROOT');
+
+  fs.rmSync(tmp,{recursive:true,force:true});
 })();
 
 console.log('TAKY enforcement regression: PASS');
