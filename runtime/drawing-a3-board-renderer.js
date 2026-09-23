@@ -170,6 +170,20 @@
     const subtitle=String(pageProfile.subtitle||pageProfile.hero||'SOURCE DRAWING').replace(/_/g,' ');
     const projectTitle=project.title||'';
     const scaleLabel=String(pageProfile.scale_label||'').trim();
+    const footerProfile=profile.footer||{};
+    const footerLeft=String(
+      footerProfile.left||
+      project.footer_label||
+      [project.organization||project.firm||'',project.location||''].filter(Boolean).join(' · ')||
+      projectTitle
+    ).trim();
+    const footerRight=String(
+      footerProfile.right||
+      project.issue_date||
+      project.report_date||
+      project.revision_date||
+      ''
+    ).trim();
     const debugLabels=profile.debug_labels===true;
 
     const ink='#151515';
@@ -236,8 +250,8 @@
         (narrativeState.status==='NO_NARRATIVE_BLOCK'?fallbackSupport:'')+
 
         '<line x1="'+margin+'" y1="'+(height-margin-footerH)+'" x2="'+(width-margin)+'" y2="'+(height-margin-footerH)+'" stroke="'+hair+'" stroke-width="2"/>'+
-        '<text x="'+margin+'" y="'+(height-margin-12)+'" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">YKH ASSOCIATES · HANNAM-DONG 737-21</text>'+
-        '<text x="'+(width-margin)+'" y="'+(height-margin-12)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">2026.09</text>'+
+        (footerLeft?'<text x="'+margin+'" y="'+(height-margin-12)+'" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">'+esc(footerLeft)+'</text>':'')+
+        (footerRight?'<text x="'+(width-margin)+'" y="'+(height-margin-12)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">'+esc(footerRight)+'</text>':'')+
       '</g>';
 
     const background='<rect x="0" y="0" width="'+width+'" height="'+height+'" fill="'+paper+'"/>';
