@@ -1,6 +1,6 @@
 # DRAWING PRESENTATION ENGINE V1
 
-Status: IMPLEMENTABLE CORE / BRANCH CANDIDATE  
+Status: V1 CORE / PARTIALLY SUPERSEDED BY DRAWING_ENGINE_ARCHITECTURE_REVISION_V2  
 Authority: subordinate to central TAKY and `WORK_OS.md`.
 
 ## Slogan execution loop
@@ -106,3 +106,23 @@ V1 core implementation lives in:
 - `ROUTERS/DRAWING_ROUTER.md`
 
 External adapters such as DXF/vector-PDF extraction, raster semantic segmentation, SVG/source overlay and pixel/geometry diff remain explicit follow-on implementations.
+
+
+## V2 production-authority correction — HARD LOCK
+
+This V1 contract remains useful for KEY_STATE, source authority and presentation layering, but its earlier “lightest viable adapter” language does not authorize production bypass.
+
+For PREVIEW / FINAL / USER_FACING artifacts, V2 controls:
+- only AUTHORIZED_ENGINE may create production artifacts;
+- one-off Python / generic HTML / ReportLab / local workaround renderers are EXPERIMENT/DIAGNOSTIC only;
+- DESTRUCTIVE_RASTER_MASK is forbidden in production;
+- GENERATIVE_GEOMETRY_REDRAW is forbidden in production;
+- UNVERIFIED_SEMANTIC_INFERENCE is forbidden in production;
+- Reference use requires compile trace and output-effect validation;
+- L8 USER EXPOSURE GATE applies: NO PASS -> NO SHOW.
+
+Authoritative V2 references:
+- DRAWING/DRAWING_ENGINE_ARCHITECTURE_REVISION_V2.md
+- DRAWING/PRE_USER_VALIDATION_SPEC_V1.json
+- DRAWING/REFERENCE_COMPILER_SPEC_V1.json
+- runtime/drawing-production-authority-gate.js
