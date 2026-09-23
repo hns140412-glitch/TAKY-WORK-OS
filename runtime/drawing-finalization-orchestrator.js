@@ -1,9 +1,13 @@
 (function(root,factory){
-  const api=factory();
+  const authority=(typeof module==='object'&&module.exports)
+    ? require('./drawing-production-authority-gate')
+    : root.TakyDrawingProductionAuthorityGate;
+  const api=factory(authority);
   if(typeof module==='object'&&module.exports) module.exports=api;
   else root.TakyDrawingFinalizer=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(authority){
   'use strict';
+
   function buildFinalizationPlan({view_id='VIEW',profile='PUBLICATION',required_formats=['html','pdf','png','pptx','xlsx']}={}){
     const steps=[
       {id:view_id+':COMPOSITE',stage:1,action:'COMPOSE_PRESENTATION_LAYERS'},
@@ -29,6 +33,7 @@
       invariant:'NO_PASS_NO_SHOW__OUTPUT_FORMAT_FAILURE_MUST_NOT_MUTATE_SOURCE_OR_GEOMETRY'
     });
   }
+
   function nextAction({fidelity='PASS',quality='PASS',formats='PASS',pre_user='PASS',production_authority='PASS'}={}){
     if(fidelity!=='PASS') return 'RETURN_TO_KEY_STATE';
     if(quality!=='PASS') return 'REVISE_PRESENTATION_LAYER';
@@ -37,5 +42,19 @@
     if(formats!=='PASS') return 'REEXPORT_A3_BUNDLE';
     return 'SHIP';
   }
-  return Object.freeze({version:'2.0.0',buildFinalizationPlan,nextAction});
+
+  function decideUserExposure(input={}){
+    if(!authority || typeof authority.evaluate!=='function'){
+      return Object.freeze({ok:false,decision:'HOLD',blocks:Object.freeze(['PRODUCTION_AUTHORITY_GATE_UNAVAILABLE']),invariant:'NO_PASS_NO_SHOW'});
+    }
+    const admission=authority.evaluate({...input,user_exposure:true});
+    return Object.freeze({
+      ok:admission.ok===true && admission.decision==='SHOW',
+      decision:admission.ok===true && admission.decision==='SHOW'?'SHOW':'HOLD',
+      blocks:admission.blocks,
+      invariant:'NO_PASS_NO_SHOW'
+    });
+  }
+
+  return Object.freeze({version:'2.1.0',buildFinalizationPlan,nextAction,decideUserExposure});
 });
