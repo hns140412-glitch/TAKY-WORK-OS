@@ -99,3 +99,26 @@ If no DXF/DWG source is available:
 - use PDF source-line / source-weight presentation routes;
 - do not manufacture CAD semantics from PDF graphics;
 - keep SALES_TEXTURED locked until verified semantic evidence is available.
+
+
+## Production authority — HARD LOCK
+
+Production artifact classes are PREVIEW / FINAL / USER_FACING.
+
+Only this route may create them:
+
+TASK -> DRAWING_ROUTER -> AUTHORIZED_ENGINE -> PRE_USER_VALIDATION -> USER_EXPOSURE_GATE -> OUTPUT
+
+Rules:
+- ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE.
+- ad-hoc Python / generic HTML / ReportLab / one-off renderer may be used only as EXPERIMENT or DIAGNOSTIC.
+- EXPERIMENT / DIAGNOSTIC artifacts cannot be shown as preview/final/user-facing output.
+- DESTRUCTIVE_RASTER_MASK and GENERATIVE_GEOMETRY_REDRAW are forbidden production operations.
+- UNVERIFIED_SEMANTIC_INFERENCE is forbidden in production.
+- NO PASS -> NO SHOW.
+- Human approval selects among already-valid alternatives; it does not debug geometry/fact/semantic failures.
+
+Runtime enforcement:
+- runtime/drawing-production-authority-gate.js
+- runtime/drawing-reference-compiler.js
+- runtime/drawing-source-equivalence.js
