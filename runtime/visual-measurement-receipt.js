@@ -25,7 +25,7 @@ function verifyVisualMeasurement(receipt,expectedDigest){
   return Object.freeze({ok:true,payload:p,validator_id:MEASURER_ID});
 }
 
-function verifyReferenceEffect(receipt,expectedCandidateDigest,expectedReferenceIds=[]){
+function verifyReferenceEffect(receipt,expectedCandidateDigest,expectedReferenceIds=[],expectedCompileDigest=null){
   const verified=Verifier.verifySignedReceipt(receipt,{
     expected_type:'TAKY_REFERENCE_EFFECT_RECEIPT',
     public_key_pem:publicKey(),
@@ -35,6 +35,9 @@ function verifyReferenceEffect(receipt,expectedCandidateDigest,expectedReference
   const p=verified.payload;
   if(expectedCandidateDigest && p.candidate_digest!==expectedCandidateDigest){
     return Object.freeze({ok:false,reason:'REFERENCE_EFFECT_DIGEST_MISMATCH'});
+  }
+  if(expectedCompileDigest && p.reference_compile_digest!==expectedCompileDigest){
+    return Object.freeze({ok:false,reason:'REFERENCE_COMPILE_DIGEST_MISMATCH'});
   }
   const actual=new Set(p.reference_ids||[]);
   for(const id of expectedReferenceIds||[]){
