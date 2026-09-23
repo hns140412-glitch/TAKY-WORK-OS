@@ -2,11 +2,10 @@
 
 const ExecutionContract=require('./execution-contract.js');
 const IndependentValidator=require('./independent-validator.js');
+const Capability=require('./capability-token.js');
 
-const grants=new WeakSet();
-
-function authorizeExposure(input={}) {
-  const {authorization, validation_receipt, target='USER_VISIBLE'}=input;
+function authorizeExposure(input={}){
+  const {authorization,validation_receipt,target='USER_VISIBLE'}=input;
 
   const auth=ExecutionContract.verifyProductionAuthorization(authorization);
   if(!auth.ok) return Object.freeze({ok:false,reason:'NO_PASS_NO_SHOW',detail:auth});
@@ -18,26 +17,22 @@ function authorizeExposure(input={}) {
     return Object.freeze({ok:false,reason:'INVALID_EXPOSURE_TARGET',target});
   }
 
-  const grant=Object.freeze({
-    kind:'TAKY_EXPOSURE_GRANT',
+  const signed=Capability.signPayload('TAKY_EXPOSURE_GRANT',{
     target,
-    producer_id:authorization.producer_id,
-    execution_graph_id:authorization.execution_graph_id,
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
     validation_status:'PASS'
   });
-  grants.add(grant);
-  return Object.freeze({ok:true,grant});
+  if(!signed.ok) return signed;
+  return Object.freeze({ok:true,grant:signed.token});
 }
 
 function verifyExposureGrant(grant){
-  return Object.freeze({
-    ok:!!grant && grants.has(grant),
-    reason:(!grant || !grants.has(grant))?'INVALID_OR_FORGED_EXPOSURE_GRANT':undefined
-  });
+  return Capability.verifyToken(grant,'TAKY_EXPOSURE_GRANT');
 }
 
 module.exports=Object.freeze({
-  version:'1.0.0',
+  version:'2.0.0',
   authorizeExposure,
   verifyExposureGrant
 });
