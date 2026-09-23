@@ -23,9 +23,21 @@ def _clamp(v: float, lo: float=0.0, hi: float=1.0) -> float:
 
 def _gray_metrics(gray: np.ndarray) -> Dict[str, Any]:
     arr=gray.astype(np.float32)
-    white=arr>=245
-    dark=arr<=80
-    ink=arr<245
+
+    # Architectural boards often use ivory / warm-gray paper instead of pure white.
+    # Estimate the dominant paper tone from the image itself, then classify ink
+    # relative to that tone. Otherwise an ivory background is falsely counted as
+    # nearly 100% ink.
+    hist=np.bincount(gray.reshape(-1),minlength=256)
+    background_level=int(hist.argmax())
+    if background_level < 160:
+        background_level=int(np.percentile(arr,90))
+
+    background_band=6
+    ink_delta=10
+    white=np.abs(arr-background_level)<=background_band
+    dark=arr<=min(80,background_level-80)
+    ink=arr<(background_level-ink_delta)
 
     gx=np.zeros_like(arr)
     gy=np.zeros_like(arr)
@@ -54,6 +66,7 @@ def _gray_metrics(gray: np.ndarray) -> Dict[str, Any]:
     return {
         "width_px":int(arr.shape[1]),
         "height_px":int(arr.shape[0]),
+        "background_level":background_level,
         "mean_luminance":round(float(arr.mean()/255.0),6),
         "contrast_std_norm":round(float(arr.std()/127.5),6),
         "whitespace_ratio":round(float(white.mean()),6),
