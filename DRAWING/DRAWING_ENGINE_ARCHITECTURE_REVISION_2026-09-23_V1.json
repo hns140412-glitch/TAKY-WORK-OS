@@ -1,37 +1,54 @@
 {
-  "version": "2026-09-23.1",
+  "version": "2026-09-23.2",
   "status": "ACTIVE_ON_SURGERY_BRANCH",
   "old_architecture": "TASK -> arbitrary implementation -> artifact -> optional validation -> user",
+  "central_existing_engine_discovery": "The repo already contained engine-core, reference compiler/router, pre-user validation, production authority gate and finalization orchestrator. The primary defect was enforcement/routing, not total absence of capability.",
   "new_architecture": [
     "TASK",
-    "ROUTER",
-    "AUTHORIZED_ENGINE",
+    "DRAWING_ROUTER",
+    "DRAWING_ENGINE_CORE",
     "L0_SOURCE_AUTHORITY",
+    "SOURCE_FRESHNESS",
     "L1_GEOMETRY",
     "L2_SEMANTIC",
-    "REFERENCE_COMPILER",
+    "DRAWING_REFERENCE_ROUTER_COMPILER",
     "L3_PRESENTATION",
     "L4_ENTOURAGE",
     "L5_ANNOTATION",
     "L6_AI_ATMOSPHERE",
     "L7_FINAL_VALIDATION",
+    "DRAWING_PRODUCTION_AUTHORITY_GATE",
+    "DRAWING_FINALIZATION_ORCHESTRATOR",
     "L8_USER_EXPOSURE_GATE",
     "OUTPUT"
   ],
   "contracts": {
-    "production_result_owner": "DRAWING_PRODUCTION_ROUTER",
+    "production_result_owner": "DRAWING_PRODUCTION_AUTHORITY_GATE + DRAWING_FINALIZATION_ORCHESTRATOR",
+    "execution_receipt_route": "TASK>DRAWING_ROUTER>AUTHORIZED_ENGINE",
+    "authorized_executor": "AUTHORIZED_DRAWING_ENGINE",
     "one_off_scripts": "EXPERIMENT_DIAGNOSTIC_ONLY",
+    "parallel_local_engine": "FORBIDDEN",
     "ai_geometry_authority": false,
     "raster_mask_geometry_authority": false,
     "semantic_before_presentation": true,
+    "source_freshness": "CONTENT_DIGEST + AUTHORITY/REVISION; DATE ALONE FORBIDDEN",
+    "reference_effect": "EVIDENCE_BACKED APPLIED PARAMETERS + VALIDATED PROBES",
     "no_pass_no_show": true
   },
   "deprecated": [
     "direct buildOutputPlan production route",
     "one-off user-facing ReportLab/Python/Generic HTML routes",
-    "generative redraw as plan authority"
+    "destructive raster mask as geometry-authoritative path",
+    "generative redraw as plan authority",
+    "self-asserted reference-effect PASS"
   ],
   "superseded": [
-    "preservation-only output treated as enhancement success"
+    "preservation-only output treated as enhancement success",
+    "handoff as unconditional resume instruction"
+  ],
+  "rejected_experimental": [
+    "parallel drawing-production-router.js introduced during surgery",
+    "parallel pre-user-validation.js introduced during surgery",
+    "parallel reference-compiler.js introduced during surgery"
   ]
 }
