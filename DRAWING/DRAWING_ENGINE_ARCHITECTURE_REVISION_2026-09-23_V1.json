@@ -1,0 +1,37 @@
+{
+  "version": "2026-09-23.1",
+  "status": "ACTIVE_ON_SURGERY_BRANCH",
+  "old_architecture": "TASK -> arbitrary implementation -> artifact -> optional validation -> user",
+  "new_architecture": [
+    "TASK",
+    "ROUTER",
+    "AUTHORIZED_ENGINE",
+    "L0_SOURCE_AUTHORITY",
+    "L1_GEOMETRY",
+    "L2_SEMANTIC",
+    "REFERENCE_COMPILER",
+    "L3_PRESENTATION",
+    "L4_ENTOURAGE",
+    "L5_ANNOTATION",
+    "L6_AI_ATMOSPHERE",
+    "L7_FINAL_VALIDATION",
+    "L8_USER_EXPOSURE_GATE",
+    "OUTPUT"
+  ],
+  "contracts": {
+    "production_result_owner": "DRAWING_PRODUCTION_ROUTER",
+    "one_off_scripts": "EXPERIMENT_DIAGNOSTIC_ONLY",
+    "ai_geometry_authority": false,
+    "raster_mask_geometry_authority": false,
+    "semantic_before_presentation": true,
+    "no_pass_no_show": true
+  },
+  "deprecated": [
+    "direct buildOutputPlan production route",
+    "one-off user-facing ReportLab/Python/Generic HTML routes",
+    "generative redraw as plan authority"
+  ],
+  "superseded": [
+    "preservation-only output treated as enhancement success"
+  ]
+}
