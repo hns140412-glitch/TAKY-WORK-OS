@@ -5,6 +5,7 @@ const fs=require('fs');
 const path=require('path');
 const renderer=require('./drawing-a3-board-renderer');
 const htmlExporter=require('./drawing-html-exporter');
+const admission=require('./drawing-production-admission-cli');
 
 function arg(name,required=false){
   const i=process.argv.indexOf('--'+name);
@@ -26,6 +27,8 @@ function main(){
   const sourceHref=arg('source-href',false);
   const outSvg=arg('out-svg',true);
   const outHtml=arg('out-html',false);
+  const artifactClass=(arg('artifact-class',false)||'EXPERIMENT').toUpperCase();
+  const productionContextPath=arg('production-context',false);
 
   const pkg=JSON.parse(fs.readFileSync(packagePath,'utf8'));
   const profile=JSON.parse(fs.readFileSync(profilePath,'utf8'));
@@ -42,6 +45,18 @@ function main(){
   if(!board.ok){
     process.stderr.write(JSON.stringify(board,null,2)+'\n');
     process.exit(2);
+  }
+  const productionContext=productionContextPath
+    ? JSON.parse(fs.readFileSync(productionContextPath,'utf8'))
+    : {};
+  const admissionResult=admission.evaluate({
+    artifact_class:artifactClass,
+    artifact_text:board.svg,
+    production_context:productionContext
+  });
+  if(!admissionResult.ok){
+    process.stderr.write(JSON.stringify({ok:false,reason:'PRODUCTION_ADMISSION_FAILED',admission:admissionResult},null,2)+'\n');
+    process.exit(4);
   }
   fs.writeFileSync(outSvg,board.svg,'utf8');
 
@@ -64,7 +79,10 @@ function main(){
     source_overlay_last:board.source_overlay_last,
     out_svg:path.resolve(outSvg),
     out_html:outHtml?path.resolve(outHtml):null,
-    route:'REPORT_PACKAGE -> A3_SVG_BOARD_STATE -> HTML'
+    route:'REPORT_PACKAGE -> A3_SVG_BOARD_STATE -> PRODUCTION_ADMISSION -> HTML',
+    artifact_class:artifactClass,
+    showable:admissionResult.showable===true,
+    production_admission:admissionResult.decision
   },null,2)+'\n');
 }
 
