@@ -8,7 +8,7 @@ function publicKey(){
   return process.env.TAKY_VISION_PUBLIC_KEY_PEM||null;
 }
 
-function verifyReview(receipt,expectedDigest){
+function verifyReview(receipt,expectedDigest,expectedIntentDigest=null){
   const verified=Verifier.verifySignedReceipt(receipt,{
     expected_type:'TAKY_VISION_REVIEW_RECEIPT',
     public_key_pem:publicKey(),
@@ -19,6 +19,9 @@ function verifyReview(receipt,expectedDigest){
   const p=verified.payload;
   if(expectedDigest && p.artifact_digest!==expectedDigest){
     return Object.freeze({ok:false,reason:'VISION_REVIEW_DIGEST_MISMATCH'});
+  }
+  if(expectedIntentDigest && p.intent_digest!==expectedIntentDigest){
+    return Object.freeze({ok:false,reason:'VISION_REVIEW_INTENT_MISMATCH'});
   }
   const pass=
     p.professional_family_pass===true &&
