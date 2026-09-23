@@ -343,6 +343,163 @@ function minimalPackage(){
   assert.equal(r.status,'FINAL_APPROVABLE');
 })();;;
 
+(function testArchDailyLineHierarchyMetricBinding(){
+  const artifactDigest='abababababababababababababababababababababababababababababababab';
+  const sourceDigest='cdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcdcd';
+  const controlledDigest='efefefefefefefefefefefefefefefefefefefefefefefefefefefefefef';
+
+  const pkg={
+    package_id:'ARCHDAILY_TEST',
+    project:{title:'ArchDaily hierarchy fixture'},
+    sources:[{source_id:'SRC-ARCH',role:'CURRENT_GEOMETRY_SOURCE'}],
+    facts:[],review_items:[],cases:[],methods:[],pages:[]
+  };
+
+  const humanIntent=HumanIntent.compileHumanIntent({
+    desired_outcome:'Preserve source geometry while strengthening existing source line hierarchy.',
+    success_criteria:['no semantic guessing','source line order remains monotonic']
+  });
+
+  const compiled=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+    context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+  });
+  assert.equal(compiled.ok,true);
+  assert.deepEqual(compiled.effect_metrics,['TAKY_LINE_HIERARCHY_DELTA_V1']);
+
+  const profileApplication=ReferenceApplication.applyToPresentationProfile({
+    a3:{margin_mm:12,layout:{hero_ratio:0.74,support_ratio:0.26}}
+  },compiled);
+  assert.equal(profileApplication.ok,true);
+  assert.equal(profileApplication.applied_parameters.length,0);
+  assert.equal(profileApplication.source_style_requests.length,1);
+
+  const sourceStyleApplication={
+    schema:'TAKY_SOURCE_STYLE_RANK_V1',
+    mode:'SOURCE_STYLE_RANK',
+    compile_digest:compiled.compile_digest,
+    reference_id:'ARCHDAILY_PLAN_HIERARCHY',
+    semantic_inference:false,
+    geometry_preserved:true,
+    monotonic_order_preserved:true,
+    applied:true,
+    styled_elements:32739
+  };
+  assert.equal(
+    ReferenceApplication.validateSourceStyleApplication(sourceStyleApplication,compiled).ok,
+    true
+  );
+
+  const sourceFidelity=TestSigner.signSourceFidelity({
+    evidence:{
+      schema:'TAKY_SOURCE_FIDELITY_EVIDENCE_V1',
+      ok:true,
+      semantic_inference:false,
+      source_sha256:sourceDigest,
+      source_page_index:0,
+      source_geometry_fingerprint:'geo-arch',
+      controlled_geometry_fingerprint:'geo-arch',
+      controlled_geometry_match:true,
+      controlled_svg_sha256:controlledDigest,
+      canonical_svg_sha256:'1212121212121212121212121212121212121212121212121212121212121212',
+      candidate_sha256:artifactDigest,
+      source_viewbox_match:true,
+      canonical_inline_match:true,
+      inline_transform_safe:true,
+      artifact_parity:{type:'PDF',ok:true,score:1.0}
+    }
+  });
+
+  const visual=TestSigner.signVisualMeasurement({
+    artifact_digest:artifactDigest,
+    metrics:{
+      schema:'TAKY_OBJECTIVE_VISUAL_METRICS_V1',
+      measurement_scope:'OBJECTIVE_ONLY',
+      professional_quality_claim:false,
+      metrics:{
+        width_mm:420,height_mm:297,landscape:true,
+        text_bbox_outside_page:false,
+        ink_ratio:0.18,contrast_std_norm:0.22,edge_density:0.06
+      }
+    }
+  });
+
+  const vision=TestSigner.signVisionReview({
+    artifact_digest:artifactDigest,
+    intent_digest:humanIntent.intent_digest,
+    professional_family_pass:true,
+    reference_effect_visible_without_explanation:true,
+    generic_layout_detected:false,
+    decision_value_pass:true
+  });
+
+  const lineEffect=TestSigner.signReferenceEffect({
+    baseline_digest:'3434343434343434343434343434343434343434343434343434343434343434',
+    candidate_digest:artifactDigest,
+    effect_input_digest:controlledDigest,
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+    reference_compile_digest:compiled.compile_digest,
+    comparison:{
+      ok:true,
+      schema:'TAKY_LINE_HIERARCHY_DELTA_V1',
+      measurement_scope:'OBJECTIVE_LINE_HIERARCHY_ONLY',
+      semantic_inference:false,
+      professional_quality_claim:false,
+      objective_effect_detected:true,
+      monotonic_order_preserved:true,
+      dynamic_range_gain:1.34,
+      minimum_adjacent_separation_gain:1.09
+    }
+  });
+
+  const common={
+    task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
+    artifact_digest:artifactDigest,
+    source_identity:{current_hash:sourceDigest,previous_hash:sourceDigest},
+    source_fidelity_receipt:sourceFidelity.receipt,
+    semantics:[],claims:[],
+    human_intent:{
+      desired_outcome:humanIntent.desired_outcome,
+      success_criteria:[...humanIntent.success_criteria]
+    },
+    reference:{
+      reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+      context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+    },
+    reference_application:profileApplication,
+    reference_source_style_application:sourceStyleApplication,
+    visual_measurement_receipt:visual.receipt,
+    vision_review_receipt:vision.receipt,
+    provenance:{source_ids:['SRC-ARCH'],module_ids:['DRAWING_CONTROLLED_PRESENTATION_V1','VALIDATION_ENGINE_V1']},
+    report_package:pkg,
+    exposure_target:'FINAL_APPROVABLE'
+  };
+
+  const good=Pipeline.runProduction({...common,reference_effect_receipt:lineEffect.receipt});
+  assert.equal(good.ok,true,JSON.stringify(good,null,2));
+  assert.equal(good.evidence.refSourceStyle.ok,true);
+  assert.equal(good.evidence.refEffectLineage.ok,true);
+
+  const wrongMetric=TestSigner.signReferenceEffect({
+    baseline_digest:'5656565656565656565656565656565656565656565656565656565656565656',
+    candidate_digest:artifactDigest,
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+    reference_compile_digest:compiled.compile_digest,
+    comparison:{
+      schema:'TAKY_OBJECTIVE_REFERENCE_DELTA_V1',
+      measurement_scope:'OBJECTIVE_ONLY',
+      objective_effect_detected:true,
+      clarity_only_suspected:false,
+      combined_effect_score:0.08,
+      professional_family_claim:false
+    }
+  });
+  const bad=Pipeline.runProduction({...common,reference_effect_receipt:wrongMetric.receipt});
+  assert.equal(bad.ok,false);
+  assert.equal(bad.stage,'VALIDATION');
+  assert.equal(bad.evidence.refEffect.reason,'REFERENCE_EFFECT_SCHEMA_MISMATCH');
+})();
+
 
 (function testSignedAuthorizationIsSerializable(){
   const routed=Router.routeProductionTask({
