@@ -37,6 +37,26 @@ class SourceStyleRankTests(unittest.TestCase):
         self.assertEqual(out["reason"],"NO_SOURCE_WIDTH_HIERARCHY")
         self.assertTrue(out["geometry_preserved"])
 
+    def test_skewed_frequency_uses_distinct_width_order(self):
+        lines=[]
+        specs=[(0.01,4),(0.1167,1),(0.24,40),(0.54,6),(1.02,2)]
+        y=0
+        for width,count in specs:
+            for _ in range(count):
+                y+=1
+                lines.append(f'<path d="M 0 {y} L 10 {y}" stroke="#111" fill="none" stroke-width="{width}"/>')
+        svg='<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">'+''.join(lines)+'</svg>'
+        out=apply_source_style_rank(svg)
+        self.assertTrue(out["ok"])
+        self.assertTrue(out["applied"])
+        m=out["source_widths"]["width_rank_map"]
+        self.assertEqual(m["0.01"],"LIGHT")
+        self.assertEqual(m["0.1167"],"LIGHT")
+        self.assertEqual(m["0.24"],"SECONDARY")
+        self.assertEqual(m["0.54"],"PRIMARY")
+        self.assertEqual(m["1.02"],"HEAVY")
+        self.assertGreater(out["rank_counts"]["SECONDARY"],out["rank_counts"]["PRIMARY"])
+
     def test_invalid_multiplier_order_is_blocked(self):
         svg='''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
           <path d="M 0 0 L 10 0" stroke="#111" fill="none" stroke-width="0.10"/>
