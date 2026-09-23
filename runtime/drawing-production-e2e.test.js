@@ -7,8 +7,8 @@ const path=require('path');
 const cp=require('child_process');
 
 const Renderer=require('./drawing-a3-board-renderer.js');
-const Measurement=require('./visual-measurement-receipt.js');
-const VisionReview=require('./vision-review-receipt.js');
+const ReferenceCompiler=require('./reference-compiler.js');
+const ReferenceApplication=require('./reference-application.js');
 const TestSigner=require('../tests/validator-test-helper.js');
 const Pipeline=require('./production-pipeline.js');
 const Broker=require('./artifact-broker.js');
@@ -31,10 +31,27 @@ function run(command,args,opts={}){
   return r.stdout;
 }
 
+function exportBundle(svgPath,name){
+  const dir=path.join(staging,name);
+  const raw=run(PYTHON,[
+    path.join(ROOT,'tools/drawing_a3_bundle_exporter.py'),
+    svgPath,dir,
+    '--orientation','landscape',
+    '--dpi','144',
+    '--max-attempts','2'
+  ]);
+  const bundle=JSON.parse(raw);
+  assert.equal(bundle.status,'PASS',JSON.stringify(bundle,null,2));
+  for(const key of ['html','pdf','png','pptx','xlsx']){
+    assert(fs.existsSync(bundle.outputs[key]),'missing '+name+' output '+key);
+  }
+  return bundle;
+}
+
 try{
   const sourcePdf=path.join(tmp,'source.pdf');
   const makePdf=[
-    'import fitz',
+    'import pymupdf as fitz',
     'doc=fitz.open()',
     'p=doc.new_page(width=400,height=240)',
     's=p.new_shape()',
@@ -61,13 +78,12 @@ try{
   assert.equal(controlled.ok,true);
   assert.equal(controlled.geometry_preserved,true);
 
-  const primitiveRaw=run(PYTHON,[
+  const primitiveResult=JSON.parse(run(PYTHON,[
     path.join(ROOT,'tools/drawing_geometry_primitive_adapter.py'),
     sourcePdf,
     '--type','PDF',
     '--page','0'
-  ]);
-  const primitiveResult=JSON.parse(primitiveRaw);
+  ]));
   assert.equal(primitiveResult.semantic_inference,false);
   assert(primitiveResult.primitive_count>0);
 
@@ -89,43 +105,66 @@ try{
       case_refs:[]
     }]
   };
-  const profile={
-    a3:{width_mm:420,height_mm:297,margin_mm:12,layout:{hero_ratio:0.74,support_ratio:0.26}},
+
+  const baselineProfile={
+    a3:{
+      width_mm:420,
+      height_mm:297,
+      margin_mm:8,
+      layout:{hero_ratio:0.60,support_ratio:0.40}
+    },
     pages:{P01:{title:'Synthetic Plan',hero:'SOURCE_DRAWING',scale_label:'1:200'}}
   };
 
+  const compiledReference=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+    context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
+  });
+  assert.equal(compiledReference.ok,true);
+
+  const referenceApplication=ReferenceApplication.applyToPresentationProfile(
+    baselineProfile,
+    compiledReference
+  );
+  assert.equal(referenceApplication.ok,true);
+  assert(referenceApplication.applied_parameters.length>=3);
+  assert.equal(referenceApplication.geometry_mutation,false);
+  assert.equal(referenceApplication.fact_mutation,false);
+
   const sourceSvg=fs.readFileSync(controlledSvg,'utf8');
-  const board=Renderer.renderPage({
+
+  const baselineBoard=Renderer.renderPage({
     package_data:pkg,
     page_id:'P01',
-    presentation_profile:profile,
+    presentation_profile:baselineProfile,
     source_svg:sourceSvg,
     source_viewbox:'0 0 400 240'
   });
-  assert.equal(board.ok,true);
-  assert.equal(board.source_geometry_locked,true);
-  assert.equal(board.source_overlay_last,true);
-  assert(board.svg.includes('width="420mm"'));
-  assert(board.svg.includes('height="297mm"'));
+  assert.equal(baselineBoard.ok,true);
 
-  const a3Svg=path.join(staging,'board.svg');
-  fs.writeFileSync(a3Svg,board.svg,'utf8');
+  const candidateBoard=Renderer.renderPage({
+    package_data:pkg,
+    page_id:'P01',
+    presentation_profile:referenceApplication.profile,
+    source_svg:sourceSvg,
+    source_viewbox:'0 0 400 240'
+  });
+  assert.equal(candidateBoard.ok,true);
+  assert.equal(candidateBoard.source_geometry_locked,true);
+  assert.equal(candidateBoard.source_overlay_last,true);
+  assert(candidateBoard.svg.includes('width="420mm"'));
+  assert(candidateBoard.svg.includes('height="297mm"'));
 
-  const bundleDir=path.join(staging,'bundle');
-  const bundleRaw=run(PYTHON,[
-    path.join(ROOT,'tools/drawing_a3_bundle_exporter.py'),
-    a3Svg,bundleDir,
-    '--orientation','landscape',
-    '--dpi','144',
-    '--max-attempts','2'
-  ]);
-  const bundle=JSON.parse(bundleRaw);
-  assert.equal(bundle.status,'PASS');
-  for(const key of ['html','pdf','png','pptx','xlsx']){
-    assert(fs.existsSync(bundle.outputs[key]),'missing output '+key);
-  }
+  const baselineSvg=path.join(staging,'baseline.svg');
+  const candidateSvg=path.join(staging,'candidate.svg');
+  fs.writeFileSync(baselineSvg,baselineBoard.svg,'utf8');
+  fs.writeFileSync(candidateSvg,candidateBoard.svg,'utf8');
 
-  const candidatePdf=bundle.outputs.pdf;
+  const baselineBundle=exportBundle(baselineSvg,'baseline-bundle');
+  const candidateBundle=exportBundle(candidateSvg,'candidate-bundle');
+
+  const baselinePdf=baselineBundle.outputs.pdf;
+  const candidatePdf=candidateBundle.outputs.pdf;
   const digest=Broker.sha256File(candidatePdf);
 
   const metrics=JSON.parse(run(PYTHON,[
@@ -143,13 +182,21 @@ try{
     path.join(ROOT,'tools/drawing_visual_metric_extractor.py'),
     candidatePdf,
     '--page','0',
-    '--baseline',sourcePdf
+    '--baseline',baselinePdf
   ]));
   assert.equal(comparisonPayload.comparison.schema,'TAKY_OBJECTIVE_REFERENCE_DELTA_V1');
+  assert.equal(
+    comparisonPayload.comparison.objective_effect_detected,
+    true,
+    JSON.stringify(comparisonPayload.comparison,null,2)
+  );
+  assert.equal(comparisonPayload.comparison.clarity_only_suspected,false);
+
   const refReceipt=TestSigner.signReferenceEffect({
-    baseline_digest:Broker.sha256File(sourcePdf),
+    baseline_digest:Broker.sha256File(baselinePdf),
     candidate_digest:digest,
-    reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+    reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+    reference_compile_digest:compiledReference.compile_digest,
     comparison:comparisonPayload.comparison
   });
   assert.equal(refReceipt.ok,true);
@@ -184,9 +231,10 @@ try{
     semantics:[],
     claims:[],
     reference:{
-      reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+      reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
     },
+    reference_application:referenceApplication,
     visual_measurement_receipt:measurement.receipt,
     reference_effect_receipt:refReceipt.receipt,
     vision_review_receipt:vision.receipt,
@@ -204,6 +252,7 @@ try{
 
   assert.equal(finalized.ok,true,JSON.stringify(finalized,null,2));
   assert.equal(finalized.status,'FINAL_APPROVABLE');
+  assert.equal(finalized.evidence.refApplication.ok,true);
 
   const auth=Contract.verifyProductionAuthorization(finalized.authorization);
   assert.equal(auth.ok,true);
@@ -221,10 +270,7 @@ try{
 
   assert.equal(published.ok,true,JSON.stringify(published,null,2));
   assert.equal(published.record.status,'PUBLISHED_PRODUCTION_ARTIFACT');
-  assert.equal(
-    Broker.sha256File(path.join(production,'synthetic-final.pdf')),
-    digest
-  );
+  assert.equal(Broker.sha256File(path.join(production,'synthetic-final.pdf')),digest);
 
   console.log('drawing-production-e2e: PASS');
 } finally {
