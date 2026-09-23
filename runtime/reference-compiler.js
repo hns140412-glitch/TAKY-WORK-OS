@@ -7,6 +7,7 @@ const REFERENCE_DNA=Object.freeze({
     intent:'PLAN_LINE_HIERARCHY',
     relation:Object.freeze(['CUT','PRIMARY','SECONDARY','ANNOTATION']),
     expected_effect:Object.freeze(['VISIBLE_HIERARCHY','FIGURE_GROUND']),
+    effect_metric:'TAKY_LINE_HIERARCHY_DELTA_V1',
     engine_patch:Object.freeze({
       source_style_policy:Object.freeze({
         requires_verified_roles:true,
@@ -27,6 +28,7 @@ const REFERENCE_DNA=Object.freeze({
     intent:'EDITORIAL_RESTRAINT',
     relation:Object.freeze(['HERO_DOMINANT','WHITESPACE_PROTECTED','CAPTION_SUBORDINATE']),
     expected_effect:Object.freeze(['LOWER_NOISE','DRAWING_DOMINANCE']),
+    effect_metric:'TAKY_OBJECTIVE_REFERENCE_DELTA_V1',
     engine_patch:Object.freeze({
       a3_layout:Object.freeze({
         margin_min_mm:12,
@@ -109,14 +111,16 @@ function compileReferenceProfile(input={}) {
       parameter_policy:'RELATION_LOCKED_VALUE_ADAPTED',
       adapter_context:Object.freeze({scale,output_size,source_density}),
       engine_patch:dna.engine_patch,
-      expected_effect:dna.expected_effect
+      expected_effect:dna.expected_effect,
+      effect_metric:dna.effect_metric||null
     }));
   }
 
   const canonical={
     reference_ids:[...reference_ids],
     context:{scale,output_size,source_density},
-    compiled
+    compiled,
+    effect_metrics:[...new Set(compiled.map(x=>x.effect_metric).filter(Boolean))]
   };
   const compile_digest=digest(canonical);
 
@@ -125,6 +129,7 @@ function compileReferenceProfile(input={}) {
     status:'COMPILED',
     compile_digest,
     compiled:Object.freeze(compiled),
+    effect_metrics:Object.freeze(canonical.effect_metrics),
     proof_required:Object.freeze([
       'APPLICATION_TRACE_PASS',
       'EFFECT_PASS',
