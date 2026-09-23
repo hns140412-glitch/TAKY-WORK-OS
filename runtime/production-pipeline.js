@@ -1,19 +1,57 @@
 'use strict';
 
 const Router=require('./work-os-router.js');
+const ExecutionContract=require('./execution-contract.js');
+const SourceIdentity=require('./source-identity-validator.js');
+const GeometryFingerprint=require('./geometry-fingerprint.js');
 const GeometryGuard=require('./geometry-guard.js');
+const FactGate=require('./fact-evidence-validator.js');
 const SemanticGate=require('./semantic-gate.js');
 const NarrativeGate=require('./narrative-evidence-gate.js');
 const ReferenceCompiler=require('./reference-compiler.js');
+const VisualQuality=require('./visual-quality-validator.js');
+const Provenance=require('./provenance-validator.js');
 const Validator=require('./independent-validator.js');
 const Exposure=require('./exposure-gate.js');
 const Report=require('./drawing-report-package.js');
 
+function fail(stage,detail,evidence={}){
+  return Object.freeze({ok:false,stage,detail,evidence:Object.freeze(evidence)});
+}
+
 function runProduction(input={}){
   const route=Router.routeProductionTask(input.task||{});
-  if(!route.ok) return Object.freeze({ok:false,stage:'ROUTER',detail:route});
+  if(!route.ok) return fail('ROUTER',route);
 
-  const geometry=GeometryGuard.validateGeometryIntegrity(input.geometry||{});
+  const auth=ExecutionContract.verifyProductionAuthorization(route.authorization);
+  if(!auth.ok) return fail('AUTHORIZATION',auth);
+
+  const source=SourceIdentity.classifyRevision(input.source_identity||{});
+
+  const geometryCompare=GeometryFingerprint.compareGeometry(
+    input.geometry?.source||{},
+    input.geometry?.output||{}
+  );
+
+  const geometry=GeometryGuard.validateGeometryIntegrity({
+    source_fingerprint:geometryCompare.source_fingerprint,
+    output_fingerprint:geometryCompare.output_fingerprint,
+    protected_anchors_source:input.geometry?.protected_anchors_source||[],
+    protected_anchors_output:input.geometry?.protected_anchors_output||[],
+    crop_source:input.geometry?.crop_source,
+    crop_output:input.geometry?.crop_output,
+    rotation_source:input.geometry?.rotation_source,
+    rotation_output:input.geometry?.rotation_output,
+    scale_source:input.geometry?.scale_source,
+    scale_output:input.geometry?.scale_output,
+    mask_intersections:input.geometry?.mask_intersections||[]
+  });
+
+  const facts=FactGate.validateFacts({
+    sources:input.report_package?.sources||input.sources||[],
+    facts:input.report_package?.facts||input.facts||[]
+  });
+
   const semantics=SemanticGate.validateSemanticAssignments(input.semantics||[]);
   const narrative=NarrativeGate.validateClaims(input.claims||[]);
 
@@ -22,17 +60,45 @@ function runProduction(input={}){
     ? ReferenceCompiler.validateReferenceEffect(input.reference_effect_proof||{})
     : Object.freeze({ok:false,status:'NOT_COMPILED'});
 
+  const a3=VisualQuality.validateA3(input.visual_metrics?.a3||{});
+  const readability=VisualQuality.validateArchitecturalReadability(input.visual_metrics?.readability||{});
+  const userEffect=VisualQuality.validateUserEffect(input.visual_metrics?.user_effect||{});
+
+  const provenance=Provenance.validateProvenance({
+    authorization:route.authorization,
+    source_ids:input.provenance?.source_ids||[],
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    module_ids:input.provenance?.module_ids||[]
+  });
+
   const gate_results={
-    SOURCE_GATE:input.external_gates?.SOURCE_GATE,
-    GEOMETRY_GATE:geometry.ok?'PASS':'FAIL',
-    FACT_GATE:input.external_gates?.FACT_GATE,
+    SOURCE_GATE:source.ok && source.gate==='PASS'?'PASS':'FAIL',
+    GEOMETRY_GATE:geometryCompare.ok && geometry.ok?'PASS':'FAIL',
+    FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:(refCompile.ok && refEffect.ok)?'PASS':'FAIL',
-    ARCHITECTURAL_READABILITY_GATE:input.external_gates?.ARCHITECTURAL_READABILITY_GATE,
-    A3_GATE:input.external_gates?.A3_GATE,
+    REFERENCE_EFFECT_GATE:refCompile.ok && refEffect.ok?'PASS':'FAIL',
+    ARCHITECTURAL_READABILITY_GATE:readability.ok?'PASS':'FAIL',
+    A3_GATE:a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
-    PROVENANCE_GATE:input.external_gates?.PROVENANCE_GATE,
-    USER_EFFECT_GATE:input.external_gates?.USER_EFFECT_GATE
+    PROVENANCE_GATE:provenance.ok?'PASS':'FAIL',
+    USER_EFFECT_GATE:userEffect.ok?'PASS':'FAIL'
+  };
+
+  const evidence={
+    source,
+    geometryCompare,
+    geometry,
+    facts,
+    semantics,
+    narrative,
+    refCompile,
+    refEffect,
+    a3,
+    readability,
+    userEffect,
+    provenance,
+    gate_results:Object.freeze(gate_results)
   };
 
   const validation=Validator.validateForExposure({
@@ -40,26 +106,19 @@ function runProduction(input={}){
     validator_id:input.validator_id,
     gate_results
   });
-  if(!validation.ok){
-    return Object.freeze({
-      ok:false,
-      stage:'VALIDATION',
-      detail:validation,
-      evidence:Object.freeze({geometry,semantics,narrative,refCompile,refEffect,gate_results:Object.freeze(gate_results)})
-    });
-  }
+  if(!validation.ok) return fail('VALIDATION',validation,evidence);
 
   const exposure=Exposure.authorizeExposure({
     authorization:route.authorization,
     validation_receipt:validation.receipt,
     target:input.exposure_target||'USER_VISIBLE'
   });
-  if(!exposure.ok) return Object.freeze({ok:false,stage:'EXPOSURE',detail:exposure});
+  if(!exposure.ok) return fail('EXPOSURE',exposure,evidence);
 
   let output_plan=null;
   if(input.task?.task_type==='ARCH_REPORT_ASSEMBLY'){
     output_plan=Report.buildOutputPlan(input.report_package||{},route.authorization);
-    if(!output_plan.ok) return Object.freeze({ok:false,stage:'OUTPUT_PLAN',detail:output_plan});
+    if(!output_plan.ok) return fail('OUTPUT_PLAN',output_plan,evidence);
   }
 
   return Object.freeze({
@@ -69,8 +128,8 @@ function runProduction(input={}){
     validation_receipt:validation.receipt,
     exposure_grant:exposure.grant,
     output_plan,
-    evidence:Object.freeze({geometry,semantics,narrative,reference:refEffect})
+    evidence:Object.freeze(evidence)
   });
 }
 
-module.exports=Object.freeze({version:'1.0.0',runProduction});
+module.exports=Object.freeze({version:'2.0.0',runProduction});
