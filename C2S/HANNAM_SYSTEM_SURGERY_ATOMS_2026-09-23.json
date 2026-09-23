@@ -1,5 +1,5 @@
 {
-  "schema": "C2S_ATOMS_V1",
+  "schema": "C2S_ATOMS_V2",
   "scope": "HANNAM_FAILURE_RETROSPECTIVE",
   "atoms": [
     {
@@ -65,6 +65,38 @@
       "owner": "QUALITY_GATE",
       "destination": "pre-user validation",
       "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-009",
+      "type": "CORRECTION",
+      "statement": "Production authorization cannot rely on self-asserted route/gate booleans; execution receipt and evidence-backed validation bundle are required.",
+      "owner": "TAKY_GOVERNANCE + DRAWING_ENGINE",
+      "destination": "runtime/drawing-execution-receipt.js + runtime/drawing-pre-user-validation.js + runtime/drawing-production-authority-gate.js",
+      "disposition": "IMPLEMENTED_CANDIDATE_CI_PASS"
+    },
+    {
+      "id": "HS-010",
+      "type": "DECISION",
+      "statement": "Drawing Engine V2 is superseded by V3 because provenance-bound admission is required.",
+      "owner": "DRAWING_ENGINE",
+      "destination": "DRAWING/DRAWING_ENGINE_ARCHITECTURE_REVISION_V3.md",
+      "disposition": "IMPLEMENTED_CANDIDATE"
+    },
+    {
+      "id": "HS-011",
+      "type": "OPEN",
+      "statement": "Repository enforcement does not prove hosted ChatGPT/tool paths automatically invoke L8.",
+      "owner": "TAKY_RUNTIME",
+      "destination": "central TAKY / hosted-runtime interception proof",
+      "disposition": "OPEN_RUNTIME_BOUNDARY"
+    },
+    {
+      "id": "HS-012",
+      "type": "OPEN",
+      "statement": "Reference Effect requires actual before/after historical visual fixture replay, not only parameter/probe contract tests.",
+      "owner": "REFERENCE_COMPILER",
+      "destination": "historical Hannam fixture replay",
+      "disposition": "OPEN_VISUAL_FIXTURE"
     }
   ]
 }
