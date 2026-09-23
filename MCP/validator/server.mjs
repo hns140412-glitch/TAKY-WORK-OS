@@ -22,6 +22,7 @@ const Signer=require('./receipt-signer.cjs');
 const VisionParser=require('../../runtime/vision-review-parser.js');
 const HumanIntent=require('../../runtime/human-intent-contract.js');
 const Readiness=require('../../runtime/readiness-evaluator.js');
+const VisionApiHealth=require('../../runtime/vision-api-health.js');
 
 function result(value){
   return {content:[{type:'text',text:JSON.stringify(value)}]};
@@ -155,10 +156,19 @@ export function buildServer(){
       const apiPresent=Boolean(process.env.ANTHROPIC_API_KEY);
       const model=process.env.TAKY_VISION_MODEL||'claude-sonnet-5';
 
+      const visionProbe=apiPresent
+        ? await VisionApiHealth.probeAnthropicModel({
+            api_key:process.env.ANTHROPIC_API_KEY,
+            model,
+            timeout_ms:Number(process.env.TAKY_VISION_HEALTH_TIMEOUT_MS||3000)
+          })
+        : Object.freeze({ok:false,reason:'ANTHROPIC_API_KEY_REQUIRED',requested_model:model});
+
       const evaluated=Readiness.evaluateValidationReadiness({
         measurement_private_key_valid:measurement.valid===true,
         vision_private_key_valid:vision.valid===true,
-        anthropic_api_key_present:apiPresent
+        anthropic_api_key_present:apiPresent,
+        vision_api_probe_ok:visionProbe.ok===true
       });
 
       let readinessReceipt=null;
@@ -181,6 +191,7 @@ export function buildServer(){
         vision_key:vision,
         anthropic_api_key_present:apiPresent,
         vision_model:model,
+        vision_api_probe:visionProbe,
         validation_readiness_receipt:readinessReceipt,
         receipt_ttl_ms:readinessReceipt?120000:null,
         warnings:[...evaluated.warnings]
