@@ -24,7 +24,7 @@
       "role": "CURRENT_GEOMETRY_SOURCE",
       "authority": "HIGHEST_GEOMETRY",
       "uri": "gdrive:1qplsHRMW-DY1hQaCziErrf3VMz5RR_ep",
-      "revision": "2026-09-22",
+      "revision": "2026-09-23T08:50:30+09:00",
       "allowed_use": [
         "geometry",
         "unit count",
@@ -33,7 +33,9 @@
       ],
       "forbidden_use": [
         "unverified DWG semantic inference before decoder/DXF route"
-      ]
+      ],
+      "latest": true,
+      "notes": "Drive file modified 2026-09-22T23:50:30.322Z; file size 2,579,579 bytes. Treat as latest geometry authority."
     },
     {
       "source_id": "SRC-PDF-B1",
@@ -41,7 +43,7 @@
       "role": "CURRENT_GEOMETRY_SOURCE",
       "authority": "FACT_SOURCE",
       "uri": "gdrive:1mRp3-5PV1_2Ni1sDdOE6X_mtYG3DxFzh",
-      "revision": "2026-09-23",
+      "revision": "2026-09-23T08:38:40+09:00",
       "allowed_use": [
         "basement geometry",
         "parking/access relation",
@@ -52,7 +54,8 @@
       "forbidden_use": [
         "automatic legal-area role assignment",
         "parking-count guess"
-      ]
+      ],
+      "latest_supporting_pdf": true
     },
     {
       "source_id": "SRC-PDF-1F",
@@ -70,7 +73,8 @@
       "forbidden_use": [
         "invented landscape",
         "automatic area semantics"
-      ]
+      ],
+      "freshness": "STALE_RELATIVE_TO_LATEST_DWG"
     },
     {
       "source_id": "SRC-PDF-2F",
@@ -87,7 +91,8 @@
       "forbidden_use": [
         "invented landscaping",
         "automatic area semantics"
-      ]
+      ],
+      "freshness": "STALE_RELATIVE_TO_LATEST_DWG"
     },
     {
       "source_id": "SRC-PDF-SECTION",
@@ -95,7 +100,7 @@
       "role": "CURRENT_GEOMETRY_SOURCE",
       "authority": "FACT_SOURCE",
       "uri": "gdrive:1ks_PJO294N84ue-8zXutgtgq5yJckXmH",
-      "revision": "2026-09-23",
+      "revision": "2026-09-23T08:38:40+09:00",
       "allowed_use": [
         "section geometry",
         "B1/1F/2F relation",
@@ -105,7 +110,8 @@
       "forbidden_use": [
         "unverified level transcription",
         "AI-redrawn section geometry as authority"
-      ]
+      ],
+      "latest_supporting_pdf": true
     },
     {
       "source_id": "SRC-FORMAT-0914",
@@ -1582,7 +1588,14 @@
   "validation": {
     "source_fidelity": "PENDING",
     "report_comprehension": "PENDING",
-    "output_bundle": "PENDING"
+    "output_bundle": "PENDING",
+    "latest_source_rebase": "PASS",
+    "presentation_preview_v1": "DEPRECATED_SOURCE_PRESERVATION_TEST",
+    "presentation_preview_v2": "B1_SECTION_REVIEW_READY",
+    "pending_visuals": [
+      "P05_1F_WAIT_LATEST_EXPORT",
+      "P06_2F_WAIT_LATEST_EXPORT"
+    ]
   },
   "presentation_reference_policy": {
     "principle": "External sites and Work/REFERENCE supply representation methods only; Work project sources retain geometry and factual authority.",
