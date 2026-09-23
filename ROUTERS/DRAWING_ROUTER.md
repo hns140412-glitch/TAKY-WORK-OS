@@ -99,3 +99,20 @@ If no DXF/DWG source is available:
 - use PDF source-line / source-weight presentation routes;
 - do not manufacture CAD semantics from PDF graphics;
 - keep SALES_TEXTURED locked until verified semantic evidence is available.
+
+
+## Production execution hard lock — 2026-09-23 surgery
+
+For `PREVIEW / FINAL / USER_FACING` artifacts, route selection is no longer advisory.
+
+Required path:
+`TASK -> ROUTER -> AUTHORIZED_ENGINE -> L0..L7 -> L8_USER_EXPOSURE_GATE -> OUTPUT`.
+
+Authorized production engines are declared by `runtime/drawing-production-gate.js`.
+Ad-hoc Python, ReportLab, generic HTML, direct generative redraw, or another one-off path may be used only as `EXPERIMENT / DIAGNOSTIC` and SHALL NOT emit a production preview/final/user-facing artifact.
+
+`ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE`.
+
+Before user exposure every applicable gate in `DRAWING/PRE_USER_VALIDATION_SPEC.json` must be PASS (or explicitly NOT_APPLICABLE). Otherwise: `NO PASS -> NO SHOW`.
+
+Reference-bearing tasks must compile reference DNA through `runtime/drawing-reference-compiler.js`. Naming a reference without an observable compiled output effect is a failure, not evidence of reference use.

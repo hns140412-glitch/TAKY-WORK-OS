@@ -1,0 +1,57 @@
+{
+  "clusters": [
+    {
+      "id": "RC-01",
+      "name": "DECLARATIVE_GOVERNANCE_WITHOUT_EXECUTABLE_ENFORCEMENT",
+      "failures": [
+        "F-HAN-001",
+        "F-HAN-006",
+        "F-HAN-007",
+        "F-HAN-011"
+      ],
+      "root": "Rules and engines existed, but production artifacts did not require machine-verifiable route attestations before user exposure.",
+      "fix": "Production gate + authorized engine route + exposure gate."
+    },
+    {
+      "id": "RC-02",
+      "name": "AUTHORITY_LAYER_INVERSION",
+      "failures": [
+        "F-HAN-002",
+        "F-HAN-003",
+        "F-HAN-009"
+      ],
+      "root": "Presentation/raster/generative layers could act before or above geometry/semantic authority.",
+      "fix": "L0-L2 immutable serial authority; L3-L6 subordinate; L7 validation; L8 exposure."
+    },
+    {
+      "id": "RC-03",
+      "name": "REFERENCE_KNOWLEDGE_NOT_COMPILED",
+      "failures": [
+        "F-HAN-004",
+        "F-HAN-005"
+      ],
+      "root": "Reference mining produced prose but not deterministic design tokens or observable output expectations.",
+      "fix": "Reference compiler and effect gate."
+    },
+    {
+      "id": "RC-04",
+      "name": "PASS_SEMANTICS_COLLAPSED",
+      "failures": [
+        "F-HAN-005",
+        "F-HAN-006"
+      ],
+      "root": "Technical pass, engine pass and visual/product pass were treated as interchangeable.",
+      "fix": "Independent blocking gates and claim-level truthfulness."
+    },
+    {
+      "id": "RC-05",
+      "name": "EVIDENCE_FRESHNESS_AND_CLAIM_BOUNDARY_WEAK",
+      "failures": [
+        "F-HAN-008",
+        "F-HAN-010"
+      ],
+      "root": "Timestamp and narrative inference could outrank content/evidence state.",
+      "fix": "Content-based freshness + narrative evidence blocking."
+    }
+  ]
+}

@@ -1,0 +1,34 @@
+{
+  "production_route": [
+    "TASK",
+    "ROUTER",
+    "AUTHORIZED_ENGINE",
+    "REFERENCE_COMPILER_IF_APPLICABLE",
+    "L0_SOURCE",
+    "L1_GEOMETRY",
+    "L2_SEMANTIC",
+    "L3_L6_PRESENTATION",
+    "L7_FINAL_VALIDATION",
+    "L8_USER_EXPOSURE_GATE",
+    "OUTPUT"
+  ],
+  "forbidden_routes": [
+    "TASK -> AD_HOC_PYTHON -> USER_FACING",
+    "TASK -> GENERIC_HTML -> USER_FACING",
+    "TASK -> REPORTLAB -> USER_FACING",
+    "TASK -> GENERATIVE_IMAGE -> FINAL_WITHOUT_GEOMETRY_GATE"
+  ],
+  "one_off_policy": {
+    "allowed_classes": [
+      "EXPERIMENT",
+      "DIAGNOSTIC"
+    ],
+    "forbidden_classes": [
+      "PREVIEW",
+      "FINAL",
+      "USER_FACING"
+    ],
+    "promotion": "Only by migrating the reusable capability into an authorized engine and passing regression tests."
+  },
+  "equation": "ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE"
+}

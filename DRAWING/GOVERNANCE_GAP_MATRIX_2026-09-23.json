@@ -1,0 +1,46 @@
+{
+  "gaps": [
+    {
+      "id": "GG-01",
+      "layer": "ROUTING",
+      "before": "advisory router",
+      "after": "production engine attestation required",
+      "execution_changed": true
+    },
+    {
+      "id": "GG-02",
+      "layer": "VALIDATION",
+      "before": "L7 final validation only",
+      "after": "L8 user exposure gate blocks show",
+      "execution_changed": true
+    },
+    {
+      "id": "GG-03",
+      "layer": "REFERENCE",
+      "before": "reference prose/method IDs",
+      "after": "DNA -> parameter -> output effect",
+      "execution_changed": true
+    },
+    {
+      "id": "GG-04",
+      "layer": "QUALITY",
+      "before": "source fidelity could imply enhancement",
+      "after": "technical/visual/user-effect independent",
+      "execution_changed": true
+    },
+    {
+      "id": "GG-05",
+      "layer": "FRESHNESS",
+      "before": "mtime heuristic possible",
+      "after": "content digest/revision relation",
+      "execution_changed": true
+    },
+    {
+      "id": "GG-06",
+      "layer": "HANDOFF",
+      "before": "resume default",
+      "after": "RESUME vs RETROSPECTIVE vs SURGERY mode",
+      "execution_changed": true
+    }
+  ]
+}

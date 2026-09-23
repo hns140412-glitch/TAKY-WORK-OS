@@ -1,0 +1,96 @@
+{
+  "tests": [
+    {
+      "id": "RT-001",
+      "failure": "F-HAN-001",
+      "given": "production artifact via AD_HOC_PYTHON",
+      "expect": "NO_SHOW + PRODUCTION_BYPASS_PATH_FORBIDDEN",
+      "automated": true,
+      "production_gate": "runtime/drawing-production-gate.test.js"
+    },
+    {
+      "id": "RT-002",
+      "failure": "F-HAN-002",
+      "given": "protected anchor missing after mask",
+      "expect": "GEOMETRY_GATE FAIL; NO_SHOW",
+      "automated": true,
+      "implementation": "runtime/drawing-protected-anchor-gate.test.js"
+    },
+    {
+      "id": "RT-003",
+      "failure": "F-HAN-003",
+      "given": "generated plan has edge/geometry drift",
+      "expect": "GEOMETRY_DIFF_FAIL; NO_SHOW",
+      "automated": true,
+      "production_gate": "runtime/drawing-production-gate.test.js"
+    },
+    {
+      "id": "RT-004",
+      "failure": "F-HAN-004",
+      "given": "reference named but effect tokens absent",
+      "expect": "REFERENCE_EFFECT_GATE FAIL",
+      "automated": true
+    },
+    {
+      "id": "RT-005",
+      "failure": "F-HAN-005",
+      "given": "fidelity pass + generic visual",
+      "expect": "USER_EFFECT/REFERENCE_EFFECT FAIL",
+      "automated": "fixture_required"
+    },
+    {
+      "id": "RT-006",
+      "failure": "F-HAN-006",
+      "given": "any blocking pre-user gate not PASS",
+      "expect": "show=false",
+      "automated": true,
+      "production_gate": "runtime/drawing-production-gate.test.js"
+    },
+    {
+      "id": "RT-007",
+      "failure": "F-HAN-007",
+      "given": "one-off purpose FINAL",
+      "expect": "ONE_OFF_PRODUCTION_FORBIDDEN",
+      "automated": true,
+      "production_gate": "runtime/drawing-production-gate.test.js"
+    },
+    {
+      "id": "RT-008",
+      "failure": "F-HAN-008",
+      "given": "freshness_basis=MODIFIED_TIME_ONLY",
+      "expect": "DATE_NOT_CONTENT_CHANGE; NO_SHOW",
+      "automated": true,
+      "production_gate": "runtime/drawing-production-gate.test.js"
+    },
+    {
+      "id": "RT-009",
+      "failure": "F-HAN-009",
+      "given": "unverified semantic promoted",
+      "expect": "SEMANTIC_GATE FAIL",
+      "automated": true,
+      "implementation": "runtime/drawing-semantic-verification-gate.test.js"
+    },
+    {
+      "id": "RT-010",
+      "failure": "F-HAN-010",
+      "given": "unsupported narrative claim exists",
+      "expect": "UNSUPPORTED_NARRATIVE; NO_SHOW",
+      "automated": true,
+      "production_gate": "runtime/drawing-production-gate.test.js"
+    },
+    {
+      "id": "RT-011",
+      "failure": "F-HAN-011",
+      "given": "surgery trigger active",
+      "expect": "resume production pointers not executable until revalidated",
+      "automated": "contract_fixture_required"
+    }
+  ],
+  "integration_regression": {
+    "id": "RT-INTEGRATION-001",
+    "given": "REPORT_PACKAGE output planning without production authorization or via ad-hoc engine",
+    "expect": "PRE_USER_GATE_BLOCKED",
+    "automated": true,
+    "implementation": "runtime/drawing-report-package.test.js"
+  }
+}
