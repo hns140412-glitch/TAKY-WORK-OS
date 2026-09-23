@@ -139,6 +139,7 @@ export function buildServer(){
         baseline_path:z.string().min(1),
         candidate_path:z.string().min(1),
         reference_ids:z.array(z.string()).min(1),
+        reference_compile_digest:z.string().min(16),
         page_index:z.number().int().min(0).default(0)
       })
     },
@@ -156,9 +157,10 @@ export function buildServer(){
           baseline_digest:baselineDigest,
           candidate_digest:candidateDigest,
           reference_ids:input.reference_ids,
+          reference_compile_digest:input.reference_compile_digest,
           comparison:measured.comparison
         });
-        return result({ok:true,receipt,baseline_digest:baselineDigest,candidate_digest:candidateDigest,comparison:measured.comparison});
+        return result({ok:true,receipt,baseline_digest:baselineDigest,candidate_digest:candidateDigest,reference_compile_digest:input.reference_compile_digest,comparison:measured.comparison});
       }catch(error){
         return result({ok:false,reason:'REFERENCE_EFFECT_MEASUREMENT_FAILED',error:String(error?.message||error)});
       }
