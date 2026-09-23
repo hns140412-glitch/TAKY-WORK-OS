@@ -358,7 +358,9 @@ function minimalPackage(){
     validation_status:'PASS'
   });
   assert.equal(signed.ok,true);
-  const tampered=signed.token.slice(0,-1)+(signed.token.endsWith('A')?'B':'A');
+  const [payloadPart,signaturePart]=signed.token.split('.');
+  const tamperedPayload=(payloadPart[0]==='A'?'B':'A')+payloadPart.slice(1);
+  const tampered=tamperedPayload+'.'+signaturePart;
   const r=ArtifactBroker.registerProductionArtifact({
     artifact_id:'A3',
     artifact_type:'PDF',
