@@ -460,6 +460,19 @@ function minimalPackage(){
 
   const outside=path.join(tmp,'outside.pdf');
   fs.writeFileSync(outside,'bad');
+
+  const v2=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results:gates,
+    artifact_digest:ArtifactBroker.sha256File(outside)
+  });
+  const e2=Exposure.authorizeExposure({
+    authorization:routed.authorization,
+    validation_receipt:v2.receipt,
+    target:'USER_VISIBLE'
+  });
+
   const denied=ArtifactBroker.publishProductionArtifact({
     artifact_id:'PUB-2',
     artifact_type:'PDF',
@@ -467,7 +480,7 @@ function minimalPackage(){
     execution_graph_id:auth.payload.execution_graph_id,
     staging_path:outside,
     file_name:'bad.pdf',
-    exposure_grant:e.grant
+    exposure_grant:e2.grant
   });
   assert.equal(denied.ok,false);
   assert.equal(denied.reason,'STAGING_PATH_OUTSIDE_ALLOWED_ROOT');
