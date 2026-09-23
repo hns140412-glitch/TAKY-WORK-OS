@@ -1,12 +1,12 @@
 {
-  "schema_version": "2026-09-23.1",
+  "schema_version": "2026-09-23.2",
   "package_id": "HANNAM_SCALE_REVIEW_V1",
   "project": {
     "project_id": "HANNAM-737-21-AREA",
     "title": "용산구 한남동 737-21 일원 다세대주택 규모검토 및 사례조사",
     "location": "서울특별시 용산구 한남동 737-21 일원",
     "report_type": "SCALE_REVIEW_AND_CASE_STUDY",
-    "status": "WORKING"
+    "status": "WORKING_ISSUED_SNAPSHOT_0923"
   },
   "governance": {
     "slogans": [
@@ -18,6 +18,35 @@
     "human_final_authority": true
   },
   "sources": [
+    {
+      "source_id": "SRC-PDF-ISSUED-0923",
+      "title": "2026-0923_한남동 737-21일원 고급주택(4세대) 규모검토.pdf",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:1JTKELb5G8g7cVsRNpgO0ZHf90aLJn3o4",
+      "revision": "2026-09-23T11:27:40+09:00",
+      "allowed_use": [
+        "issued drawing snapshot",
+        "B1 geometry and parking count",
+        "1F geometry and road/site relation",
+        "2F geometry and A/B relation",
+        "section geometry and levels",
+        "sheet scales and annotations"
+      ],
+      "forbidden_use": [
+        "automatic legal-area role assignment",
+        "geometry replacement by reference",
+        "semantic inference beyond explicit drawing evidence"
+      ],
+      "latest": true,
+      "page_map": {
+        "B1": 0,
+        "1F": 1,
+        "2F": 2,
+        "SECTION": 3
+      },
+      "notes": "Current 4-page issued PDF in Google Drive Work; registered as the active issued snapshot for presentation/render routing."
+    },
     {
       "source_id": "SRC-DWG-WORK",
       "title": "2026-0922_한남동 737-21일원 고급주택(4세대) 규모검토_SSH.dwg",
@@ -55,7 +84,8 @@
         "automatic legal-area role assignment",
         "parking-count guess"
       ],
-      "latest_supporting_pdf": true
+      "latest_supporting_pdf": false,
+      "freshness": "SUPERSEDED_BY_ISSUED_0923"
     },
     {
       "source_id": "SRC-PDF-1F",
@@ -74,7 +104,8 @@
         "invented landscape",
         "automatic area semantics"
       ],
-      "freshness": "STALE_RELATIVE_TO_LATEST_DWG"
+      "freshness": "SUPERSEDED_BY_ISSUED_0923",
+      "latest_supporting_pdf": false
     },
     {
       "source_id": "SRC-PDF-2F",
@@ -92,7 +123,8 @@
         "invented landscaping",
         "automatic area semantics"
       ],
-      "freshness": "STALE_RELATIVE_TO_LATEST_DWG"
+      "freshness": "SUPERSEDED_BY_ISSUED_0923",
+      "latest_supporting_pdf": false
     },
     {
       "source_id": "SRC-PDF-SECTION",
@@ -111,7 +143,8 @@
         "unverified level transcription",
         "AI-redrawn section geometry as authority"
       ],
-      "latest_supporting_pdf": true
+      "latest_supporting_pdf": false,
+      "freshness": "SUPERSEDED_BY_ISSUED_0923"
     },
     {
       "source_id": "SRC-FORMAT-0914",
@@ -259,17 +292,14 @@
     {
       "fact_id": "FACT-DRAWING-SCALE",
       "label": "도면 축척",
-      "value": "1:200",
+      "value": "B1 1:200 / 1F 1:300 / 2F 1:200 / Section 1:200",
       "unit": null,
       "evidence_state": "CONFIRMED",
       "source_refs": [
-        "SRC-PDF-B1",
-        "SRC-PDF-1F",
-        "SRC-PDF-2F",
-        "SRC-PDF-SECTION"
+        "SRC-PDF-ISSUED-0923"
       ],
       "calculation_ref": null,
-      "notes": "각 시트 타이틀 블록의 SCALE 표기"
+      "notes": "2026-0923 issued 4-page PDF sheet title blocks; scales differ by sheet."
     },
     {
       "fact_id": "FACT-ROAD-CONDITION",
@@ -300,14 +330,14 @@
     {
       "fact_id": "FACT-PARKING",
       "label": "계획 주차대수",
-      "value": null,
+      "value": 14,
       "unit": "대",
-      "evidence_state": "PENDING",
+      "evidence_state": "CONFIRMED",
       "source_refs": [
-        "SRC-PDF-B1"
+        "SRC-PDF-ISSUED-0923"
       ],
-      "calculation_ref": "PARKING_COUNT",
-      "notes": "실제 주차구획/기계식 여부를 분리 검증 후 확정"
+      "calculation_ref": null,
+      "notes": "2026-0923 issued B1 sheet explicitly labels 'B1F 지하주차장 (14대)'."
     },
     {
       "fact_id": "FACT-SITE-AREA",
@@ -1180,8 +1210,7 @@
         "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
-        "SRC-PDF-B1",
-        "SRC-PDF-SECTION"
+        "SRC-PDF-ISSUED-0923"
       ],
       "layout_slots": [
         {
@@ -1235,7 +1264,7 @@
         "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
-        "SRC-PDF-1F"
+        "SRC-PDF-ISSUED-0923"
       ],
       "layout_slots": [
         {
@@ -1281,7 +1310,7 @@
         "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
-        "SRC-PDF-2F"
+        "SRC-PDF-ISSUED-0923"
       ],
       "layout_slots": [
         {
@@ -1322,7 +1351,7 @@
         "M-EDITORIAL-RESTRAINT"
       ],
       "source_visual_refs": [
-        "SRC-PDF-SECTION"
+        "SRC-PDF-ISSUED-0923"
       ],
       "layout_slots": [
         {
