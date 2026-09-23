@@ -1,0 +1,93 @@
+{
+  "schema": "HANNAM_2F_APPROVED_PRESENTATION_REGIONS_V1",
+  "source": {
+    "file": "지상2층 평면도.pdf",
+    "sha256": "9a23e49b4fb801ef51c1cd86f28fadc4b848fbfc40a5ded718a5c706bd1201d1",
+    "page_index": 0,
+    "page_width": 842.0,
+    "page_height": 1191.0
+  },
+  "preview": {
+    "file": "HANNAM_2F_ROTATED_SOURCE_CORRECT.png",
+    "render_scale": 2.6,
+    "rotation_ccw": 90
+  },
+  "regions": [
+    {
+      "region_id": "B-W01",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [1747, 631, 1873, 763],
+      "rect": [548.5385, 671.9231, 599.3077, 720.3846],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 343
+    },
+    {
+      "region_id": "B-W02",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [2015, 649, 2083, 750],
+      "rect": [553.5385, 775.0, 592.3846, 801.1538],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 0
+    },
+    {
+      "region_id": "B-W03",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [1243, 801, 1322, 881],
+      "rect": [503.1538, 478.0769, 533.9231, 508.4615],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 236
+    },
+    {
+      "region_id": "B-W04",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [1239, 887, 1338, 980],
+      "rect": [465.0769, 476.5385, 500.8462, 514.6154],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 21
+    },
+    {
+      "region_id": "A-W01",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [1468, 1428, 1595, 1561],
+      "rect": [241.6154, 564.6154, 292.7692, 613.4615],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 342
+    },
+    {
+      "region_id": "A-W02",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [1736, 1446, 1810, 1548],
+      "rect": [246.6154, 667.6923, 285.8462, 696.1538],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 0
+    },
+    {
+      "region_id": "A-W03",
+      "role": "FURNITURE_BACKGROUND",
+      "policy": "REMOVE_CANDIDATE",
+      "verification_state": "USER_CONFIRMED",
+      "preview_rect": [885, 1580, 1080, 1690],
+      "rect": [192.0, 340.3846, 234.3077, 415.3846],
+      "path_filter": {"require_fill": true, "fill_luma_min": 0.95, "fill_chroma_max": 0.03},
+      "candidate_count": 112
+    }
+  ],
+  "rules": [
+    "NO_GENERATIVE_REDRAW",
+    "EXACT_PATH_ID_ONLY",
+    "GEOMETRY_LOCKED",
+    "CANDIDATE_ONLY_UNTIL_APPLIED"
+  ]
+}

@@ -1,0 +1,79 @@
+{
+  "benchmark_version": "2026-09-23.actual.1",
+  "privacy": "fixture class metrics only; no private source IDs, filenames or digests",
+  "findings": [
+    {
+      "fixture_id": "PLAN_A3_VECTOR",
+      "page_points": [
+        842,
+        1191
+      ],
+      "render_pixels": [
+        1684,
+        2382
+      ],
+      "vector_paths": 24048,
+      "vector_items": 105151,
+      "text_blocks_extracted": 0,
+      "embedded_images": 1,
+      "original_edge_density": 0.054766,
+      "reconstructed_vector_edge_density": 0.027569,
+      "raw_edge_mismatch_ratio": 0.033635,
+      "multiply_snapshot_edge_mismatch_ratio": 0.00021
+    },
+    {
+      "fixture_id": "BASEMENT_A3_VECTOR",
+      "page_points": [
+        842,
+        1191
+      ],
+      "render_pixels": [
+        1684,
+        2382
+      ],
+      "vector_paths": 2132,
+      "vector_items": 21578,
+      "text_blocks_extracted": 0,
+      "embedded_images": 0,
+      "original_edge_density": 0.044255,
+      "reconstructed_vector_edge_density": 0.020893,
+      "raw_edge_mismatch_ratio": 0.024528,
+      "multiply_snapshot_edge_mismatch_ratio": 0.001211
+    },
+    {
+      "fixture_id": "SECTION_A3_VECTOR",
+      "page_points": [
+        842,
+        1191
+      ],
+      "render_pixels": [
+        1684,
+        2382
+      ],
+      "vector_paths": 1782,
+      "vector_items": 31721,
+      "text_blocks_extracted": 0,
+      "embedded_images": 0,
+      "original_edge_density": 0.068416,
+      "reconstructed_vector_edge_density": 0.050061,
+      "raw_edge_mismatch_ratio": 0.071131,
+      "multiply_snapshot_edge_mismatch_ratio": 0.000601
+    }
+  ],
+  "interpretation": [
+    "All tested fixtures contain substantial vector drawing content.",
+    "Vector path extraction is usable for clean geometry guides and regression evidence.",
+    "Reconstructed vector SVG is a subset of the rendered PDF appearance and must not be treated as a complete source snapshot.",
+    "Full source snapshot preservation requires a second overlay/evidence path for annotations, special PDF graphics and other non-reconstructed content.",
+    "Raw pixel/edge mismatch is renderer-sensitive and is not itself a geometry-failure threshold.",
+    "Multiply composition of a full source snapshot over a neutral presentation underlay preserved rendered source edges far better than reconstructing vector paths alone in these fixtures.",
+    "This supports automating the traditional CAD/PDF Multiply finishing step as a preservation fallback, while keeping vector overlays for clean/styleable geometry lines."
+  ],
+  "resulting_contract": {
+    "geometry_overlay": "vector/path derived, clean and styleable",
+    "source_snapshot_overlay": "full-page source render with white-to-alpha treatment when complete visual preservation is required",
+    "canonical_source": "unchanged original CAD/PDF retained separately",
+    "validation": "geometry/object checks dominate; edge checks are supporting evidence",
+    "source_snapshot_composition": "MULTIPLY preferred for full rendered-source preservation; white source remains transparent in effect without thresholding."
+  }
+}

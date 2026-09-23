@@ -1,0 +1,28 @@
+{
+  "registry_version": "2026-09-23.1",
+  "authority": "PRESENTATION_ONLY",
+  "principle": "Use only source stroke-weight ordering. Do not infer architectural meaning from line weight.",
+  "roles": [
+    "SOURCE_HEAVY",
+    "SOURCE_PRIMARY",
+    "SOURCE_SECONDARY",
+    "SOURCE_BASE",
+    "SOURCE_LIGHT"
+  ],
+  "profiles": {
+    "PUBLICATION": {
+      "goal": "Strengthen figure/ground hierarchy while retaining the complete source SVG.",
+      "safe_without_semantics": true
+    },
+    "TECHNICAL_CLEAN": {
+      "goal": "Clean source hierarchy with less contextual fading than publication mode.",
+      "safe_without_semantics": true
+    },
+    "SECTION_PRESENTATION_SAFE": {
+      "goal": "Increase existing heavy-line hierarchy for section communication without claiming heavy lines are cut geometry.",
+      "safe_without_semantics": true,
+      "limitation": "Semantic CUT styling requires explicit/verified section semantics."
+    }
+  },
+  "promotion_rule": "SOURCE_HEAVY must never be automatically renamed CUT/WALL/BOUNDARY without explicit semantic evidence."
+}

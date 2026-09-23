@@ -1,0 +1,159 @@
+{
+  "schema_version": "2026-09-23.1",
+  "rule": "Masks are presentation/selection artifacts. SOURCE_LINE and SOURCE_SNAPSHOT preserve evidence but do not replace the untouched original source or CAD geometry authority.",
+  "mask_types": [
+    {
+      "mask_id": "SOURCE_LINE",
+      "authority": "SOURCE_DERIVED",
+      "purpose": "final line overlay and edge regression",
+      "may_change": false
+    },
+    {
+      "mask_id": "SOURCE_SNAPSHOT",
+      "authority": "SOURCE_SNAPSHOT",
+      "purpose": "preserve complete issued drawing appearance when vector extraction omits annotations or PDF-specific graphics",
+      "may_change": false,
+      "constraints": [
+        "not CAD semantic authority",
+        "keep original file separately",
+        "use only at controlled opacity/blend when presentation requires it"
+      ]
+    },
+    {
+      "mask_id": "ROOM_MATERIAL",
+      "authority": "DERIVED",
+      "purpose": "floor/material application inside already-known room/surface boundaries",
+      "may_change": true,
+      "forbidden": [
+        "change wall boundary",
+        "bridge opening",
+        "erase structural object"
+      ]
+    },
+    {
+      "mask_id": "FURNITURE",
+      "authority": "PRESENTATION",
+      "purpose": "scale/use communication",
+      "may_change": true,
+      "constraints": [
+        "realistic scale",
+        "do not fake room size",
+        "do not block critical circulation"
+      ]
+    },
+    {
+      "mask_id": "LANDSCAPE",
+      "authority": "PRESENTATION_OR_SOURCE_DERIVED",
+      "purpose": "site readability / scale / depth",
+      "may_change": true,
+      "constraints": [
+        "do not cover access",
+        "do not invent forbidden planting",
+        "respect source boundary"
+      ]
+    },
+    {
+      "mask_id": "ANNOTATION",
+      "authority": "SOURCE_DERIVED",
+      "purpose": "room labels, key dimensions, notes",
+      "may_change": true,
+      "constraints": [
+        "semantic value must stay traceable to source or explicit user input"
+      ]
+    },
+    {
+      "mask_id": "UNKNOWN",
+      "authority": "UNKNOWN",
+      "purpose": "protect unresolved source content from accidental cleanup",
+      "may_change": false
+    },
+    {
+      "mask_id": "INTERIOR_FURNITURE",
+      "authority": "SOURCE_DERIVED_OR_USER_CONFIRMED",
+      "purpose": "interior/furniture/material regions used only as presentation guidance",
+      "may_change": true,
+      "constraints": [
+        "must not move wall/column/opening geometry",
+        "fixed fixtures remain source-controlled unless explicitly separated",
+        "may be omitted when source/user cannot verify"
+      ]
+    },
+    {
+      "mask_id": "SECTION_CUT",
+      "authority": "SOURCE_DERIVED_OR_USER_CONFIRMED",
+      "purpose": "verified section-cut poche region",
+      "may_change": true,
+      "constraints": [
+        "cut boundary must come from source or explicit user confirmation",
+        "solid poche may change presentation only",
+        "must not invent cut geometry"
+      ]
+    },
+    {
+      "mask_id": "DEPTH_GUIDE",
+      "authority": "DERIVED_PRESENTATION_GUIDE",
+      "purpose": "optional depth guidance for controlled generative rendering",
+      "may_change": false,
+      "constraints": [
+        "never becomes geometry authority",
+        "must remain subordinate to SOURCE_LINE",
+        "use only for depth/lighting guidance"
+      ]
+    }
+  ],
+  "output_profiles": {
+    "SALES_PLAN": {
+      "required": [
+        "SOURCE_LINE",
+        "ROOM_MATERIAL",
+        "FURNITURE",
+        "ANNOTATION"
+      ],
+      "optional": [
+        "LANDSCAPE"
+      ],
+      "completion_checks": [
+        "layout readable",
+        "room relationships readable",
+        "geometry preserved",
+        "furniture scale plausible",
+        "critical labels readable"
+      ]
+    },
+    "SECTION_PRESENTATION": {
+      "required": [
+        "SOURCE_LINE",
+        "ANNOTATION"
+      ],
+      "optional": [
+        "ROOM_MATERIAL",
+        "LANDSCAPE"
+      ],
+      "completion_checks": [
+        "cut hierarchy clear",
+        "ground/soil readable",
+        "level relationships preserved",
+        "background subordinate",
+        "geometry preserved"
+      ]
+    },
+    "SECTION_PERSPECTIVE": {
+      "required": [
+        "SOURCE_LINE",
+        "INTERIOR_FURNITURE",
+        "SECTION_CUT"
+      ],
+      "optional": [
+        "DEPTH_GUIDE",
+        "ANNOTATION"
+      ],
+      "completion_checks": [
+        "source line geometry preserved",
+        "section cut poche dominant",
+        "interior/material layer subordinate to source line",
+        "AI render never becomes geometry authority",
+        "source line reapplied on final composite"
+      ]
+    }
+  }
+}

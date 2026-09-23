@@ -1,0 +1,381 @@
+{
+  "schema_version": "2026-09-23.1",
+  "package_id": "HANNAM_SCALE_REVIEW_V1",
+  "project": {
+    "project_id": "HANNAM-737-21-63",
+    "title": "한남동 737-21, 737-63 일원 고급주택 규모검토 및 사례조사",
+    "location": "서울특별시 용산구 한남동",
+    "report_type": "SCALE_REVIEW_AND_CASE_STUDY",
+    "status": "WORKING"
+  },
+  "governance": {
+    "slogans": [
+      "Think Again, Keep Your Key.",
+      "Think Again, You’re The Key."
+    ],
+    "source_geometry_mutation": "FORBIDDEN",
+    "unknown_policy": "PRESERVE_UNKNOWN",
+    "human_final_authority": true
+  },
+  "sources": [
+    {
+      "source_id": "SRC-GEOM-WORK",
+      "title": "Work 실제 평면/주차/단면 PDF·DWG",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "HIGHEST_GEOMETRY",
+      "uri": null,
+      "revision": null,
+      "allowed_use": [
+        "geometry",
+        "levels",
+        "access",
+        "parking",
+        "plan",
+        "section"
+      ],
+      "forbidden_use": [
+        "AI-redrawn geometry as authority"
+      ]
+    },
+    {
+      "source_id": "SRC-FORMAT-0914",
+      "title": "2026-0914_한남동 고급빌라 규모검토.pptx",
+      "role": "FORMAT_REFERENCE",
+      "authority": "REFERENCE_ONLY",
+      "uri": null,
+      "revision": "2026-09-14",
+      "allowed_use": [
+        "page structure",
+        "information order",
+        "table pattern",
+        "scale-review workflow"
+      ],
+      "forbidden_use": [
+        "automatic reuse of project-specific numbers",
+        "automatic reuse of addresses",
+        "automatic reuse of legal values"
+      ]
+    },
+    {
+      "source_id": "SRC-COMMITTEE",
+      "title": "건축경관 공동위원회 심의의결 조치계획",
+      "role": "REVIEW_STANDARD",
+      "authority": "REVIEW_STANDARD",
+      "uri": null,
+      "revision": null,
+      "allowed_use": [
+        "review axes",
+        "issue-response-status logic",
+        "before-after review structure"
+      ],
+      "forbidden_use": [
+        "reuse of another project's numeric requirements as current project facts"
+      ]
+    },
+    {
+      "source_id": "SRC-CASE-0915",
+      "title": "2026-0915_한남동 규모검토 사례조사.pptx",
+      "role": "CASE_DATASET",
+      "authority": "FACT_SOURCE",
+      "uri": null,
+      "revision": "2026-09-15",
+      "allowed_use": [
+        "case metrics",
+        "unit types",
+        "parking per unit",
+        "exclusive area comparison"
+      ],
+      "forbidden_use": [
+        "direct proof of current-project legal adequacy"
+      ]
+    },
+    {
+      "source_id": "SRC-INFO-73718",
+      "title": "서울_용산구_한남동_737-18_외_2필지_한남동_고급주택_개발부지.pdf",
+      "role": "INFO_STRUCTURE_REFERENCE",
+      "authority": "REFERENCE_ONLY",
+      "uri": null,
+      "revision": null,
+      "allowed_use": [
+        "information sequence",
+        "development-decision narrative"
+      ],
+      "forbidden_use": [
+        "graphic imitation",
+        "automatic current-project fact reuse"
+      ]
+    },
+    {
+      "source_id": "SRC-METHOD-LIB",
+      "title": "Work / REFERENCE Method Library",
+      "role": "PRESENTATION_METHOD",
+      "authority": "REFERENCE_ONLY",
+      "uri": null,
+      "revision": null,
+      "allowed_use": [
+        "drawing enhancement",
+        "diagram method",
+        "CG method",
+        "board hierarchy"
+      ],
+      "forbidden_use": [
+        "source truth replacement"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "FACT-SITE-AREA",
+      "label": "대지면적",
+      "value": null,
+      "unit": "㎡",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "calculation_ref": "AREA_ENGINE",
+      "notes": "실제 프로젝트 경계 검증 후 확정"
+    },
+    {
+      "fact_id": "FACT-UNITS",
+      "label": "계획 세대수",
+      "value": 4,
+      "unit": "세대",
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-PARKING",
+      "label": "계획 주차대수",
+      "value": null,
+      "unit": "대",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "calculation_ref": "PARKING_COUNT",
+      "notes": "지하주차장 도면 기반 검증"
+    }
+  ],
+  "review_items": [
+    {
+      "review_id": "REV-ARCH-01",
+      "axis": "ARCHITECTURE",
+      "topic": "배치·세대·코어·내외부 공간 연계",
+      "current_evidence_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "평면/단면 마이닝 결과와 연결"
+    },
+    {
+      "review_id": "REV-TRAFFIC-01",
+      "axis": "TRAFFIC_PARKING",
+      "topic": "차량·보행 진입 및 지하주차 동선",
+      "current_evidence_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "지하주차장/1층 진입 관계 검증"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "CASE-ITAEWON111",
+      "name": "이태원 111",
+      "class": "DIRECT_COMPARABLE",
+      "fact_refs": [],
+      "comparison_dimensions": [
+        "site_area",
+        "gfa",
+        "bcr",
+        "far",
+        "floors",
+        "units",
+        "parking",
+        "parking_per_unit",
+        "exclusive_area"
+      ],
+      "limitations": [
+        "current project와 법적·대지 조건 차이 별도 표기"
+      ]
+    },
+    {
+      "case_id": "CASE-LECIEL1022",
+      "name": "르씨엘 1022",
+      "class": "DIRECT_COMPARABLE",
+      "fact_refs": [],
+      "comparison_dimensions": [
+        "site_area",
+        "gfa",
+        "bcr",
+        "far",
+        "floors",
+        "units",
+        "parking",
+        "parking_per_unit",
+        "exclusive_area"
+      ],
+      "limitations": [
+        "current project와 법적·대지 조건 차이 별도 표기"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "method_id": "M-SOURCE-WEIGHT",
+      "purpose": "원본 선 위계를 유지한 채 도면 가독성 향상",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "geometry",
+        "source line hierarchy"
+      ],
+      "change": [
+        "stroke opacity",
+        "stroke tone",
+        "presentation hierarchy"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG",
+        "SVG"
+      ],
+      "validation": [
+        "geometry fingerprint",
+        "source overlay"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page_id": "P01",
+      "title": "Executive Summary",
+      "purpose": "사업 규모와 핵심 판단조건을 한 장에 압축",
+      "primary_message": "현재 계획의 규모·핵심 조건·검토상태를 즉시 파악",
+      "fact_refs": [
+        "FACT-SITE-AREA",
+        "FACT-UNITS",
+        "FACT-PARKING"
+      ],
+      "review_refs": [
+        "REV-ARCH-01",
+        "REV-TRAFFIC-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT"
+      ],
+      "source_visual_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "DIAGRAM",
+          "content_ref": "SITE_KEY_DIAGRAM"
+        },
+        {
+          "slot_id": "KEY_NUMBERS",
+          "type": "TABLE",
+          "content_ref": "TBL-OVERVIEW"
+        },
+        {
+          "slot_id": "ISSUES",
+          "type": "TEXT",
+          "content_ref": "REVIEW_SUMMARY"
+        }
+      ],
+      "completion_gate": [
+        "핵심 수치 상태 표시",
+        "미확정값 PENDING 유지",
+        "한 장에서 주요 조건 파악 가능"
+      ]
+    },
+    {
+      "page_id": "P04",
+      "title": "B1 Parking / Access",
+      "purpose": "지하주차·차량·보행·옹벽/지반 관계 검토",
+      "primary_message": "지하 진입과 주차 계획의 구조를 명확히 전달",
+      "fact_refs": [
+        "FACT-PARKING"
+      ],
+      "review_refs": [
+        "REV-TRAFFIC-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT"
+      ],
+      "source_visual_refs": [
+        "SRC-GEOM-WORK"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "SOURCE_DRAWING",
+          "content_ref": "B1_PLAN"
+        },
+        {
+          "slot_id": "ACCESS_DIAGRAM",
+          "type": "DIAGRAM",
+          "content_ref": "ACCESS_FLOW"
+        },
+        {
+          "slot_id": "REVIEW_CARD",
+          "type": "TEXT",
+          "content_ref": "REV-TRAFFIC-01"
+        }
+      ],
+      "completion_gate": [
+        "대지경계/옹벽/지하외벽 관계 유지",
+        "차량·보행 진입 식별",
+        "주차대수 검증 상태 표시"
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "TBL-OVERVIEW",
+      "title": "건축개요",
+      "column_ids": [
+        "항목",
+        "계획",
+        "기준",
+        "상태",
+        "근거"
+      ],
+      "row_refs": [
+        "FACT-SITE-AREA",
+        "FACT-UNITS",
+        "FACT-PARKING"
+      ]
+    }
+  ],
+  "outputs": {
+    "primary": "A3_PDF",
+    "visual_canonical": "A3_SVG_BOARD_STATE",
+    "derivative": [
+      "HTML",
+      "PPTX",
+      "PNG",
+      "PDF"
+    ],
+    "data_export": [
+      "XLSX"
+    ]
+  },
+  "validation": {
+    "source_fidelity": "PENDING",
+    "report_comprehension": "PENDING",
+    "output_bundle": "PENDING"
+  }
+}
