@@ -63,6 +63,7 @@ function signSourceFidelity({evidence}={}){
     throw new Error('SOURCE_FIDELITY_EVIDENCE_REQUIRED');
   }
   if(evidence.ok!==true) throw new Error('SOURCE_FIDELITY_EVIDENCE_NOT_PASSING');
+  if(!evidence.controlled_svg_sha256) throw new Error('CONTROLLED_SVG_DIGEST_REQUIRED');
   const parity=Number(evidence.artifact_parity?.score||0);
   if(parity<0.999) throw new Error('SOURCE_FIDELITY_ARTIFACT_PARITY_FAIL');
   return sign('TAKY_SOURCE_FIDELITY_RECEIPT','SOURCE_FIDELITY_VALIDATOR_V1',{
