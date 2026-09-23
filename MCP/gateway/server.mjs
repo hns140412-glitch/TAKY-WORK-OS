@@ -339,7 +339,8 @@ export function buildServer(){
           requested_producer_id:z.string().optional()
         }),
         source_identity:z.record(z.string(),z.any()),
-        geometry:z.record(z.string(),z.any()),
+        source_fidelity_receipt:z.string().min(1),
+        geometry:z.record(z.string(),z.any()).optional(),
         semantics:z.array(z.record(z.string(),z.any())).default([]),
         claims:z.array(z.record(z.string(),z.any())).default([]),
         human_intent:z.object({
