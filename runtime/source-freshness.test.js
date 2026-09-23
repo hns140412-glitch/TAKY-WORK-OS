@@ -1,0 +1,11 @@
+const assert=require('assert');
+const f=require('./source-freshness');
+const a={content:'same bytes',modified_at:'2026-09-22T10:00:00+09:00'};
+const b={content:'same bytes',modified_at:'2026-09-23T10:00:00+09:00'};
+const same=f.compare(a,b);
+assert.equal(same.relation,'CONTENT_IDENTICAL');
+assert.equal(same.supersession_allowed,false);
+const changed=f.compare(a,{content:'different bytes',modified_at:'2026-09-23T10:00:00+09:00'});
+assert.equal(changed.relation,'CONTENT_CHANGED');
+assert.equal(changed.supersession_allowed,null);
+console.log('source-freshness: PASS');
