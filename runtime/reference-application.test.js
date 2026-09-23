@@ -48,4 +48,21 @@ assert.equal(deferred.source_style_requests[0].mode,'SOURCE_STYLE_RANK');
 assert.equal(deferred.source_style_requests[0].policy.semantic_inference,false);
 assert.equal(Application.validateApplication(deferred,archdaily).ok,false);
 
+const sourceStyleProof={
+  schema:'TAKY_SOURCE_STYLE_RANK_V1',
+  mode:'SOURCE_STYLE_RANK',
+  compile_digest:archdaily.compile_digest,
+  reference_id:'ARCHDAILY_PLAN_HIERARCHY',
+  semantic_inference:false,
+  geometry_preserved:true,
+  monotonic_order_preserved:true,
+  applied:true,
+  styled_elements:42
+};
+assert.equal(Application.validateSourceStyleApplication(sourceStyleProof,archdaily).ok,true);
+assert.equal(
+  Application.validateSourceStyleApplication({...sourceStyleProof,compile_digest:'wrong'},archdaily).ok,
+  false
+);
+
 console.log('reference-application: PASS');
