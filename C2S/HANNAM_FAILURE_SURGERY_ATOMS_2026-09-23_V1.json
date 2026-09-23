@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-23.1",
+  "version": "2026-09-23.2",
   "mode": "SURGERY",
   "slogan": [
     "Think Again, Keep Your Key.",
@@ -11,15 +11,15 @@
       "type": "CORRECTION",
       "statement": "ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE",
       "owner": "TAKY/Work OS",
-      "destination": "TAKY OS + Drawing Router",
+      "destination": "TAKY OS + Drawing production authority/finalization chain",
       "status": "APPLIED"
     },
     {
       "id": "C2S-HAN-002",
       "type": "REQUIREMENT",
-      "statement": "Production results must route through authorized engine only",
+      "statement": "Production results must route through authorized Drawing Engine and central finalization only",
       "owner": "Drawing Engine",
-      "destination": "runtime/drawing-production-router.js",
+      "destination": "runtime/drawing-production-authority-gate.js + runtime/drawing-finalization-orchestrator.js",
       "status": "APPLIED"
     },
     {
@@ -27,7 +27,7 @@
       "type": "REQUIREMENT",
       "statement": "One-off Python/ReportLab/Generic HTML/raster/generative paths are experiment/diagnostic only",
       "owner": "Drawing Engine",
-      "destination": "production router",
+      "destination": "runtime/drawing-production-authority-gate.js",
       "status": "APPLIED"
     },
     {
@@ -35,7 +35,7 @@
       "type": "CORRECTION",
       "statement": "Raster/presentation layers cannot destructively outrank geometry authority",
       "owner": "Drawing Engine",
-      "destination": "L0-L8 architecture",
+      "destination": "drawing-engine-core key preservation + production authority",
       "status": "APPLIED"
     },
     {
@@ -43,15 +43,15 @@
       "type": "CORRECTION",
       "statement": "Generative output is never geometry authority",
       "owner": "Drawing Engine",
-      "destination": "Geometry Gate",
+      "destination": "drawing-production-authority-gate.js",
       "status": "APPLIED"
     },
     {
       "id": "C2S-HAN-006",
       "type": "REQUIREMENT",
-      "statement": "Reference mining must compile to engine parameters and visible output effect",
+      "statement": "Reference mining must compile to engine parameters and evidence-backed visible output effect",
       "owner": "Reference Compiler",
-      "destination": "runtime/reference-compiler.js",
+      "destination": "runtime/drawing-reference-compiler.js + drawing-reference-router.js",
       "status": "APPLIED"
     },
     {
@@ -59,7 +59,7 @@
       "type": "REQUIREMENT",
       "statement": "SOURCE_FIDELITY and PRESENTATION_QUALITY are independent",
       "owner": "Validation",
-      "destination": "Pre-user validation",
+      "destination": "drawing-pre-user-validation + finalization",
       "status": "APPLIED"
     },
     {
@@ -67,7 +67,7 @@
       "type": "REQUIREMENT",
       "statement": "NO PASS -> NO SHOW",
       "owner": "TAKY",
-      "destination": "L8 User Exposure Gate",
+      "destination": "drawing-finalization-orchestrator L8",
       "status": "APPLIED"
     },
     {
@@ -75,7 +75,7 @@
       "type": "CORRECTION",
       "statement": "USER != DEBUGGER; human approval is for final choice, not mechanical defect detection",
       "owner": "TAKY",
-      "destination": "Pre-user suite",
+      "destination": "drawing-pre-user-validation",
       "status": "APPLIED"
     },
     {
@@ -83,15 +83,15 @@
       "type": "CORRECTION",
       "statement": "DATE != CONTENT CHANGE",
       "owner": "Source Authority",
-      "destination": "TAKY Work OS",
-      "status": "APPLIED_GOVERNANCE_RUNTIME_FINGERPRINT_TODO"
+      "destination": "runtime/drawing-source-freshness.js + TAKY Work OS",
+      "status": "APPLIED"
     },
     {
       "id": "C2S-HAN-011",
       "type": "REQUIREMENT",
       "statement": "Semantic verification precedes presentation",
       "owner": "Drawing Engine",
-      "destination": "Semantic Gate",
+      "destination": "pre-user SEMANTIC gate",
       "status": "APPLIED"
     },
     {
@@ -99,7 +99,7 @@
       "type": "REQUIREMENT",
       "statement": "Narrative claim strength must not exceed evidence strength",
       "owner": "Report Engine",
-      "destination": "Fact Gate",
+      "destination": "NARRATIVE_EVIDENCE gate",
       "status": "APPLIED"
     },
     {
@@ -112,19 +112,27 @@
     },
     {
       "id": "C2S-HAN-014",
-      "type": "FRONTIER",
-      "statement": "Real drawing fixtures for protected-geometry fingerprint and visual reference-effect regression remain to be added",
-      "owner": "Drawing Engine",
-      "destination": "tests/fixtures",
-      "status": "OPEN"
+      "type": "CORRECTION",
+      "statement": "Do not solve engine bypass by creating another parallel engine; fold fixes into the existing central engine chain",
+      "owner": "TAKY/Work OS",
+      "destination": "central Drawing Engine modules",
+      "status": "APPLIED"
     },
     {
       "id": "C2S-HAN-015",
       "type": "FRONTIER",
-      "statement": "Content fingerprint freshness runtime must be implemented to prove DATE != CONTENT CHANGE automatically",
-      "owner": "Source Registry",
-      "destination": "runtime/source-freshness",
-      "status": "OPEN"
+      "statement": "Image-level reference-effect/professional-family fixture can strengthen VISUAL_PASS beyond current parameter/probe evidence",
+      "owner": "Drawing Engine",
+      "destination": "future evaluation fixtures",
+      "status": "OPEN_NON_BLOCKING_STRENGTHENING"
+    },
+    {
+      "id": "C2S-HAN-016",
+      "type": "FRONTIER",
+      "statement": "Real-project drawing fixtures can extend current key-state object regression",
+      "owner": "Drawing Engine",
+      "destination": "future protected geometry fixtures",
+      "status": "OPEN_NON_BLOCKING_STRENGTHENING"
     }
   ]
 }
