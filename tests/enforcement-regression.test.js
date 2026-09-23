@@ -497,9 +497,196 @@ function minimalPackage(){
   const bad=Pipeline.runProduction({...common,reference_effect_receipt:wrongMetric.receipt});
   assert.equal(bad.ok,false);
   assert.equal(bad.stage,'VALIDATION');
-  assert.equal(bad.evidence.refEffect.reason,'REFERENCE_EFFECT_SCHEMA_MISMATCH');
+  assert(
+    bad.evidence.refEffectSet.findings.some(x=>x.reason==='UNEXPECTED_REFERENCE_EFFECT_SCHEMA' || x.reason==='REFERENCE_EFFECT_REFERENCE_SCHEMA_MISMATCH' || x.reason==='REFERENCE_EFFECT_RECEIPT_COVERAGE_MISSING'),
+    JSON.stringify(bad.evidence.refEffectSet,null,2)
+  );
 })();
 
+
+(function testMultiReferenceEffectCoverage(){
+  const artifactDigest='9191919191919191919191919191919191919191919191919191919191919191';
+  const sourceDigest='8181818181818181818181818181818181818181818181818181818181818181';
+  const controlledDigest='7171717171717171717171717171717171717171717171717171717171717171';
+
+  const compiled=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY','DIVISARE_EDITORIAL_RESTRAINT'],
+    context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+  });
+  assert.equal(compiled.ok,true);
+  assert.deepEqual(
+    [...compiled.effect_metrics].sort(),
+    ['TAKY_LINE_HIERARCHY_DELTA_V1','TAKY_OBJECTIVE_REFERENCE_DELTA_V1'].sort()
+  );
+
+  const profileApplication=ReferenceApplication.applyToPresentationProfile({
+    a3:{margin_mm:4,layout:{hero_ratio:0.45,support_ratio:0.55}}
+  },compiled);
+  assert(profileApplication.applied_parameters.some(x=>x.reference_id==='DIVISARE_EDITORIAL_RESTRAINT'));
+  assert.equal(profileApplication.source_style_requests.length,1);
+
+  const sourceStyleApplication={
+    schema:'TAKY_SOURCE_STYLE_RANK_V1',
+    mode:'SOURCE_STYLE_RANK',
+    compile_digest:compiled.compile_digest,
+    reference_id:'ARCHDAILY_PLAN_HIERARCHY',
+    semantic_inference:false,
+    geometry_preserved:true,
+    monotonic_order_preserved:true,
+    applied:true,
+    styled_elements:32000
+  };
+  const coverage=ReferenceApplication.validateApplicationCoverage(
+    profileApplication,
+    sourceStyleApplication,
+    compiled
+  );
+  assert.equal(coverage.ok,true,JSON.stringify(coverage,null,2));
+
+  const humanIntent=HumanIntent.compileHumanIntent({
+    desired_outcome:'Apply only demonstrably effective reference methods while preserving source geometry.'
+  });
+
+  const sourceFidelity=TestSigner.signSourceFidelity({
+    evidence:{
+      schema:'TAKY_SOURCE_FIDELITY_EVIDENCE_V1',
+      ok:true,
+      semantic_inference:false,
+      source_sha256:sourceDigest,
+      source_page_index:0,
+      source_geometry_fingerprint:'geo-multi',
+      controlled_geometry_fingerprint:'geo-multi',
+      controlled_geometry_match:true,
+      controlled_svg_sha256:controlledDigest,
+      canonical_svg_sha256:'6161616161616161616161616161616161616161616161616161616161616161',
+      candidate_sha256:artifactDigest,
+      source_viewbox_match:true,
+      canonical_inline_match:true,
+      inline_transform_safe:true,
+      artifact_parity:{type:'PDF',ok:true,score:1.0}
+    }
+  });
+
+  const visual=TestSigner.signVisualMeasurement({
+    artifact_digest:artifactDigest,
+    metrics:{
+      schema:'TAKY_OBJECTIVE_VISUAL_METRICS_V1',
+      measurement_scope:'OBJECTIVE_ONLY',
+      professional_quality_claim:false,
+      metrics:{
+        width_mm:420,height_mm:297,landscape:true,
+        text_bbox_outside_page:false,
+        ink_ratio:0.18,contrast_std_norm:0.22,edge_density:0.06
+      }
+    }
+  });
+
+  const vision=TestSigner.signVisionReview({
+    artifact_digest:artifactDigest,
+    intent_digest:humanIntent.intent_digest,
+    professional_family_pass:true,
+    reference_effect_visible_without_explanation:true,
+    generic_layout_detected:false,
+    decision_value_pass:true
+  });
+
+  const lineReceipt=TestSigner.signReferenceEffect({
+    baseline_digest:'5151515151515151515151515151515151515151515151515151515151515151',
+    candidate_digest:artifactDigest,
+    effect_input_digest:controlledDigest,
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+    reference_compile_digest:compiled.compile_digest,
+    comparison:{
+      ok:true,
+      schema:'TAKY_LINE_HIERARCHY_DELTA_V1',
+      measurement_scope:'OBJECTIVE_LINE_HIERARCHY_ONLY',
+      semantic_inference:false,
+      professional_quality_claim:false,
+      objective_effect_detected:true,
+      monotonic_order_preserved:true,
+      dynamic_range_gain:1.30,
+      minimum_adjacent_separation_gain:1.08
+    }
+  });
+
+  const layoutReceipt=TestSigner.signReferenceEffect({
+    baseline_digest:'4141414141414141414141414141414141414141414141414141414141414141',
+    candidate_digest:artifactDigest,
+    reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+    reference_compile_digest:compiled.compile_digest,
+    comparison:{
+      schema:'TAKY_OBJECTIVE_REFERENCE_DELTA_V1',
+      measurement_scope:'OBJECTIVE_ONLY',
+      objective_effect_detected:true,
+      clarity_only_suspected:false,
+      combined_effect_score:0.08,
+      professional_family_claim:false
+    }
+  });
+
+  const pkg={
+    package_id:'MULTI_REF_TEST',
+    project:{title:'Multi-reference fixture'},
+    sources:[{source_id:'SRC-MULTI',role:'CURRENT_GEOMETRY_SOURCE'}],
+    facts:[],review_items:[],cases:[],methods:[],pages:[]
+  };
+
+  const common={
+    task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
+    artifact_digest:artifactDigest,
+    source_identity:{current_hash:sourceDigest,previous_hash:sourceDigest},
+    source_fidelity_receipt:sourceFidelity.receipt,
+    semantics:[],claims:[],
+    human_intent:{desired_outcome:humanIntent.desired_outcome,success_criteria:[]},
+    reference:{
+      reference_ids:['ARCHDAILY_PLAN_HIERARCHY','DIVISARE_EDITORIAL_RESTRAINT'],
+      context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+    },
+    reference_application:profileApplication,
+    reference_source_style_application:sourceStyleApplication,
+    visual_measurement_receipt:visual.receipt,
+    vision_review_receipt:vision.receipt,
+    provenance:{source_ids:['SRC-MULTI'],module_ids:['DRAWING_CONTROLLED_PRESENTATION_V1','REPORT_ENGINE_V2','VALIDATION_ENGINE_V1']},
+    report_package:pkg,
+    exposure_target:'FINAL_APPROVABLE'
+  };
+
+  const good=Pipeline.runProduction({
+    ...common,
+    reference_effect_receipts:[lineReceipt.receipt,layoutReceipt.receipt]
+  });
+  assert.equal(good.ok,true,JSON.stringify(good,null,2));
+  assert.equal(good.evidence.refCoverage.ok,true);
+  assert.equal(good.evidence.refEffectSet.ok,true);
+  assert.equal(good.evidence.refEffectSet.payloads.length,2);
+
+  const missing=Pipeline.runProduction({
+    ...common,
+    reference_effect_receipts:[lineReceipt.receipt]
+  });
+  assert.equal(missing.ok,false);
+  assert.equal(missing.stage,'VALIDATION');
+  assert(
+    missing.evidence.refEffectSet.findings.some(
+      x=>x.reason==='REFERENCE_EFFECT_RECEIPT_COVERAGE_MISSING' &&
+         x.reference_id==='DIVISARE_EDITORIAL_RESTRAINT'
+    ),
+    JSON.stringify(missing.evidence.refEffectSet,null,2)
+  );
+
+  const unimplemented=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY','DIVISARE_EDITORIAL_RESTRAINT','OMA_RELATION_FIRST'],
+    context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+  });
+  const unsupported=Measurement.verifyReferenceEffectSet(
+    [lineReceipt.receipt,layoutReceipt.receipt],
+    artifactDigest,
+    unimplemented
+  );
+  assert.equal(unsupported.ok,false);
+  assert.equal(unsupported.reason,'REFERENCE_EFFECT_METRIC_NOT_IMPLEMENTED');
+  assert(unsupported.reference_ids.includes('OMA_RELATION_FIRST'));
+})();
 
 (function testSignedAuthorizationIsSerializable(){
   const routed=Router.routeProductionTask({
