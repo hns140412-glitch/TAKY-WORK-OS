@@ -1,0 +1,68 @@
+{
+  "version": "2026-09-23.1",
+  "gaps": [
+    {
+      "id": "GAP-01",
+      "layer": "ROUTING",
+      "finding": "No mandatory producer authorization for user-facing artifacts.",
+      "priority": "P0",
+      "fix": "production-router"
+    },
+    {
+      "id": "GAP-02",
+      "layer": "GEOMETRY",
+      "finding": "Presentation/entourage transforms can destructively alter protected geometry.",
+      "priority": "P0",
+      "fix": "layer capability ACL + geometry diff"
+    },
+    {
+      "id": "GAP-03",
+      "layer": "VALIDATION",
+      "finding": "Validation can be descriptive/non-blocking and occur after artifact rendering.",
+      "priority": "P0",
+      "fix": "L7/L8 state machine"
+    },
+    {
+      "id": "GAP-04",
+      "layer": "REFERENCE",
+      "finding": "method_refs do not prove compiled visual effect.",
+      "priority": "P0",
+      "fix": "reference compiler receipt"
+    },
+    {
+      "id": "GAP-05",
+      "layer": "QUALITY",
+      "finding": "Source fidelity conflated with presentation success.",
+      "priority": "P0",
+      "fix": "independent quality axes"
+    },
+    {
+      "id": "GAP-06",
+      "layer": "SOURCE",
+      "finding": "mtime can be overused as freshness authority.",
+      "priority": "P1",
+      "fix": "content identity relation"
+    },
+    {
+      "id": "GAP-07",
+      "layer": "SEMANTIC",
+      "finding": "inference can become style input before verification.",
+      "priority": "P0",
+      "fix": "semantic state gate"
+    },
+    {
+      "id": "GAP-08",
+      "layer": "NARRATIVE",
+      "finding": "prose claims lack claim-level evidence receipts.",
+      "priority": "P0",
+      "fix": "narrative evidence gate"
+    },
+    {
+      "id": "GAP-09",
+      "layer": "HANDOFF",
+      "finding": "Resume can perpetuate failed architecture.",
+      "priority": "P1",
+      "fix": "RESUME/RETROSPECTIVE/SURGERY modes"
+    }
+  ]
+}

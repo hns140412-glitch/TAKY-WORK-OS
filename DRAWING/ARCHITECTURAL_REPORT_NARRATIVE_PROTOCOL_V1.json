@@ -1,0 +1,67 @@
+{
+  "protocol_version": "2026-09-23.1",
+  "protocol_id": "ARCHITECTURAL_REPORT_NARRATIVE_PROTOCOL_V1",
+  "purpose": "Convert verified drawing facts and design intent into decision-oriented report pages without inventing unsupported architectural claims.",
+  "source_inspiration": {
+    "title": "AI 설계 보고서 작성법",
+    "role": "USER_REFERENCE",
+    "mined_principles": [
+      "ROLE / STRUCTURE / STRUCTURED_CONTEXT / OUTPUT_FORMAT are separated",
+      "report storyline is fixed before prose expansion",
+      "drawing data is entered as meaning units rather than dumped as raw files",
+      "each page explains why the shown condition matters",
+      "executive summaries, concise tables and short captions outrank long prose"
+    ]
+  },
+  "pipeline": [
+    "SOURCE",
+    "FACT",
+    "DESIGN_INTENT",
+    "WHY_DECISION_POINT",
+    "PAGE_MESSAGE",
+    "REFERENCE_DNA",
+    "A3_SVG_BOARD_STATE",
+    "HTML_PDF_PPTX"
+  ],
+  "required_page_narrative": {
+    "message": {
+      "required": true,
+      "max_lines": 4,
+      "evidence_refs_required": true
+    },
+    "why_it_matters": {
+      "required": true,
+      "max_lines": 4,
+      "evidence_refs_required": true
+    },
+    "decision_points": {
+      "min_items": 1,
+      "max_items": 3,
+      "evidence_refs_required": true
+    }
+  },
+  "report_storyline": [
+    "EXECUTIVE_SUMMARY",
+    "SITE_AND_CONTEXT",
+    "DESIGN_CONCEPT_AND_NARRATIVE",
+    "SPACE_PROGRAM_AND_ZONING",
+    "TECHNICAL_AND_ENVIRONMENTAL",
+    "EXPECTED_VALUE_AND_NEXT_ACTION"
+  ],
+  "output_rules": [
+    "ONE_PAGE_ONE_MESSAGE",
+    "MAIN_DRAWING_FIRST",
+    "SUPPORTING_DIAGRAMS_MAX_3",
+    "SHORT_CAPTIONS",
+    "TABLES_FOR_COMPARABLE_METRICS",
+    "CLIENT_FACING_LABELS_ONLY",
+    "INTERNAL_ENGINE_IDS_HIDDEN_IN_PRODUCTION"
+  ],
+  "evidence_rules": [
+    "UNSUPPORTED_CLAIM_FORBIDDEN",
+    "PENDING_REMAINS_PENDING",
+    "REFERENCE_ONLY_DOES_NOT_BECOME_CURRENT_FACT",
+    "EVALUATIVE_LANGUAGE_REQUIRES_PROJECT_EVIDENCE",
+    "SOURCE_GEOMETRY_MUTATION_FORBIDDEN"
+  ]
+}
