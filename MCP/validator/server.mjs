@@ -18,6 +18,7 @@ const reviewImageExporter=path.resolve(projectRoot,'tools/drawing_review_image_e
 
 const Signer=require('./receipt-signer.cjs');
 const VisionParser=require('../../runtime/vision-review-parser.js');
+const HumanIntent=require('../../runtime/human-intent-contract.js');
 
 function result(value){
   return {content:[{type:'text',text:JSON.stringify(value)}]};
@@ -56,7 +57,7 @@ function renderReviewPng(sourcePath,pageIndex=0){
   });
 }
 
-async function callIndependentVision({baselinePng,candidatePng,referencePngs=[]}){
+async function callIndependentVision({baselinePng,candidatePng,referencePngs=[],humanIntent}){
   const apiKey=process.env.ANTHROPIC_API_KEY;
   if(!apiKey) throw new Error('ANTHROPIC_API_KEY_REQUIRED');
   const model=process.env.TAKY_VISION_MODEL||'claude-sonnet-5';
@@ -77,7 +78,9 @@ async function callIndependentVision({baselinePng,candidatePng,referencePngs=[]}
     content.push(imageBlock(p));
   });
   content.push({type:'text',text:[
-    'Evaluate only visible architectural-presentation evidence.',
+    'HUMAN DESIRED OUTCOME: '+humanIntent.desired_outcome,
+    'SUCCESS CRITERIA: '+(humanIntent.success_criteria.length?humanIntent.success_criteria.join(' | '):'none explicitly stated'),
+    'Evaluate only visible architectural-presentation evidence against that human purpose.',
     'Return exactly one JSON object with booleans:',
     'professional_family_pass, reference_effect_visible_without_explanation, generic_layout_detected, decision_value_pass,',
     'plus reasons as an array of short strings.',
@@ -175,6 +178,10 @@ export function buildServer(){
         baseline_path:z.string().min(1),
         candidate_path:z.string().min(1),
         reference_paths:z.array(z.string().min(1)).min(1).max(3),
+        human_intent:z.object({
+          desired_outcome:z.string().min(1),
+          success_criteria:z.array(z.string()).default([])
+        }),
         page_index:z.number().int().min(0).default(0)
       })
     },
@@ -189,10 +196,29 @@ export function buildServer(){
         for(const refPath of input.reference_paths){
           const p=await renderReviewPng(refPath,input.page_index??0); temp.push(p); refs.push(p);
         }
-        const reviewed=await callIndependentVision({baselinePng:baseline,candidatePng:candidate,referencePngs:refs});
+        const intent=HumanIntent.compileHumanIntent(input.human_intent);
+        if(!intent.ok) return result({ok:false,reason:intent.reason});
+        const reviewed=await callIndependentVision({
+          baselinePng:baseline,
+          candidatePng:candidate,
+          referencePngs:refs,
+          humanIntent:intent
+        });
         const digest=sha256File(input.candidate_path);
-        const receipt=Signer.signVisionReview({artifact_digest:digest,...reviewed.review});
-        return result({ok:true,receipt,artifact_digest:digest,validator_id:'VISION_VALIDATOR_V1',model:reviewed.model,review:reviewed.review});
+        const receipt=Signer.signVisionReview({
+          artifact_digest:digest,
+          intent_digest:intent.intent_digest,
+          ...reviewed.review
+        });
+        return result({
+          ok:true,
+          receipt,
+          artifact_digest:digest,
+          intent_digest:intent.intent_digest,
+          validator_id:'VISION_VALIDATOR_V1',
+          model:reviewed.model,
+          review:reviewed.review
+        });
       }catch(error){
         return result({ok:false,reason:'VISION_REVIEW_FAILED',error:String(error?.message||error)});
       }finally{
