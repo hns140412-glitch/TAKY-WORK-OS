@@ -1,8 +1,10 @@
 (function(root,factory){
-  const api=factory();
-  if(typeof module==='object'&&module.exports) module.exports=api;
-  else root.TakyReportPackage=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+  let productionGate=null;
+  if(typeof module==='object'&&module.exports){
+    productionGate=require('./drawing-production-gate');
+    module.exports=factory(productionGate);
+  }else root.TakyReportPackage=Object.freeze(factory(root.TakyDrawingProductionGate));
+})(typeof globalThis!=='undefined'?globalThis:this,function(productionGate){
   'use strict';
 
   const SOURCE_ROLES=new Set([
@@ -56,9 +58,22 @@
     });
   }
 
-  function buildOutputPlan(pkg={}){
+  function buildOutputPlan(pkg={},authorization={}){
     const v=validate(pkg);
     if(!v.ok) return Object.freeze({ok:false,reason:'PACKAGE_INVALID',findings:v.findings});
+    if(!productionGate) return Object.freeze({ok:false,reason:'PRODUCTION_GATE_REQUIRED'});
+    const admission=productionGate.evaluate({
+      artifact_class:authorization.artifact_class||'PREVIEW',
+      engine:authorization.engine||'',
+      execution_path:authorization.execution_path||'',
+      gates:authorization.gates||{},
+      geometry_diff:authorization.geometry_diff,
+      source_digest_before:authorization.source_digest_before,
+      source_digest_after:authorization.source_digest_after,
+      freshness_basis:authorization.freshness_basis,
+      unsupported_narrative_claims:authorization.unsupported_narrative_claims||[]
+    });
+    if(!admission.show) return Object.freeze({ok:false,reason:'PRE_USER_GATE_BLOCKED',admission});
 
     const pages=(pkg.pages||[]).map(p=>({
       page_id:p.page_id,
@@ -76,6 +91,7 @@
       content_canonical:'REPORT_PACKAGE',
       visual_canonical:'A3_SVG_BOARD_STATE',
       pages:Object.freeze(pages),
+      production_admission:admission,
       outputs:Object.freeze({
         PDF:{route:'A3_SVG_BOARD_STATE -> PDF',role:'PRIMARY_DELIVERABLE'},
         HTML:{route:'A3_SVG_BOARD_STATE -> HTML',role:'INTERACTIVE_VIEW'},
