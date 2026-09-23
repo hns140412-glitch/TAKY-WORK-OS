@@ -121,6 +121,9 @@
     if(!sb) return {ok:false,reason:'SOURCE_VIEWBOX_REQUIRED'};
     const sourceDoc=String(source_svg||'').trim();
     if(!sourceDoc || !/^<svg\b/i.test(sourceDoc)) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
+    const sourceDocClipped=/\boverflow\s*=/.test(sourceDoc)
+      ? sourceDoc
+      : sourceDoc.replace(/^<svg\b/i,'<svg overflow="hidden"');
 
     const fit=fitTransform(sb,{
       x:hero.x+8,y:hero.y+8,width:hero.width-16,height:hero.height-16
@@ -133,7 +136,7 @@
       '<defs><clipPath id="source-a3-clip" clipPathUnits="userSpaceOnUse"><rect x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" width="'+(hero.width-16)+'" height="'+(hero.height-16)+'"/></clipPath></defs>'+
       '<g id="source-slot" data-source-geometry="locked" clip-path="url(#source-a3-clip)" '+
       'transform="translate('+fit.x.toFixed(4)+' '+fit.y.toFixed(4)+') scale('+fit.scale.toFixed(8)+')">'+
-      sourceDoc+'</g>';
+      sourceDocClipped+'</g>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
