@@ -56,6 +56,12 @@
     if(input.geometry_diff && input.geometry_diff.pass!==true){
       findings.push({code:'GEOMETRY_DIFF_FAIL'});
     }
+    if(input.protected_anchor_check && input.protected_anchor_check.ok!==true){
+      findings.push({code:'PROTECTED_ARCHITECTURE_DELETED',missing:[...(input.protected_anchor_check.missing||[])]});
+    }
+    if(input.semantic_check && input.semantic_check.ok!==true){
+      findings.push({code:'SEMANTIC_VERIFICATION_FAIL',details:[...(input.semantic_check.findings||[])]});
+    }
     if(input.source_digest_before && input.source_digest_after && input.source_digest_before!==input.source_digest_after){
       findings.push({code:'SOURCE_IDENTITY_DRIFT'});
     }
