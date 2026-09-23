@@ -1,35 +1,52 @@
 'use strict';
 
-function validateA3(metrics={}){
+function validateA3Measured(metrics={}){
   const findings=[];
-  if(metrics.width_mm!==420 || metrics.height_mm!==297) findings.push('A3_MEDIA_BOX_INVALID');
-  if(typeof metrics.margin_mm!=='number' || metrics.margin_mm<8) findings.push('MARGIN_TOO_SMALL');
-  if(typeof metrics.hero_ratio!=='number' || metrics.hero_ratio<0.60 || metrics.hero_ratio>0.85) findings.push('HERO_RATIO_OUT_OF_RANGE');
-  if(typeof metrics.support_diagram_count!=='number' || metrics.support_diagram_count>3) findings.push('TOO_MANY_SUPPORT_DIAGRAMS');
-  if(metrics.text_clipped===true) findings.push('TEXT_CLIPPED');
-  return Object.freeze({ok:findings.length===0,gate:findings.length?'FAIL':'PASS',findings:Object.freeze(findings)});
+  if(metrics.width_mm===null || metrics.height_mm===null || metrics.width_mm===undefined || metrics.height_mm===undefined){
+    findings.push('PHYSICAL_MEDIA_SIZE_UNAVAILABLE');
+  } else {
+    if(Math.abs(metrics.width_mm-420)>2 || Math.abs(metrics.height_mm-297)>2){
+      findings.push('A3_MEDIA_BOX_INVALID');
+    }
+  }
+  if(metrics.landscape!==true) findings.push('LANDSCAPE_REQUIRED');
+  if(metrics.text_bbox_outside_page===true) findings.push('TEXT_CLIPPED_OR_OUTSIDE_PAGE');
+  if(metrics.ink_ratio!==undefined && (metrics.ink_ratio<0.01 || metrics.ink_ratio>0.80)){
+    findings.push('CONTENT_OCCUPANCY_OUT_OF_RANGE');
+  }
+  return Object.freeze({
+    ok:findings.length===0,
+    gate:findings.length?'FAIL':'PASS',
+    scope:'OBJECTIVE_MEASURED',
+    findings:Object.freeze(findings)
+  });
 }
 
-function validateArchitecturalReadability(metrics={}){
+function validateArchitecturalReadabilityObjective(metrics={}){
   const findings=[];
-  if(metrics.main_drawing_identifiable_ms===undefined || metrics.main_drawing_identifiable_ms>2000) findings.push('MAIN_DRAWING_NOT_IMMEDIATE');
-  if(metrics.hierarchy_score===undefined || metrics.hierarchy_score<0.70) findings.push('HIERARCHY_TOO_WEAK');
-  if(metrics.figure_ground_score===undefined || metrics.figure_ground_score<0.70) findings.push('FIGURE_GROUND_TOO_WEAK');
-  if(metrics.support_competition_score===undefined || metrics.support_competition_score>0.35) findings.push('SUPPORT_COMPETES_WITH_HERO');
-  return Object.freeze({ok:findings.length===0,gate:findings.length?'FAIL':'PASS',findings:Object.freeze(findings)});
-}
-
-function validateUserEffect(metrics={}){
-  const findings=[];
-  if(metrics.reference_effect_visible_without_explanation!==true) findings.push('REFERENCE_EFFECT_NOT_SELF_EVIDENT');
-  if(metrics.decision_value_score===undefined || metrics.decision_value_score<0.70) findings.push('DECISION_VALUE_TOO_LOW');
-  if(metrics.generic_layout_detected===true) findings.push('GENERIC_LAYOUT_DETECTED');
-  return Object.freeze({ok:findings.length===0,gate:findings.length?'FAIL':'PASS',findings:Object.freeze(findings)});
+  if(typeof metrics.contrast_std_norm!=='number' || metrics.contrast_std_norm<0.04){
+    findings.push('CONTRAST_TOO_WEAK');
+  }
+  if(typeof metrics.edge_density!=='number' || metrics.edge_density<0.001){
+    findings.push('EDGE_STRUCTURE_TOO_WEAK');
+  }
+  if(typeof metrics.ink_ratio!=='number' || metrics.ink_ratio<0.01){
+    findings.push('DRAWING_TOO_SPARSE_OR_EMPTY');
+  }
+  if(typeof metrics.ink_ratio==='number' && metrics.ink_ratio>0.80){
+    findings.push('DRAWING_OVERDENSE');
+  }
+  return Object.freeze({
+    ok:findings.length===0,
+    gate:findings.length?'FAIL':'PASS',
+    scope:'OBJECTIVE_PRESCREEN_ONLY',
+    professional_quality_claim:false,
+    findings:Object.freeze(findings)
+  });
 }
 
 module.exports=Object.freeze({
-  version:'1.0.0',
-  validateA3,
-  validateArchitecturalReadability,
-  validateUserEffect
+  version:'2.0.0',
+  validateA3Measured,
+  validateArchitecturalReadabilityObjective
 });
