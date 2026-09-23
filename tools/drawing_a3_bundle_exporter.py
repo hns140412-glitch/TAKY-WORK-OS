@@ -12,6 +12,7 @@ import argparse
 import importlib.util
 import json
 import shutil
+import subprocess
 from pathlib import Path
 from typing import Dict
 
@@ -174,6 +175,26 @@ def validate_bundle(paths: Dict[str, str], orientation: str, dpi: int):
     }
 
 
+def _production_admission(svg_path: str | Path, artifact_class: str, production_context: str | Path | None):
+    cls = str(artifact_class or "EXPERIMENT").upper()
+    if cls not in {"PREVIEW", "FINAL", "USER_FACING"}:
+        return {"ok": True, "decision": "ALLOW_INTERNAL", "showable": False, "artifact_class": cls}
+    if not production_context:
+        return {"ok": False, "decision": "HOLD", "showable": False, "artifact_class": cls, "blocks": ["PRODUCTION_CONTEXT_REQUIRED"]}
+    node_cli = HERE.parent / "runtime" / "drawing-production-admission-cli.js"
+    proc = subprocess.run(
+        ["node", str(node_cli), "--artifact", str(svg_path), "--artifact-class", cls, "--production-context", str(production_context)],
+        capture_output=True, text=True
+    )
+    try:
+        payload = json.loads(proc.stdout or "{}")
+    except json.JSONDecodeError:
+        payload = {"ok": False, "decision": "HOLD", "blocks": ["ADMISSION_OUTPUT_INVALID"], "stderr": proc.stderr}
+    if proc.returncode != 0:
+        payload["ok"] = False
+    return payload
+
+
 def export_verified(
     svg_path: str | Path,
     out_dir: str | Path,
@@ -181,9 +202,15 @@ def export_verified(
     orientation: str = "landscape",
     dpi: int = 300,
     max_attempts: int = 2,
+    artifact_class: str = "EXPERIMENT",
+    production_context: str | Path | None = None,
 ):
     history = []
     out_dir = Path(out_dir)
+    admission = _production_admission(svg_path, artifact_class, production_context)
+    if not admission.get("ok"):
+        return {"status":"BLOCKED_PRODUCTION_ADMISSION","artifact_class":str(artifact_class).upper(),"admission":admission,"outputs":{}}
+
     for attempt in range(1, max_attempts + 1):
         if out_dir.exists():
             for child in out_dir.iterdir():
@@ -204,6 +231,8 @@ def export_verified(
                 "outputs": paths,
                 "validation": check,
                 "history": history,
+                "artifact_class": str(artifact_class).upper(),
+                "production_admission": admission,
             }
             (out_dir / "bundle_manifest.json").write_text(
                 json.dumps(manifest, ensure_ascii=False, indent=2),
@@ -233,6 +262,8 @@ def main():
     parser.add_argument("--orientation", choices=["landscape", "portrait"], default="landscape")
     parser.add_argument("--dpi", type=int, default=300)
     parser.add_argument("--max-attempts", type=int, default=2)
+    parser.add_argument("--artifact-class", default="EXPERIMENT", choices=["EXPERIMENT","DIAGNOSTIC","PREVIEW","FINAL","USER_FACING"])
+    parser.add_argument("--production-context")
     args = parser.parse_args()
     result = export_verified(
         args.svg,
@@ -240,6 +271,8 @@ def main():
         orientation=args.orientation,
         dpi=args.dpi,
         max_attempts=args.max_attempts,
+        artifact_class=args.artifact_class,
+        production_context=args.production_context,
     )
     print(json.dumps(result, ensure_ascii=False, indent=2))
     raise SystemExit(0 if result["status"] == "PASS" else 2)
