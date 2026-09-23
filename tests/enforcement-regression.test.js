@@ -225,6 +225,17 @@ function minimalPackage(){
   });
   assert.equal(deferred.compiled[0].applicability.status,'PARTIAL');
   assert.equal(deferred.compiled[1].applicability.status,'DEFERRED');
+  assert.equal(deferred.compiled[1].applicability.production_claimable,false);
+  assert.equal(deferred.compiled[1].effect_metric,'TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1');
+  assert.equal(
+    deferred.compiled[1].engine_patch.source_style_policy.staging_adapter.mode,
+    'VERIFIED_PRESENTATION_ROLE_CLARITY'
+  );
+  assert.equal(
+    deferred.compiled[1].engine_patch.source_style_policy.staging_adapter.production_claimable,
+    false
+  );
+  assert(deferred.effect_metrics.includes('TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1'));
   const checked=ReferenceCompiler.validateClaimability(deferred);
   assert.equal(checked.ok,false);
   assert.deepEqual(

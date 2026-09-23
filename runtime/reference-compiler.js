@@ -95,14 +95,22 @@ const REFERENCE_DNA=Object.freeze({
       status:'DEFERRED',
       production_claimable:false,
       claim_scope:null,
-      limitation:'VERIFIED_PRESENTATION_ROLES_REQUIRED'
+      limitation:'VERIFIED_PRESENTATION_ROLE_AUTHORITY_REQUIRED_FOR_PRODUCTION_CLAIM'
     }),
     relation:Object.freeze(['STRUCTURE','PROGRAM','ENVELOPE']),
     expected_effect:Object.freeze(['SYSTEM_READABILITY']),
+    effect_metric:'TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1',
     engine_patch:Object.freeze({
       source_style_policy:Object.freeze({
         requires_verified_roles:true,
-        hierarchy:Object.freeze(['STRUCTURE','PROGRAM','ENVELOPE'])
+        hierarchy:Object.freeze(['STRUCTURE','PROGRAM','ENVELOPE']),
+        staging_adapter:Object.freeze({
+          mode:'VERIFIED_PRESENTATION_ROLE_CLARITY',
+          role_contract:'VERIFIED_PRESENTATION_ROLES_ONLY',
+          executable:'tools/drawing_technical_clarity_adapter.py',
+          effect_metric:'TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1',
+          production_claimable:false
+        })
       })
     })
   })
@@ -220,7 +228,7 @@ function validateReferenceEffect(proof={}) {
 }
 
 module.exports=Object.freeze({
-  version:'2.1.0',
+  version:'2.2.0',
   REFERENCE_DNA,
   stable,
   digest,
