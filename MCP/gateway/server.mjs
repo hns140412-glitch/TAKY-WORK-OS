@@ -10,11 +10,13 @@ const require=createRequire(import.meta.url);
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=path.dirname(__filename);
 const geometryAdapter=path.resolve(__dirname,'../../tools/drawing_geometry_primitive_adapter.py');
+const visualAdapter=path.resolve(__dirname,'../../tools/drawing_visual_metric_extractor.py');
 
 const Router=require('../../runtime/work-os-router.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
 const Pipeline=require('../../runtime/production-pipeline.js');
 const ReferenceCompiler=require('../../runtime/reference-compiler.js');
+const Measurement=require('../../runtime/visual-measurement-receipt.js');
 
 function runPython(args){
   return new Promise((resolve,reject)=>{
@@ -28,6 +30,23 @@ function runPython(args){
       catch(parseErr){ reject(new Error('GEOMETRY_ADAPTER_JSON_INVALID:'+parseErr.message)); }
     });
   });
+}
+
+function runVisualPython(args){
+  return new Promise((resolve,reject)=>{
+    const python=process.env.TAKY_PYTHON||'python3';
+    execFile(python,[visualAdapter,...args],{maxBuffer:20*1024*1024},(err,stdout,stderr)=>{
+      if(err){ reject(new Error(stderr||err.message)); return; }
+      try{ resolve(JSON.parse(stdout)); }
+      catch(parseErr){ reject(new Error('VISUAL_METRIC_JSON_INVALID:'+parseErr.message)); }
+    });
+  });
+}
+
+function projectSafe(rawPath){
+  const root=path.resolve(process.env.CLAUDE_PROJECT_DIR||path.resolve(__dirname,'../..'));
+  const candidate=path.resolve(rawPath);
+  return candidate===root || candidate.startsWith(root+path.sep);
 }
 
 function result(value){
@@ -66,6 +85,62 @@ export function buildServer(){
   );
 
   server.registerTool(
+    'measure-visual-artifact',
+    {
+      description:'Measure objective visual properties from a project PDF/PNG/JPG/WEBP and issue a signed receipt bound to the exact artifact SHA256. Does not claim professional quality.',
+      inputSchema:z.object({
+        artifact_path:z.string().min(1),
+        page_index:z.number().int().min(0).default(0)
+      })
+    },
+    async(input)=>{
+      try{
+        if(!projectSafe(input.artifact_path)) return result({ok:false,reason:'ARTIFACT_PATH_OUTSIDE_PROJECT'});
+        const digest=ArtifactBroker.sha256File(input.artifact_path);
+        const metrics=await runVisualPython([input.artifact_path,'--page',String(input.page_index??0)]);
+        const issued=Measurement.issueVisualMeasurement({artifact_digest:digest,metrics});
+        return result({...issued,artifact_digest:digest,metrics});
+      }catch(error){
+        return result({ok:false,reason:'VISUAL_MEASUREMENT_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
+
+  server.registerTool(
+    'measure-reference-effect',
+    {
+      description:'Compare reference-off baseline and reference-on candidate artifacts objectively and issue a signed candidate-digest-bound effect receipt. Professional-family judgment remains separate.',
+      inputSchema:z.object({
+        baseline_path:z.string().min(1),
+        candidate_path:z.string().min(1),
+        reference_ids:z.array(z.string()).min(1),
+        page_index:z.number().int().min(0).default(0)
+      })
+    },
+    async(input)=>{
+      try{
+        if(!projectSafe(input.baseline_path)||!projectSafe(input.candidate_path)){
+          return result({ok:false,reason:'REFERENCE_ARTIFACT_PATH_OUTSIDE_PROJECT'});
+        }
+        const baselineDigest=ArtifactBroker.sha256File(input.baseline_path);
+        const candidateDigest=ArtifactBroker.sha256File(input.candidate_path);
+        const measured=await runVisualPython([
+          input.candidate_path,'--page',String(input.page_index??0),'--baseline',input.baseline_path
+        ]);
+        const issued=Measurement.issueReferenceEffect({
+          baseline_digest:baselineDigest,
+          candidate_digest:candidateDigest,
+          reference_ids:input.reference_ids,
+          comparison:measured.comparison
+        });
+        return result({...issued,baseline_digest:baselineDigest,candidate_digest:candidateDigest,comparison:measured.comparison});
+      }catch(error){
+        return result({ok:false,reason:'REFERENCE_EFFECT_MEASUREMENT_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
+
+  server.registerTool(
     'route-production-task',
     {
       description:'Issue a signed TAKY production authorization only for an approved Work OS route.',
@@ -94,8 +169,9 @@ export function buildServer(){
         semantics:z.array(z.record(z.string(),z.any())).default([]),
         claims:z.array(z.record(z.string(),z.any())).default([]),
         reference:z.record(z.string(),z.any()),
-        reference_effect_proof:z.record(z.string(),z.any()),
-        visual_metrics:z.record(z.string(),z.any()),
+        visual_measurement_receipt:z.string().min(1),
+        reference_effect_receipt:z.string().min(1),
+        vision_review_receipt:z.string().min(1),
         provenance:z.record(z.string(),z.any()),
         report_package:z.record(z.string(),z.any()).optional(),
         sources:z.array(z.record(z.string(),z.any())).optional(),
