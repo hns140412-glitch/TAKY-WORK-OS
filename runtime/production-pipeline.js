@@ -3,6 +3,7 @@
 const Router=require('./work-os-router.js');
 const ExecutionContract=require('./execution-contract.js');
 const SourceIdentity=require('./source-identity-validator.js');
+const SourceFidelity=require('./source-fidelity-receipt.js');
 const GeometryFingerprint=require('./geometry-fingerprint.js');
 const GeometryGuard=require('./geometry-guard.js');
 const FactGate=require('./fact-evidence-validator.js');
@@ -35,24 +36,35 @@ function runProduction(input={}){
 
   const source=SourceIdentity.classifyRevision(input.source_identity||{});
 
-  const geometryCompare=GeometryFingerprint.compareGeometry(
-    input.geometry?.source||{},
-    input.geometry?.output||{}
-  );
+  let geometryCompare=null;
+  let geometryDiagnostic=null;
+  if(Array.isArray(input.geometry?.source?.primitives) && Array.isArray(input.geometry?.output?.primitives)){
+    geometryCompare=GeometryFingerprint.compareGeometry(
+      input.geometry.source,
+      input.geometry.output
+    );
+    geometryDiagnostic=geometryCompare.ok
+      ? GeometryGuard.validateGeometryIntegrity({
+          source_fingerprint:geometryCompare.source_fingerprint,
+          output_fingerprint:geometryCompare.output_fingerprint,
+          protected_anchors_source:input.geometry?.protected_anchors_source||[],
+          protected_anchors_output:input.geometry?.protected_anchors_output||[],
+          crop_source:input.geometry?.crop_source,
+          crop_output:input.geometry?.crop_output,
+          rotation_source:input.geometry?.rotation_source,
+          rotation_output:input.geometry?.rotation_output,
+          scale_source:input.geometry?.scale_source,
+          scale_output:input.geometry?.scale_output,
+          mask_intersections:input.geometry?.mask_intersections||[]
+        })
+      : Object.freeze({ok:false,status:'DIAGNOSTIC_MISMATCH'});
+  }
 
-  const geometry=GeometryGuard.validateGeometryIntegrity({
-    source_fingerprint:geometryCompare.source_fingerprint,
-    output_fingerprint:geometryCompare.output_fingerprint,
-    protected_anchors_source:input.geometry?.protected_anchors_source||[],
-    protected_anchors_output:input.geometry?.protected_anchors_output||[],
-    crop_source:input.geometry?.crop_source,
-    crop_output:input.geometry?.crop_output,
-    rotation_source:input.geometry?.rotation_source,
-    rotation_output:input.geometry?.rotation_output,
-    scale_source:input.geometry?.scale_source,
-    scale_output:input.geometry?.scale_output,
-    mask_intersections:input.geometry?.mask_intersections||[]
-  });
+  const sourceFidelity=SourceFidelity.verifySourceFidelity(
+    input.source_fidelity_receipt,
+    input.artifact_digest||null,
+    source.current_hash||null
+  );
 
   const facts=FactGate.validateFacts({
     sources:input.report_package?.sources||input.sources||[],
@@ -105,7 +117,7 @@ function runProduction(input={}){
 
   const gate_results={
     SOURCE_GATE:source.ok && source.gate==='PASS'?'PASS':'FAIL',
-    GEOMETRY_GATE:geometryCompare.ok && geometry.ok?'PASS':'FAIL',
+    GEOMETRY_GATE:sourceFidelity.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
     REFERENCE_EFFECT_GATE:refCompile.ok && refApplication.ok && refEffect.ok && visionReview.ok?'PASS':'FAIL',
@@ -118,8 +130,9 @@ function runProduction(input={}){
 
   const evidence={
     source,
+    sourceFidelity,
     geometryCompare,
-    geometry,
+    geometryDiagnostic,
     facts,
     semantics,
     narrative,
