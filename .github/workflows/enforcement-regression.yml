@@ -19,6 +19,8 @@ jobs:
         run: node tests/ci-attestation-gate.test.js
       - name: Run readiness evaluator regression
         run: node tests/readiness-evaluator.test.js
+      - name: Run validation readiness receipt regression
+        run: node tests/validation-readiness-receipt.test.js
       - name: Run MCP trust-boundary regression
         run: node tests/mcp-trust-boundary.test.js
       - name: Run Claude host guard regression
