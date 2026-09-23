@@ -76,6 +76,7 @@ function runProduction(input={}){
   const humanIntent=HumanIntent.compileHumanIntent(input.human_intent||{});
 
   const refCompile=ReferenceCompiler.compileReferenceProfile(input.reference||{});
+  const refClaimability=ReferenceCompiler.validateClaimability(refCompile);
   const refApplication=ReferenceApplication.validateApplication(
     input.reference_application||{},
     refCompile
@@ -166,7 +167,7 @@ function runProduction(input={}){
     GEOMETRY_GATE:sourceFidelity.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:refCompile.ok && refCoverage.ok && refEffectSet.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
+    REFERENCE_EFFECT_GATE:refCompile.ok && refClaimability.ok && refCoverage.ok && refEffectSet.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
     ARCHITECTURAL_READABILITY_GATE:visualMeasurement.ok && readability.ok?'PASS':'FAIL',
     A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
@@ -184,6 +185,7 @@ function runProduction(input={}){
     narrative,
     humanIntent,
     refCompile,
+    refClaimability,
     refApplication,
     refSourceStyle,
     refCoverage,
