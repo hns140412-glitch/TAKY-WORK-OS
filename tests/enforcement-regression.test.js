@@ -144,6 +144,12 @@ function minimalPackage(){
   });
   assert.equal(c.ok,true);
   assert.equal(c.status,'COMPILED');
+  assert.equal(c.applicability_status,'HAS_DEFERRED');
+  assert(c.claimable_reference_ids.includes('ARCHDAILY_PLAN_HIERARCHY'));
+  assert(c.deferred_reference_ids.includes('OMA_RELATION_FIRST'));
+  const claimability=ReferenceCompiler.validateClaimability(c);
+  assert.equal(claimability.ok,false);
+  assert.equal(claimability.reason,'REFERENCE_NOT_PRODUCTION_CLAIMABLE');
 
   const weak=ReferenceCompiler.validateReferenceEffect({
     APPLICATION_TRACE_PASS:true,
@@ -164,6 +170,36 @@ function minimalPackage(){
   });
   assert.equal(strong.ok,true);
   assert.equal(strong.status,'VERIFIED_EFFECTIVE');
+})();
+
+(function testReferenceApplicabilityScopes(){
+  const full=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+    context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
+  });
+  assert.equal(full.compiled[0].applicability.status,'FULL');
+  assert.equal(full.compiled[0].applicability.claim_scope,'EDITORIAL_LAYOUT_RESTRAINT');
+  assert.equal(ReferenceCompiler.validateClaimability(full).ok,true);
+
+  const partial=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
+    context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+  });
+  assert.equal(partial.compiled[0].applicability.status,'PARTIAL');
+  assert.equal(partial.compiled[0].applicability.claim_scope,'SOURCE_LINE_HIERARCHY_ONLY');
+  assert.equal(ReferenceCompiler.validateClaimability(partial).ok,true);
+
+  const deferred=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['BIG_ONE_MOVE','SOM_FOSTER_TECHNICAL_CLARITY'],
+    context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
+  });
+  assert.equal(deferred.compiled.every(x=>x.applicability.status==='DEFERRED'),true);
+  const checked=ReferenceCompiler.validateClaimability(deferred);
+  assert.equal(checked.ok,false);
+  assert.deepEqual(
+    [...checked.deferred_reference_ids].sort(),
+    ['BIG_ONE_MOVE','SOM_FOSTER_TECHNICAL_CLARITY'].sort()
+  );
 })();
 
 (function testDestructiveMaskBlocked(){
