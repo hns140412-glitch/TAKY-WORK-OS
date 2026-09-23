@@ -2,8 +2,8 @@
 """TAKY Drawing Engine - exact-path SVG selective editor.
 
 Applies only verified presentation edits to exact source path IDs. Geometry
-attributes are immutable. Suppression hides an approved source object without
-deleting its geometry from the SVG DOM, enabling geometry preservation checks.
+attributes are immutable. Suppression keeps approved source objects in the SVG
+DOM but makes them renderer-agnostically invisible, enabling geometry checks.
 """
 
 from __future__ import annotations
@@ -70,10 +70,22 @@ def apply_edit_plan(svg_text: str, plan: Dict[str, Any]) -> Dict[str, Any]:
             continue
 
         if action == "SUPPRESS":
+            # Some downstream SVG renderers ignore display:none. Set all common
+            # presentation-level suppression attributes while preserving geometry.
             elem.set("display", "none")
+            elem.set("visibility", "hidden")
+            elem.set("opacity", "0")
+            elem.set("stroke-opacity", "0")
+            elem.set("fill-opacity", "0")
             elem.set("data-suppressed", "presentation-only")
             elem.set("data-verification-state", state)
-            applied.append({"path_id":path_id,"action":action})
+            applied.append({
+                "path_id":path_id,
+                "action":action,
+                "suppression_attributes":[
+                    "display","visibility","opacity","stroke-opacity","fill-opacity"
+                ],
+            })
         elif action == "STYLE":
             attrs = op.get("attributes") or {}
             bad = [k for k in attrs if k not in STYLE_ATTRS]
