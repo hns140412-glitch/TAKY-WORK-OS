@@ -75,7 +75,7 @@
       ok:true,
       production_authorized:false,
       showable:false,
-      authorization_required:'runtime/drawing-production-router.js',
+      authorization_required:'runtime/drawing-finalization-orchestrator.js',
       content_canonical:'REPORT_PACKAGE',
       visual_canonical:'A3_SVG_BOARD_STATE',
       pages:Object.freeze(pages),
@@ -96,10 +96,22 @@
     if(typeof module!=='object' || !module.exports){
       return Object.freeze({ok:false,reason:'PRODUCTION_ROUTER_REQUIRED',showable:false});
     }
-    const router=require('./drawing-production-router');
-    const auth=router.authorizeProduction(execution);
-    if(!auth.ok) return Object.freeze({ok:false,reason:'PRODUCTION_NOT_AUTHORIZED',showable:false,findings:auth.findings});
-    return Object.freeze({...plan,production_authorized:true,showable:auth.showable,production_authorization:auth.receipt});
+    const finalizer=require('./drawing-finalization-orchestrator');
+    const admission=finalizer.decideUserExposure(execution);
+    if(!admission.ok || admission.decision!=='SHOW'){
+      return Object.freeze({
+        ok:false,
+        reason:'PRODUCTION_NOT_AUTHORIZED',
+        showable:false,
+        blocks:admission.blocks||Object.freeze([])
+      });
+    }
+    return Object.freeze({
+      ...plan,
+      production_authorized:true,
+      showable:true,
+      production_admission:Object.freeze({decision:'SHOW',invariant:admission.invariant||'NO_PASS_NO_SHOW'})
+    });
   }
 
   function applyFactPatch(pkg={},patches=[]){
