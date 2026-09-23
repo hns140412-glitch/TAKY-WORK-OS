@@ -302,6 +302,34 @@ Repository branch protection:
 - runtime exact-head CI gate remains the production compensating control
 - status: `REPOSITORY_BRANCH_PROTECTION = ADMIN_REQUIRED / OPEN`
 
+## SIGNED READINESS INTEGRATION
+
+A further attack review found that Production Gateway readiness alone could not prove that the separate Validator process had valid private keys and live Vision API access.
+
+Correction:
+- added `TAKY_VALIDATION_READINESS_RECEIPT`
+- validator signs short-lived readiness using the measurement validation key
+- production verifies that receipt using the measurement public key
+- production also compares the attested Vision public-key fingerprint with its own configured Vision public key
+- a signed NOT-ready receipt remains NOT ready
+- missing receipt cannot produce overall user-facing readiness
+- staging remains available
+
+Readiness regression now proves:
+- durable production readiness requires exact-head CI + public keys + persistent capability key
+- objective validation and Vision readiness remain separable
+- mismatched Vision key fingerprint fails
+- NOT-ready validator receipt fails
+- missing readiness receipt fails closed for overall user-facing readiness
+- no secret values are embedded in shared MCP config
+
+Latest code validation before this document update:
+- Enforcement #372 — SUCCESS
+- Drawing Core #828 — SUCCESS
+
+Do not use those run numbers as future authority after this commit.
+Live authority is always the result of current HEAD + readiness/exact-head CI.
+
 ## OPEN — REAL-WORLD / OPERATIONAL
 
 - live validator secrets must be provisioned outside the repo:
