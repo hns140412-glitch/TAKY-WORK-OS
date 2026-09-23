@@ -12,6 +12,7 @@ import hashlib
 import json
 import math
 import tempfile
+from collections import Counter
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
@@ -64,10 +65,13 @@ def extract_dxf_primitives(path: str | Path) -> Dict[str, Any]:
     doc=ezdxf.readfile(file_path)
     msp=doc.modelspace()
     primitives: List[Dict[str, Any]]=[]
+    observed: Counter[str]=Counter()
+    unrepresented: Counter[str]=Counter()
 
     for top in msp:
         for e,lineage in _iter_dxf(top,[]):
             kind=e.dxftype()
+            observed[kind]+=1
             layer=str(getattr(e.dxf,"layer","0") or "0")
             meta={"layer":layer,"block_lineage":lineage}
             if kind=="LINE":
@@ -90,15 +94,45 @@ def extract_dxf_primitives(path: str | Path) -> Dict[str, Any]:
                     "cx":_q(e.dxf.center.x),"cy":_q(e.dxf.center.y),"r":_q(e.dxf.radius),
                     "start_deg":_q(e.dxf.start_angle),"end_deg":_q(e.dxf.end_angle)
                 },**meta))
+            elif kind=="SPLINE":
+                def p3(v: Any) -> List[float]:
+                    return [_q(v[0]),_q(v[1]),_q(v[2] if len(v)>2 else 0.0)]
+                primitives.append(_base("SPLINE",{
+                    "degree":int(e.dxf.degree),
+                    "flags":int(e.dxf.flags),
+                    "control_points":[p3(v) for v in e.control_points],
+                    "fit_points":[p3(v) for v in e.fit_points],
+                    "knots":[_q(v) for v in e.knots],
+                    "weights":[_q(v) for v in e.weights],
+                },**meta))
+            elif kind=="SOLID":
+                vertices=[]
+                for key in ("vtx0","vtx1","vtx2","vtx3"):
+                    v=getattr(e.dxf,key)
+                    vertices.append([_q(v.x),_q(v.y),_q(v.z)])
+                primitives.append(_base("SOLID",{"points":vertices},**meta))
+            elif kind=="POINT":
+                v=e.dxf.location
+                primitives.append(_base("POINT",{"x":_q(v.x),"y":_q(v.y),"z":_q(v.z)},**meta))
+            else:
+                unrepresented[kind]+=1
 
     primitives.sort(key=lambda x:x["id"])
+    observed_total=sum(observed.values())
+    represented_total=len(primitives)
     return {
         "schema":"TAKY_GEOMETRY_PRIMITIVES_V1",
         "source_type":"DXF",
         "source_sha256":hashlib.sha256(raw).hexdigest(),
         "authority":"AUTHORITATIVE_VECTOR",
         "semantic_inference":False,
-        "primitive_count":len(primitives),
+        "primitive_count":represented_total,
+        "observed_entity_count":observed_total,
+        "observed_entity_type_counts":dict(sorted(observed.items())),
+        "unrepresented_entity_type_counts":dict(sorted(unrepresented.items())),
+        "entity_representation_coverage_ratio":(
+            represented_total/observed_total if observed_total else 1.0
+        ),
         "primitives":primitives,
     }
 

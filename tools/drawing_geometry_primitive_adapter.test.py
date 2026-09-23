@@ -15,6 +15,10 @@ def test_dxf(tmp: Path):
     msp.add_line((0,0),(10,0),dxfattribs={"layer":"WALL"})
     msp.add_lwpolyline([(0,0),(10,0),(10,5),(0,5)],close=True,dxfattribs={"layer":"BOUNDARY"})
     msp.add_circle((5,2.5),1,dxfattribs={"layer":"COLUMN"})
+    msp.add_spline([(0,0,0),(2,1,0),(4,0,0),(6,2,0)],degree=3,dxfattribs={"layer":"CURVE"})
+    msp.add_solid([(0,0,0),(2,0,0),(2,2,0),(0,2,0)],dxfattribs={"layer":"SOLID"})
+    msp.add_point((3,3,0),dxfattribs={"layer":"POINT"})
+    msp.add_text("presentation text",dxfattribs={"layer":"TEXT"})
     doc.saveas(path)
 
     a=extract_dxf_primitives(path)
@@ -22,8 +26,12 @@ def test_dxf(tmp: Path):
     assert a["schema"]=="TAKY_GEOMETRY_PRIMITIVES_V1"
     assert a["authority"]=="AUTHORITATIVE_VECTOR"
     assert a["semantic_inference"] is False
-    assert a["primitive_count"]==3
+    assert a["primitive_count"]==6
+    assert a["observed_entity_count"]==7
+    assert a["unrepresented_entity_type_counts"]=={"TEXT":1}
+    assert abs(a["entity_representation_coverage_ratio"]-(6/7))<1e-12
     assert a["primitives"]==b["primitives"]
+    assert {x["type"] for x in a["primitives"]}=={"LINE","POLYLINE","CIRCLE","SPLINE","SOLID","POINT"}
     assert all(x["semantic_state"]=="UNKNOWN" for x in a["primitives"])
 
 
