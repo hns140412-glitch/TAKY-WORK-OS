@@ -84,6 +84,12 @@
       "historical": "Execution receipt and validation bundle digests disagree",
       "expected": "HOLD",
       "test": "drawing-finalization-orchestrator.test.js"
+    },
+    {
+      "id": "RT-O",
+      "historical": "Feature branch engine co-located with project-specific Hannam artifacts and treated as available/default",
+      "expected": "BLOCK PROMOTION until GENERIC_ENGINE / PROJECT_PACK split is proven",
+      "test": "promotion-boundary lint (OPEN to implement)"
     }
   ],
   "proof_boundary": "Exact-head CI proves repository regression checks only; hosted runtime invocation remains separate."
