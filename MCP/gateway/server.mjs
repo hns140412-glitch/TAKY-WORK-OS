@@ -2,14 +2,34 @@ import { McpServer } from '@modelcontextprotocol/server';
 import { serveStdio } from '@modelcontextprotocol/server/stdio';
 import * as z from 'zod/v4';
 import { createRequire } from 'node:module';
+import { execFile } from 'node:child_process';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 
 const require=createRequire(import.meta.url);
+const __filename=fileURLToPath(import.meta.url);
+const __dirname=path.dirname(__filename);
+const geometryAdapter=path.resolve(__dirname,'../../tools/drawing_geometry_primitive_adapter.py');
 
 const Router=require('../../runtime/work-os-router.js');
 const Validator=require('../../runtime/independent-validator.js');
 const Exposure=require('../../runtime/exposure-gate.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
 const ReferenceCompiler=require('../../runtime/reference-compiler.js');
+
+function runPython(args){
+  return new Promise((resolve,reject)=>{
+    const python=process.env.TAKY_PYTHON||'python3';
+    execFile(python,[geometryAdapter,...args],{maxBuffer:20*1024*1024},(err,stdout,stderr)=>{
+      if(err){
+        reject(new Error(stderr||err.message));
+        return;
+      }
+      try{ resolve(JSON.parse(stdout)); }
+      catch(parseErr){ reject(new Error('GEOMETRY_ADAPTER_JSON_INVALID:'+parseErr.message)); }
+    });
+  });
+}
 
 function result(value){
   return {
@@ -25,6 +45,26 @@ serveStdio(()=>{
     name:'taky-work-os-production-gateway',
     version:'0.1.0'
   });
+
+  server.registerTool(
+    'extract-geometry-primitives',
+    {
+      description:'Parse local DXF or vector PDF source into normalized geometry primitives without architectural semantic inference. DWG remains conversion-required.',
+      inputSchema:z.object({
+        source_path:z.string().min(1),
+        source_type:z.enum(['DXF','PDF','VECTOR_PDF','DWG']),
+        page_index:z.number().int().min(0).default(0)
+      })
+    },
+    async(input)=>{
+      try{
+        const args=[input.source_path,'--type',input.source_type,'--page',String(input.page_index??0)];
+        return result(await runPython(args));
+      }catch(error){
+        return result({ok:false,reason:'GEOMETRY_ADAPTER_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
 
   server.registerTool(
     'route-production-task',
