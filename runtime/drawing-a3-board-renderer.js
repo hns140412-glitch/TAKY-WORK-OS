@@ -133,10 +133,14 @@
     // clip paths, xlink references, and can leak content outside the intended crop.
     // Geometry is never rewritten: crop is achieved only by outer clip + transform.
     const sourcePlaced=
-      '<defs><clipPath id="source-a3-clip" clipPathUnits="userSpaceOnUse"><rect x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" width="'+(hero.width-16)+'" height="'+(hero.height-16)+'"/></clipPath></defs>'+
+      '<defs>'+
+        '<clipPath id="source-a3-clip" clipPathUnits="userSpaceOnUse"><rect x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" width="'+(hero.width-16)+'" height="'+(hero.height-16)+'"/></clipPath>'+
+        '<clipPath id="source-local-clip" clipPathUnits="userSpaceOnUse"><rect x="'+sb.x+'" y="'+sb.y+'" width="'+sb.width+'" height="'+sb.height+'"/></clipPath>'+
+      '</defs>'+
       '<g id="source-slot" data-source-geometry="locked" clip-path="url(#source-a3-clip)" '+
       'transform="translate('+fit.x.toFixed(4)+' '+fit.y.toFixed(4)+') scale('+fit.scale.toFixed(8)+')">'+
-      sourceDocClipped+'</g>';
+        '<g clip-path="url(#source-local-clip)">'+sourceDocClipped+'</g>'+
+      '</g>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
