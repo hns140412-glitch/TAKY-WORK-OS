@@ -3,10 +3,11 @@
 
 Maps approved review regions to exact source vector path IDs (src-N). This tool
 NEVER edits the source and NEVER promotes a region hit to verified semantics.
-It exists to replace unsafe rectangle painting with exact-path review.
 
-Selection defaults to FULL CONTAINMENT only. Paths touching protected regions
-are excluded. Candidate output must be user/source verified before editing.
+Selection defaults to FULL CONTAINMENT only. Optional path_filter constraints
+can narrow candidates by source presentation attributes (fill/stroke/luma/area)
+without changing geometry. Paths touching protected regions are excluded.
+Candidate output must be source/user verified before editing.
 """
 
 from __future__ import annotations
@@ -47,6 +48,75 @@ def _intersects(a: fitz.Rect, b: fitz.Rect) -> bool:
     return not (a.x1 <= b.x0 or a.x0 >= b.x1 or a.y1 <= b.y0 or a.y0 >= b.y1)
 
 
+def _color_tuple(value: Any) -> tuple[float, float, float] | None:
+    if value is None:
+        return None
+    vals = list(value)
+    if len(vals) < 3:
+        return None
+    return tuple(float(x) for x in vals[:3])
+
+
+def _luma(color: tuple[float, float, float] | None) -> float | None:
+    if color is None:
+        return None
+    r, g, b = color
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b
+
+
+def _chroma(color: tuple[float, float, float] | None) -> float | None:
+    if color is None:
+        return None
+    return max(color) - min(color)
+
+
+def _rect_area(rect: fitz.Rect) -> float:
+    return max(0.0, float(rect.width)) * max(0.0, float(rect.height))
+
+
+def _passes_filter(drawing: Dict[str, Any], path_filter: Dict[str, Any] | None) -> bool:
+    if not path_filter:
+        return True
+
+    fill = _color_tuple(drawing.get("fill"))
+    stroke = _color_tuple(drawing.get("color"))
+    rect = drawing.get("rect")
+    area = _rect_area(rect) if rect is not None else 0.0
+
+    if "require_fill" in path_filter:
+        if bool(path_filter["require_fill"]) != (fill is not None):
+            return False
+    if "require_stroke" in path_filter:
+        if bool(path_filter["require_stroke"]) != (stroke is not None):
+            return False
+
+    fill_luma = _luma(fill)
+    fill_chroma = _chroma(fill)
+    stroke_luma = _luma(stroke)
+
+    if "fill_luma_min" in path_filter:
+        if fill_luma is None or fill_luma < float(path_filter["fill_luma_min"]):
+            return False
+    if "fill_luma_max" in path_filter:
+        if fill_luma is None or fill_luma > float(path_filter["fill_luma_max"]):
+            return False
+    if "fill_chroma_max" in path_filter:
+        if fill_chroma is None or fill_chroma > float(path_filter["fill_chroma_max"]):
+            return False
+    if "stroke_luma_min" in path_filter:
+        if stroke_luma is None or stroke_luma < float(path_filter["stroke_luma_min"]):
+            return False
+    if "stroke_luma_max" in path_filter:
+        if stroke_luma is None or stroke_luma > float(path_filter["stroke_luma_max"]):
+            return False
+    if "min_rect_area" in path_filter and area < float(path_filter["min_rect_area"]):
+        return False
+    if "max_rect_area" in path_filter and area > float(path_filter["max_rect_area"]):
+        return False
+
+    return True
+
+
 def _digest(index: int, rect: fitz.Rect, drawing: Dict[str, Any]) -> str:
     payload = {
         "path_id": f"src-{index}",
@@ -78,6 +148,7 @@ def select_candidates(
             "verification_state": str(raw.get("verification_state", "UNVERIFIED")).upper(),
             "rect": _rect(raw["rect"]),
             "margin": float(raw.get("containment_margin", 0.0)),
+            "path_filter": raw.get("path_filter"),
         }
         if rec["policy"] == "KEEP_PROTECTED":
             protected.append(rec)
@@ -85,6 +156,8 @@ def select_candidates(
             regions.append(rec)
 
     candidates: List[Dict[str, Any]] = []
+    rejected_by_filter = 0
+
     for index, drawing in enumerate(drawings):
         rect = drawing.get("rect")
         if rect is None:
@@ -97,6 +170,12 @@ def select_candidates(
             continue
 
         region = hits[0]
+        if not _passes_filter(drawing, region["path_filter"]):
+            rejected_by_filter += 1
+            continue
+
+        fill = _color_tuple(drawing.get("fill"))
+        stroke = _color_tuple(drawing.get("color"))
         candidates.append({
             "path_id": f"src-{index}",
             "path_index": index,
@@ -108,10 +187,17 @@ def select_candidates(
             "candidate_state": "CANDIDATE_ONLY",
             "eligible_for_edit": region["verification_state"] in TRUSTED_STATES,
             "path_digest": _digest(index, rect, drawing),
+            "presentation_evidence": {
+                "fill": None if fill is None else [round(x, 4) for x in fill],
+                "stroke": None if stroke is None else [round(x, 4) for x in stroke],
+                "fill_luma": None if fill is None else round(_luma(fill), 4),
+                "fill_chroma": None if fill is None else round(_chroma(fill), 4),
+                "rect_area": round(_rect_area(rect), 4),
+            },
         })
 
     return {
-        "schema": "TAKY_PDF_PATH_CANDIDATES_V1",
+        "schema": "TAKY_PDF_PATH_CANDIDATES_V2",
         "page_index": page_index,
         "source_path_count": len(drawings),
         "selection_rule": "FULL_CONTAINMENT_ONLY",
@@ -120,6 +206,7 @@ def select_candidates(
         "stats": {
             "candidate_count": len(candidates),
             "eligible_count": sum(x["eligible_for_edit"] for x in candidates),
+            "rejected_by_filter": rejected_by_filter,
         },
         "canonical_promotion": False,
     }
