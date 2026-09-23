@@ -1,0 +1,93 @@
+{
+  "spec_version": "2026-09-23.1",
+  "rule": "All final drawing/report outputs use ISO A3 absolute page geometry. Landscape is default; portrait requires explicit output intent. No arbitrary canvas sizes.",
+  "iso_a3": {
+    "portrait": {
+      "width_mm": 297,
+      "height_mm": 420
+    },
+    "landscape": {
+      "width_mm": 420,
+      "height_mm": 297
+    }
+  },
+  "default_orientation": "landscape",
+  "conversions": {
+    "points_per_inch": 72,
+    "mm_per_inch": 25.4,
+    "emu_per_inch": 914400,
+    "png_default_dpi": 300
+  },
+  "absolute_targets": {
+    "landscape": {
+      "html": {
+        "width": "420mm",
+        "height": "297mm",
+        "page_rule": "420mm 297mm",
+        "margin": "0mm"
+      },
+      "pdf": {
+        "width_pt": 1190.551181,
+        "height_pt": 841.889764
+      },
+      "pptx": {
+        "width_emu": 15120000,
+        "height_emu": 10692000
+      },
+      "png_300dpi": {
+        "width_px": 4961,
+        "height_px": 3508
+      },
+      "xlsx": {
+        "paper_size": "A3",
+        "orientation": "landscape",
+        "fit_to_width": 1,
+        "fit_to_height": 1
+      }
+    },
+    "portrait": {
+      "html": {
+        "width": "297mm",
+        "height": "420mm",
+        "page_rule": "297mm 420mm",
+        "margin": "0mm"
+      },
+      "pdf": {
+        "width_pt": 841.889764,
+        "height_pt": 1190.551181
+      },
+      "pptx": {
+        "width_emu": 10692000,
+        "height_emu": 15120000
+      },
+      "png_300dpi": {
+        "width_px": 3508,
+        "height_px": 4961
+      },
+      "xlsx": {
+        "paper_size": "A3",
+        "orientation": "portrait",
+        "fit_to_width": 1,
+        "fit_to_height": 1
+      }
+    }
+  },
+  "quality_gates": [
+    "page/canvas dimensions exact within format tolerance",
+    "no hidden scale-to-fit beyond declared Excel print fit",
+    "HTML print background/color preservation enabled",
+    "one architectural board per A3 page unless multi-page output is explicit",
+    "critical linework remains vector where target format supports vector",
+    "PNG exported at declared DPI and exact pixel dimensions",
+    "PDF media box matches A3",
+    "PPT slide size matches A3",
+    "Excel page setup is A3 and print area is explicit",
+    "output re-export required after any dimension or overflow failure"
+  ],
+  "reexport_policy": {
+    "max_attempts": 2,
+    "on_failure": "REEXPORT_REQUIRED",
+    "no_silent_scaling": true,
+    "compare_after_reexport": true
+  }
+}

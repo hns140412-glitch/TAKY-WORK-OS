@@ -1,0 +1,74 @@
+{
+  "contract_version": "2026-09-23.1",
+  "slogan_filter": [
+    "THINK_AGAIN",
+    "KEEP_YOUR_KEY",
+    "FIND_A_WAY_SOLVE",
+    "YOURE_THE_KEY",
+    "VERIFY_CORRECT_CONTINUE"
+  ],
+  "source_routes": {
+    "DXF": {
+      "preferred": true,
+      "block_aware": true,
+      "nested_block": true,
+      "transform_support": [
+        "translation",
+        "rotation",
+        "uniform_scale",
+        "nonuniform_scale_when_ezdxf_can_virtualize",
+        "mirror"
+      ],
+      "source_mutation": false
+    },
+    "SCALED_VECTOR_PDF": {
+      "preferred": false,
+      "authority": "DERIVED_VECTOR",
+      "requirements": [
+        "explicit scale denominator",
+        "confirmed scale before authoritative use",
+        "explicit closed vector boundary"
+      ],
+      "forbidden": [
+        "auto-joining unrelated segments",
+        "claiming CAD semantics"
+      ],
+      "fragmented_line_fallback": {
+        "route_id": "PDF_LINE_NETWORK_POLYGONIZE",
+        "executable": "tools/drawing_pdf_vector_polygonizer.py",
+        "authority": "DERIVED_TOPOLOGY",
+        "purpose": "generate closed face candidates when the PDF stores boundaries as separate vector segments",
+        "warning": "Polygonized faces may come from dimensions, furniture, hatches or other graphics. Never assign area semantics automatically."
+      }
+    }
+  },
+  "area_pipeline": [
+    "SOURCE_PRESERVE",
+    "UNIT_OR_SCALE_VERIFY",
+    "BLOCK_INSTANCE_EXPANSION_IF_DXF",
+    "CLOSED_BOUNDARY_CANDIDATES",
+    "PDF_LINE_NETWORK_POLYGONIZE_IF_NEEDED",
+    "EXPLICIT_ROLE_ASSIGNMENT",
+    "AREA_RULE_PROFILE",
+    "AGGREGATE_AND_RATIO",
+    "SOURCE_TRACE_AND_VALIDATION"
+  ],
+  "housing_inside_face_rule": {
+    "policy": "BOUNDARY_EVIDENCE_REQUIRED",
+    "accepted_boundary_label": "INTERIOR_FACE_BOUNDARY",
+    "centerline_auto_offset": "FORBIDDEN_WITHOUT_VERIFIED_WALL_BUILDUP"
+  },
+  "design_overview_outputs": [
+    "site_area",
+    "building_area",
+    "gross_floor_area",
+    "far_included_area",
+    "building_coverage_ratio",
+    "floor_area_ratio",
+    "residential_exclusive_area",
+    "common_area",
+    "parking_area",
+    "balcony_reference_area"
+  ],
+  "note": "Actual legal applicability and inclusion/exclusion rules are project-specific and must be verified before activating a rule profile."
+}

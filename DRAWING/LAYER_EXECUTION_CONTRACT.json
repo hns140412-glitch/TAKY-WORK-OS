@@ -1,0 +1,155 @@
+{
+  "schema_version": "2026-09-23.1",
+  "execution_rule": "L0-L2 are shared serial authority layers. L3-L6 are view-specific parallel layers. L7 is per-view serial finalization.",
+  "layers": [
+    {
+      "layer_id": "L0_SOURCE",
+      "name": "SOURCE / AUTHORITY",
+      "authority": "HIGHEST_AVAILABLE_SOURCE",
+      "mutable": false,
+      "outputs": [
+        "source identity",
+        "source digest",
+        "revision",
+        "source snapshot"
+      ]
+    },
+    {
+      "layer_id": "L1_GEOMETRY",
+      "name": "GEOMETRY",
+      "authority": "SOURCE_DERIVED_OR_CAD_DIRECT",
+      "mutable": false,
+      "depends_on": [
+        "L0_SOURCE"
+      ],
+      "outputs": [
+        "source line",
+        "geometry objects",
+        "geometry digest"
+      ]
+    },
+    {
+      "layer_id": "L2_SEMANTIC",
+      "name": "SEMANTIC",
+      "authority": "RULE_BOUND_CANDIDATE",
+      "mutable": "RULE_BOUND_ONLY",
+      "depends_on": [
+        "L1_GEOMETRY"
+      ],
+      "outputs": [
+        "semantic candidates",
+        "UNKNOWN set",
+        "mask manifest candidates"
+      ]
+    },
+    {
+      "layer_id": "L3_PRESENTATION",
+      "name": "PRESENTATION",
+      "authority": "PRESENTATION_ONLY",
+      "mutable": true,
+      "parallel_group": "PRESENTATION_WORK",
+      "depends_on": [
+        "L2_SEMANTIC"
+      ],
+      "outputs": [
+        "poche",
+        "color",
+        "material",
+        "texture",
+        "shadow"
+      ]
+    },
+    {
+      "layer_id": "L4_ENTOURAGE",
+      "name": "ENTOURAGE",
+      "authority": "PRESENTATION_ONLY",
+      "mutable": true,
+      "parallel_group": "PRESENTATION_WORK",
+      "depends_on": [
+        "L2_SEMANTIC"
+      ],
+      "outputs": [
+        "furniture",
+        "people",
+        "planting",
+        "vehicles"
+      ]
+    },
+    {
+      "layer_id": "L5_ANNOTATION",
+      "name": "ANNOTATION",
+      "authority": "TRACEABLE_SOURCE_OR_USER_INPUT",
+      "mutable": true,
+      "parallel_group": "PRESENTATION_WORK",
+      "depends_on": [
+        "L2_SEMANTIC"
+      ],
+      "outputs": [
+        "room labels",
+        "key dimensions",
+        "levels",
+        "notes"
+      ]
+    },
+    {
+      "layer_id": "L6_AI_ATMOSPHERE",
+      "name": "AI / ATMOSPHERE",
+      "authority": "PRESENTATION_ONLY",
+      "mutable": true,
+      "parallel_group": "PRESENTATION_WORK",
+      "depends_on": [
+        "L2_SEMANTIC"
+      ],
+      "outputs": [
+        "lighting",
+        "atmosphere",
+        "micro texture"
+      ],
+      "constraints": [
+        "never geometry authority",
+        "optional by output profile"
+      ]
+    },
+    {
+      "layer_id": "L7_FINAL_OVERLAY_VALIDATION",
+      "name": "FINAL OVERLAY + VALIDATION",
+      "authority": "VALIDATION",
+      "mutable": false,
+      "depends_on": [
+        "L3_PRESENTATION",
+        "L4_ENTOURAGE",
+        "L5_ANNOTATION",
+        "L6_AI_ATMOSPHERE"
+      ],
+      "outputs": [
+        "composite",
+        "source-line overlay",
+        "source-snapshot multiply when required",
+        "geometry diff",
+        "edge diff",
+        "user-intent result"
+      ]
+    }
+  ],
+  "fanout_rule": {
+    "shared_once": [
+      "L0_SOURCE",
+      "L1_GEOMETRY",
+      "L2_SEMANTIC"
+    ],
+    "repeat_per_view": [
+      "L3_PRESENTATION",
+      "L4_ENTOURAGE",
+      "L5_ANNOTATION",
+      "L6_AI_ATMOSPHERE",
+      "L7_FINAL_OVERLAY_VALIDATION"
+    ],
+    "goal": "One KEY_STATE can produce multiple presentation views without re-reading or re-interpreting source geometry."
+  },
+  "failure_isolation": [
+    "presentation-layer failure reruns only the failed presentation work unit when inputs are unchanged",
+    "source/geometry/semantic change invalidates all downstream views",
+    "annotation-only revision does not require AI atmosphere regeneration",
+    "AI atmosphere failure must not invalidate authoritative source layers"
+  ]
+}
