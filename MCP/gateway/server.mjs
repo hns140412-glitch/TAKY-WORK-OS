@@ -15,6 +15,9 @@ const __dirname=path.dirname(__filename);
 const geometryAdapter=path.resolve(__dirname,'../../tools/drawing_geometry_primitive_adapter.py');
 const visualAdapter=path.resolve(__dirname,'../../tools/drawing_visual_metric_extractor.py');
 const reviewImageExporter=path.resolve(__dirname,'../../tools/drawing_review_image_exporter.py');
+const controlledPresentationPipeline=path.resolve(__dirname,'../../tools/drawing_controlled_presentation_pipeline.py');
+const a3BundleExporter=path.resolve(__dirname,'../../tools/drawing_a3_bundle_exporter.py');
+const a3BoardCli=path.resolve(__dirname,'../../runtime/drawing-a3-board-cli.js');
 
 const Router=require('../../runtime/work-os-router.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
@@ -164,6 +167,41 @@ function projectSafe(rawPath){
   return candidate===root || candidate.startsWith(root+path.sep);
 }
 
+function safeName(value,fallback='job'){
+  const s=String(value||fallback).replace(/[^A-Za-z0-9._-]+/g,'-').replace(/^-+|-+$/g,'');
+  return s||fallback;
+}
+
+function stagingRoot(){
+  return path.resolve(process.env.TAKY_STAGING_ROOT||path.resolve(__dirname,'../../artifacts/staging'));
+}
+
+function inside(root,candidate){
+  const r=path.resolve(root);
+  const p=path.resolve(candidate);
+  return p===r || p.startsWith(r+path.sep);
+}
+
+function stagingJobDir(jobId){
+  const root=stagingRoot();
+  const dir=path.join(root,safeName(jobId,'job'));
+  fs.mkdirSync(dir,{recursive:true});
+  return dir;
+}
+
+function execJson(command,args,options={}){
+  return new Promise((resolve,reject)=>{
+    execFile(command,args,{maxBuffer:40*1024*1024,...options},(err,stdout,stderr)=>{
+      if(err){
+        reject(new Error((stderr||stdout||err.message).slice(0,2000)));
+        return;
+      }
+      try{ resolve(stdout&&stdout.trim()?JSON.parse(stdout):{}); }
+      catch(parseErr){ reject(new Error('ENGINE_JSON_INVALID:'+parseErr.message)); }
+    });
+  });
+}
+
 function result(value){
   return {
     content:[{
@@ -178,6 +216,149 @@ export function buildServer(){
     name:'taky-work-os-production-gateway',
     version:'0.1.0'
   });
+
+  server.registerTool(
+    'controlled-present-drawing',
+    {
+      description:'Run the existing TAKY controlled vector-PDF presentation engine. Writes only staging SVG/manifest, never production. Geometry preservation is mandatory.',
+      inputSchema:z.object({
+        source_pdf:z.string().min(1),
+        page_index:z.number().int().min(0).default(0),
+        job_id:z.string().min(1),
+        edit_plan:z.record(z.string(),z.any()).optional(),
+        role_styles:z.record(z.string(),z.any()).optional()
+      })
+    },
+    async(input)=>{
+      try{
+        if(!projectSafe(input.source_pdf)) return result({ok:false,reason:'SOURCE_PATH_OUTSIDE_PROJECT'});
+        if(path.extname(input.source_pdf).toLowerCase()!=='.pdf') return result({ok:false,reason:'VECTOR_PDF_REQUIRED'});
+        const dir=stagingJobDir(input.job_id);
+        const outSvg=path.join(dir,'controlled-presentation.svg');
+        const manifest=path.join(dir,'controlled-presentation-manifest.json');
+        const args=[controlledPresentationPipeline,input.source_pdf,'--page',String(input.page_index??0),'--out-svg',outSvg,'--manifest',manifest];
+
+        if(input.edit_plan){
+          const p=path.join(dir,'edit-plan.json');
+          fs.writeFileSync(p,JSON.stringify(input.edit_plan,null,2));
+          args.push('--edit-plan',p);
+        }
+        if(input.role_styles){
+          const p=path.join(dir,'role-styles.json');
+          fs.writeFileSync(p,JSON.stringify(input.role_styles,null,2));
+          args.push('--styles',p);
+        }
+
+        const python=process.env.TAKY_PYTHON||'python3';
+        await new Promise((resolve,reject)=>{
+          execFile(python,args,{maxBuffer:40*1024*1024},(err,stdout,stderr)=>{
+            if(err){ reject(new Error((stderr||stdout||err.message).slice(0,2000))); return; }
+            resolve();
+          });
+        });
+
+        const data=JSON.parse(fs.readFileSync(manifest,'utf8'));
+        if(data.geometry_preserved!==true){
+          return result({ok:false,reason:'GEOMETRY_PRESERVATION_REQUIRED',manifest:data});
+        }
+        return result({
+          ok:true,
+          engine:'DRAWING_CONTROLLED_PRESENTATION_V1',
+          geometry_preserved:true,
+          out_svg:outSvg,
+          manifest_path:manifest,
+          manifest:data
+        });
+      }catch(error){
+        return result({ok:false,reason:'CONTROLLED_PRESENTATION_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
+
+  server.registerTool(
+    'render-a3-report-page',
+    {
+      description:'Render a canonical A3 architectural report SVG/HTML using the existing Drawing Engine board renderer. Output is staging-only.',
+      inputSchema:z.object({
+        package_path:z.string().min(1),
+        profile_path:z.string().min(1),
+        page_id:z.string().min(1),
+        source_svg_path:z.string().min(1),
+        source_viewbox:z.string().min(1),
+        job_id:z.string().min(1)
+      })
+    },
+    async(input)=>{
+      try{
+        const inputs=[input.package_path,input.profile_path,input.source_svg_path];
+        if(inputs.some(p=>!projectSafe(p))) return result({ok:false,reason:'A3_INPUT_PATH_OUTSIDE_PROJECT'});
+        const dir=stagingJobDir(input.job_id);
+        const outSvg=path.join(dir,safeName(input.page_id,'page')+'.a3.svg');
+        const outHtml=path.join(dir,safeName(input.page_id,'page')+'.a3.html');
+        const args=[
+          a3BoardCli,
+          '--package',input.package_path,
+          '--profile',input.profile_path,
+          '--page',input.page_id,
+          '--source-svg',input.source_svg_path,
+          '--source-viewbox',input.source_viewbox,
+          '--out-svg',outSvg,
+          '--out-html',outHtml
+        ];
+        const rendered=await execJson(process.execPath,args);
+        if(rendered.ok!==true || rendered.source_geometry_locked!==true || rendered.source_overlay_last!==true){
+          return result({ok:false,reason:'A3_RENDER_SOURCE_LOCK_FAILED',rendered});
+        }
+        return result({
+          ...rendered,
+          engine:'DRAWING_A3_BOARD_RENDERER_V1',
+          staging_only:true
+        });
+      }catch(error){
+        return result({ok:false,reason:'A3_REPORT_RENDER_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
+
+  server.registerTool(
+    'export-a3-bundle',
+    {
+      description:'Export a canonical staging A3 SVG through the existing verified A3 bundle exporter to HTML/PDF/PNG/PPTX/XLSX. All formats must validate.',
+      inputSchema:z.object({
+        canonical_svg_path:z.string().min(1),
+        job_id:z.string().min(1),
+        orientation:z.enum(['landscape','portrait']).default('landscape'),
+        dpi:z.number().int().min(72).max(600).default(300)
+      })
+    },
+    async(input)=>{
+      try{
+        const root=stagingRoot();
+        const source=path.resolve(input.canonical_svg_path);
+        if(!inside(root,source)) return result({ok:false,reason:'CANONICAL_SVG_MUST_BE_IN_STAGING'});
+        if(path.extname(source).toLowerCase()!=='.svg') return result({ok:false,reason:'CANONICAL_SVG_REQUIRED'});
+        const dir=path.join(stagingJobDir(input.job_id),'bundle');
+        const python=process.env.TAKY_PYTHON||'python3';
+        const exported=await execJson(python,[
+          a3BundleExporter,source,dir,
+          '--orientation',input.orientation,
+          '--dpi',String(input.dpi),
+          '--max-attempts','2'
+        ]);
+        if(exported.status!=='PASS'){
+          return result({ok:false,reason:'A3_BUNDLE_VALIDATION_FAILED',manifest:exported});
+        }
+        return result({
+          ok:true,
+          engine:'DRAWING_A3_BUNDLE_EXPORTER_V1',
+          staging_only:true,
+          manifest:exported
+        });
+      }catch(error){
+        return result({ok:false,reason:'A3_BUNDLE_EXPORT_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
 
   server.registerTool(
     'extract-geometry-primitives',
