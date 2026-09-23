@@ -139,9 +139,10 @@
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
     const title=pageProfile.title||page.title||page_id;
-    const subtitle=String(pageProfile.hero||'SOURCE DRAWING').replace(/_/g,' ');
+    const subtitle=String(pageProfile.subtitle||pageProfile.hero||'SOURCE DRAWING').replace(/_/g,' ');
     const projectTitle=project.title||'';
-    const methods=(pageProfile.methods||[]).slice(0,3).join(' · ');
+    const scaleLabel=String(pageProfile.scale_label||'').trim();
+    const debugLabels=profile.debug_labels===true;
 
     const ink='#151515';
     const muted='#777169';
@@ -192,7 +193,7 @@
 
     const presentation=
       '<g id="a3-editorial-frame">'+
-        '<text x="'+margin+'" y="'+(margin+30)+'" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" letter-spacing="4.5" fill="'+ink+'">ARCHITECTURAL REVIEW · '+esc(page_id)+'</text>'+
+        '<text x="'+margin+'" y="'+(margin+30)+'" font-family="Arial, Helvetica, sans-serif" font-size="28" font-weight="700" letter-spacing="4.5" fill="'+ink+'">DESIGN DEVELOPMENT</text>'+
         '<text x="'+margin+'" y="'+(margin+78)+'" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="'+muted+'">'+esc(projectTitle)+'</text>'+
         '<text x="'+(width-margin)+'" y="'+(margin+30)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="23" fill="'+muted+'">'+String(idx).padStart(2,'0')+'</text>'+
         '<line x1="'+margin+'" y1="'+(margin+112)+'" x2="'+(width-margin)+'" y2="'+(margin+112)+'" stroke="'+ink+'" stroke-width="3"/>'+
@@ -200,15 +201,15 @@
         '<text x="'+rail.x+'" y="'+(rail.y+58)+'" font-family="Arial, Helvetica, sans-serif" font-size="23" font-weight="700" letter-spacing="4.2" fill="'+muted+'">'+esc(subtitle)+'</text>'+
         '<text x="'+rail.x+'" y="'+(rail.y+158)+'" font-family="Arial, Helvetica, sans-serif" font-size="66" font-weight="700" fill="'+ink+'">'+esc(title)+'</text>'+
         '<rect x="'+rail.x+'" y="'+(rail.y+214)+'" width="92" height="5" fill="'+accent+'"/>'+
-        '<text x="'+rail.x+'" y="'+(rail.y+270)+'" font-family="Arial, Helvetica, sans-serif" font-size="22" fill="'+muted+'">'+esc(methods)+'</text>'+
+        (scaleLabel?'<text x="'+rail.x+'" y="'+(rail.y+270)+'" font-family="Arial, Helvetica, sans-serif" font-size="22" letter-spacing="2.4" fill="'+muted+'">'+esc(scaleLabel)+'</text>':'')+
 
         narrativeSvg+
         decisionSvg+
         (narrativeState.status==='NO_NARRATIVE_BLOCK'?fallbackSupport:'')+
 
         '<line x1="'+margin+'" y1="'+(height-margin-footerH)+'" x2="'+(width-margin)+'" y2="'+(height-margin-footerH)+'" stroke="'+hair+'" stroke-width="2"/>'+
-        '<text x="'+margin+'" y="'+(height-margin-12)+'" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">TAKY WORK OS · A3 SVG BOARD STATE</text>'+
-        '<text x="'+(width-margin)+'" y="'+(height-margin-12)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">SOURCE GEOMETRY LOCKED</text>'+
+        '<text x="'+margin+'" y="'+(height-margin-12)+'" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">YKH ASSOCIATES · HANNAM-DONG 737-21</text>'+
+        '<text x="'+(width-margin)+'" y="'+(height-margin-12)+'" text-anchor="end" font-family="Arial, Helvetica, sans-serif" font-size="20" fill="'+muted+'">2026.09</text>'+
       '</g>';
 
     const background='<rect x="0" y="0" width="'+width+'" height="'+height+'" fill="'+paper+'"/>';
@@ -242,6 +243,7 @@
       source_geometry_locked:true,
       source_slot_transform:Object.freeze(fit),
       source_overlay_last:composed.source_overlay_last,
+      debug_labels:debugLabels,
       svg:composed.svg
     });
   }
