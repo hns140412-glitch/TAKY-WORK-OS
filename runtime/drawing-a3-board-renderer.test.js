@@ -35,4 +35,7 @@ assert(out.svg.includes('width="420mm"'));
 assert(out.svg.includes('height="297mm"'));
 assert(out.svg.includes('viewBox="0 0 4200 2970"'));
 assert(!out.svg.includes('<img'));
+assert(!out.svg.includes('data:image/svg+xml'));
+assert(out.svg.includes('source-inline-vector'));
+assert(out.svg.includes('M0 0 L100 50'));
 console.log('drawing-a3-board-renderer PASS');
