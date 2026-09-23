@@ -61,6 +61,13 @@
       depends_on:['L3_PRESENTATION','L4_ENTOURAGE','L5_ANNOTATION','L6_AI_ATMOSPHERE'],
       mutation:'NO_GEOMETRY_MUTATION',
       parallel:false
+    },
+    L8_USER_EXPOSURE_GATE:{
+      layer_id:'L8_USER_EXPOSURE_GATE',
+      role:'production authority / no-pass-no-show admission',
+      depends_on:['L7_FINAL_OVERLAY_VALIDATION'],
+      mutation:'NO_ARTIFACT_MUTATION',
+      parallel:false
     }
   });
 
@@ -118,7 +125,8 @@
         stage:3,
         parallel_group:view_id+':PRESENTATION'
       })),
-      {work_unit_id:view_id+':L7',view_id,layer_id:'L7_FINAL_OVERLAY_VALIDATION',stage:4,parallel_group:null}
+      {work_unit_id:view_id+':L7',view_id,layer_id:'L7_FINAL_OVERLAY_VALIDATION',stage:4,parallel_group:null},
+      {work_unit_id:view_id+':L8',view_id,layer_id:'L8_USER_EXPOSURE_GATE',stage:5,parallel_group:null,depends_on:[view_id+':L7']}
     ];
 
     return Object.freeze({
@@ -134,7 +142,8 @@
         Object.freeze({stage:1,mode:'SERIAL',layers:Object.freeze(['L1_GEOMETRY'])}),
         Object.freeze({stage:2,mode:'SERIAL',layers:Object.freeze(['L2_SEMANTIC'])}),
         Object.freeze({stage:3,mode:'PARALLEL',layers:Object.freeze([...selected])}),
-        Object.freeze({stage:4,mode:'SERIAL',layers:Object.freeze(['L7_FINAL_OVERLAY_VALIDATION'])})
+        Object.freeze({stage:4,mode:'SERIAL',layers:Object.freeze(['L7_FINAL_OVERLAY_VALIDATION'])}),
+        Object.freeze({stage:5,mode:'SERIAL',layers:Object.freeze(['L8_USER_EXPOSURE_GATE'])})
       ])
     });
   }
@@ -163,13 +172,24 @@
       }
     }
 
-    const finalize=viewPlans.map(plan=>({
-      work_unit_id:plan.view_id+':L7',
-      view_id:plan.view_id,
-      layer_id:'L7_FINAL_OVERLAY_VALIDATION',
-      stage:4,
-      depends_on:parallel.filter(x=>x.view_id===plan.view_id).map(x=>x.work_unit_id)
-    }));
+    const finalize=[];
+    for(const plan of viewPlans){
+      const l7=plan.view_id+':L7';
+      finalize.push({
+        work_unit_id:l7,
+        view_id:plan.view_id,
+        layer_id:'L7_FINAL_OVERLAY_VALIDATION',
+        stage:4,
+        depends_on:parallel.filter(x=>x.view_id===plan.view_id).map(x=>x.work_unit_id)
+      });
+      finalize.push({
+        work_unit_id:plan.view_id+':L8',
+        view_id:plan.view_id,
+        layer_id:'L8_USER_EXPOSURE_GATE',
+        stage:5,
+        depends_on:[l7]
+      });
+    }
 
     return Object.freeze({
       ok:bad.length===0,
@@ -210,7 +230,7 @@
   }
 
   return Object.freeze({
-    version:'1.0.0',
+    version:'2.0.0',
     LAYERS,
     PROFILE_LAYERS,
     PROFILE_MASKS,
