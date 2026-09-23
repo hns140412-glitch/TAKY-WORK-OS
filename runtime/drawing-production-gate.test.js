@@ -31,6 +31,16 @@ function allPass(){
   assert.equal(r.show,false);
   assert(r.findings.some(x=>x.code==='UNSUPPORTED_NARRATIVE'));
 }
+{
+  const r=gate.evaluate({artifact_class:'FINAL',engine:'DRAWING_ENGINE',execution_path:'AUTHORIZED_ENGINE',gates:allPass(),geometry_diff:{pass:true},protected_anchor_check:{ok:false,missing:['CORE-1']}});
+  assert.equal(r.show,false);
+  assert(r.findings.some(x=>x.code==='PROTECTED_ARCHITECTURE_DELETED'));
+}
+{
+  const r=gate.evaluate({artifact_class:'FINAL',engine:'DRAWING_ENGINE',execution_path:'AUTHORIZED_ENGINE',gates:allPass(),geometry_diff:{pass:true},semantic_check:{ok:false,findings:[{code:'UNVERIFIED_SEMANTIC_USED'}]}});
+  assert.equal(r.show,false);
+  assert(r.findings.some(x=>x.code==='SEMANTIC_VERIFICATION_FAIL'));
+}
 assert.equal(gate.classifyOneOff({purpose:'FINAL'}).ok,false);
 assert.equal(gate.classifyOneOff({purpose:'DIAGNOSTIC'}).ok,true);
 console.log('drawing-production-gate.test PASS');
