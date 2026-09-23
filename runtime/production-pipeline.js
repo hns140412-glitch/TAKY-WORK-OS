@@ -14,6 +14,9 @@ const Provenance=require('./provenance-validator.js');
 const Validator=require('./independent-validator.js');
 const Exposure=require('./exposure-gate.js');
 const Report=require('./drawing-report-package.js');
+const ArtifactBroker=require('./artifact-broker.js');
+const path=require('path');
+const fs=require('fs');
 
 function fail(stage,detail,evidence={}){
   return Object.freeze({ok:false,stage,detail,evidence:Object.freeze(evidence)});
@@ -103,8 +106,9 @@ function runProduction(input={}){
 
   const validation=Validator.validateForExposure({
     authorization:route.authorization,
-    validator_id:input.validator_id,
-    gate_results
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results,
+    artifact_digest:input.artifact_digest||null
   });
   if(!validation.ok) return fail('VALIDATION',validation,evidence);
 
@@ -132,4 +136,28 @@ function runProduction(input={}){
   });
 }
 
-module.exports=Object.freeze({version:'2.0.0',runProduction});
+function finalizeStagedProduction(input={}){
+  const stagingRoot=path.resolve(process.env.TAKY_STAGING_ROOT||'artifacts/staging');
+  const stagingPath=path.resolve(input.staging_path||'');
+  if(!input.staging_path){
+    return Object.freeze({ok:false,stage:'STAGING',detail:{reason:'STAGING_PATH_REQUIRED'}});
+  }
+  if(!(stagingPath===stagingRoot || stagingPath.startsWith(stagingRoot+path.sep))){
+    return Object.freeze({ok:false,stage:'STAGING',detail:{reason:'STAGING_PATH_OUTSIDE_ALLOWED_ROOT'}});
+  }
+  if(!fs.existsSync(stagingPath) || !fs.statSync(stagingPath).isFile()){
+    return Object.freeze({ok:false,stage:'STAGING',detail:{reason:'STAGING_ARTIFACT_NOT_FOUND'}});
+  }
+  const artifact_digest=ArtifactBroker.sha256File(stagingPath);
+  return runProduction({
+    ...input,
+    artifact_digest,
+    exposure_target:input.exposure_target||'FINAL_APPROVABLE'
+  });
+}
+
+module.exports=Object.freeze({
+  version:'3.0.0',
+  runProduction,
+  finalizeStagedProduction
+});
