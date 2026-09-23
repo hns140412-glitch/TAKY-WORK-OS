@@ -52,6 +52,29 @@ function signReferenceEffect({baseline_digest,candidate_digest,reference_ids,ref
   },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
 }
 
+function signSourceFidelity({evidence}={}){
+  if(!evidence || evidence.schema!=='TAKY_SOURCE_FIDELITY_EVIDENCE_V1'){
+    throw new Error('SOURCE_FIDELITY_EVIDENCE_REQUIRED');
+  }
+  if(evidence.ok!==true) throw new Error('SOURCE_FIDELITY_EVIDENCE_NOT_PASSING');
+  const parity=Number(evidence.artifact_parity?.score||0);
+  if(parity<0.999) throw new Error('SOURCE_FIDELITY_ARTIFACT_PARITY_FAIL');
+  return sign('TAKY_SOURCE_FIDELITY_RECEIPT','SOURCE_FIDELITY_VALIDATOR_V1',{
+    source_sha256:evidence.source_sha256,
+    source_page_index:evidence.source_page_index,
+    candidate_digest:evidence.candidate_sha256,
+    canonical_svg_sha256:evidence.canonical_svg_sha256,
+    source_geometry_fingerprint:evidence.source_geometry_fingerprint,
+    controlled_geometry_fingerprint:evidence.controlled_geometry_fingerprint,
+    controlled_geometry_match:evidence.controlled_geometry_match===true,
+    source_viewbox_match:evidence.source_viewbox_match===true,
+    canonical_inline_match:evidence.canonical_inline_match===true,
+    inline_transform_safe:evidence.inline_transform_safe===true,
+    artifact_type:evidence.artifact_parity?.type||null,
+    artifact_parity_score:parity
+  },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
+}
+
 function signVisionReview(payload={}){
   if(!payload.artifact_digest) throw new Error('ARTIFACT_DIGEST_REQUIRED');
   if(!payload.intent_digest) throw new Error('HUMAN_INTENT_DIGEST_REQUIRED');
@@ -68,5 +91,6 @@ function signVisionReview(payload={}){
 module.exports=Object.freeze({
   signVisualMeasurement,
   signReferenceEffect,
+  signSourceFidelity,
   signVisionReview
 });
