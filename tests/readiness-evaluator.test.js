@@ -39,7 +39,8 @@ const R=require('../runtime/readiness-evaluator.js');
   let r=R.evaluateValidationReadiness({
     measurement_private_key_valid:true,
     vision_private_key_valid:true,
-    anthropic_api_key_present:true
+    anthropic_api_key_present:true,
+    vision_api_probe_ok:true
   });
   assert.equal(r.objective_validation_ready,true);
   assert.equal(r.vision_review_ready,true);
@@ -48,7 +49,8 @@ const R=require('../runtime/readiness-evaluator.js');
   r=R.evaluateValidationReadiness({
     measurement_private_key_valid:true,
     vision_private_key_valid:true,
-    anthropic_api_key_present:false
+    anthropic_api_key_present:false,
+    vision_api_probe_ok:false
   });
   assert.equal(r.objective_validation_ready,true);
   assert.equal(r.vision_review_ready,false);
@@ -58,11 +60,26 @@ const R=require('../runtime/readiness-evaluator.js');
   r=R.evaluateValidationReadiness({
     measurement_private_key_valid:false,
     vision_private_key_valid:true,
-    anthropic_api_key_present:true
+    anthropic_api_key_present:true,
+    vision_api_probe_ok:true
   });
   assert.equal(r.objective_validation_ready,false);
   assert.equal(r.vision_review_ready,true);
   assert.equal(r.user_facing_validation_ready,false);
+})();
+
+
+(function probeFailureBlocksVision(){
+  const r=R.evaluateValidationReadiness({
+    measurement_private_key_valid:true,
+    vision_private_key_valid:true,
+    anthropic_api_key_present:true,
+    vision_api_probe_ok:false
+  });
+  assert.equal(r.objective_validation_ready,true);
+  assert.equal(r.vision_review_ready,false);
+  assert.equal(r.user_facing_validation_ready,false);
+  assert(r.warnings.includes('VISION_API_MODEL_PROBE_FAILED'));
 })();
 
 console.log('readiness-evaluator: PASS');
