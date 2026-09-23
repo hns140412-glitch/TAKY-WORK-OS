@@ -19,6 +19,7 @@ const Router=require('../../runtime/work-os-router.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
 const Pipeline=require('../../runtime/production-pipeline.js');
 const ReferenceCompiler=require('../../runtime/reference-compiler.js');
+const ReferenceApplication=require('../../runtime/reference-application.js');
 const CIGate=require('../../runtime/ci-attestation-gate.js');
 
 function runPython(args){
@@ -190,7 +191,13 @@ export function buildServer(){
         page_id:z.string().min(1),
         source_svg_path:z.string().min(1),
         source_viewbox:z.string().min(1),
-        job_id:z.string().min(1)
+        job_id:z.string().min(1),
+        reference_ids:z.array(z.string()).optional(),
+        reference_context:z.object({
+          scale:z.string().min(1),
+          output_size:z.string().min(1),
+          source_density:z.string().min(1)
+        }).optional()
       })
     },
     async(input)=>{
@@ -200,10 +207,31 @@ export function buildServer(){
         const dir=stagingJobDir(input.job_id);
         const outSvg=path.join(dir,safeName(input.page_id,'page')+'.a3.svg');
         const outHtml=path.join(dir,safeName(input.page_id,'page')+'.a3.html');
+
+        let renderProfilePath=input.profile_path;
+        let referenceApplication=null;
+        if(Array.isArray(input.reference_ids) && input.reference_ids.length){
+          if(!input.reference_context){
+            return result({ok:false,reason:'REFERENCE_CONTEXT_REQUIRED'});
+          }
+          const compiled=ReferenceCompiler.compileReferenceProfile({
+            reference_ids:input.reference_ids,
+            context:input.reference_context
+          });
+          if(!compiled.ok) return result({ok:false,reason:'REFERENCE_COMPILE_FAILED',compiled});
+
+          const baseProfile=JSON.parse(fs.readFileSync(input.profile_path,'utf8'));
+          referenceApplication=ReferenceApplication.applyToPresentationProfile(baseProfile,compiled);
+          if(!referenceApplication.ok) return result({ok:false,reason:'REFERENCE_APPLICATION_FAILED',reference_application:referenceApplication});
+
+          renderProfilePath=path.join(dir,'reference-applied-profile.json');
+          fs.writeFileSync(renderProfilePath,JSON.stringify(referenceApplication.profile,null,2));
+        }
+
         const args=[
           a3BoardCli,
           '--package',input.package_path,
-          '--profile',input.profile_path,
+          '--profile',renderProfilePath,
           '--page',input.page_id,
           '--source-svg',input.source_svg_path,
           '--source-viewbox',input.source_viewbox,
@@ -217,7 +245,8 @@ export function buildServer(){
         return result({
           ...rendered,
           engine:'DRAWING_A3_BOARD_RENDERER_V1',
-          staging_only:true
+          staging_only:true,
+          reference_application:referenceApplication
         });
       }catch(error){
         return result({ok:false,reason:'A3_REPORT_RENDER_FAILED',error:String(error?.message||error)});
@@ -314,6 +343,7 @@ export function buildServer(){
         semantics:z.array(z.record(z.string(),z.any())).default([]),
         claims:z.array(z.record(z.string(),z.any())).default([]),
         reference:z.record(z.string(),z.any()),
+        reference_application:z.record(z.string(),z.any()),
         visual_measurement_receipt:z.string().min(1),
         reference_effect_receipt:z.string().min(1),
         vision_review_receipt:z.string().min(1),
