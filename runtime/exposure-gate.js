@@ -21,6 +21,8 @@ function authorizeExposure(input={}){
     target,
     producer_id:auth.payload.producer_id,
     execution_graph_id:auth.payload.execution_graph_id,
+    validator_id:validation.payload.validator_id,
+    artifact_digest:validation.payload.artifact_digest||null,
     validation_status:'PASS'
   });
   if(!signed.ok) return signed;
@@ -32,7 +34,7 @@ function verifyExposureGrant(grant){
 }
 
 module.exports=Object.freeze({
-  version:'2.0.0',
+  version:'3.0.0',
   authorizeExposure,
   verifyExposureGrant
 });
