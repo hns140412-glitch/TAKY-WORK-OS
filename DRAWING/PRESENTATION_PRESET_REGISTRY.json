@@ -92,6 +92,32 @@
       "annotation": "report_hierarchy",
       "white_space": "high",
       "layout": "print_readability"
+    },
+    {
+      "preset_id": "SECTION_PERSPECTIVE_EDITORIAL",
+      "mode": "CONTROLLED_GENERATIVE",
+      "linework": "source_overlay_final",
+      "poche": "verified_section_cut_solid",
+      "material": "warm_restrained_realistic",
+      "furniture": "source_guided_real_scale",
+      "shadow": "soft_diffuse_ambient_occlusion",
+      "annotation": "minimal_or_removed_from_ai_input",
+      "white_space": "high",
+      "film_grain": "subtle_print_grain",
+      "composition": "editorial_architectural_section"
+    },
+    {
+      "preset_id": "ISOMETRIC_CUTAWAY_EDITORIAL",
+      "mode": "CONTROLLED_GENERATIVE",
+      "linework": "source_overlay_final",
+      "poche": "verified_section_cut_solid",
+      "material": "light_timber_neutral_pastel_accents",
+      "furniture": "selective_human_scale",
+      "shadow": "bright_even_low_harshness",
+      "annotation": "minimal",
+      "white_space": "high",
+      "film_grain": "subtle_print_grain",
+      "composition": "clear_isometric_cutaway"
     }
   ]
 }
