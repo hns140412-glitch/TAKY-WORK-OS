@@ -23,6 +23,7 @@ const ReferenceCompiler=require('../../runtime/reference-compiler.js');
 const Measurement=require('../../runtime/visual-measurement-receipt.js');
 const VisionReview=require('../../runtime/vision-review-receipt.js');
 const VisionParser=require('../../runtime/vision-review-parser.js');
+const CIGate=require('../../runtime/ci-attestation-gate.js');
 
 function runPython(args){
   return new Promise((resolve,reject)=>{
@@ -124,6 +125,37 @@ async function callIndependentVision({baselinePng,candidatePng,referencePngs=[]}
   const parsed=VisionParser.parseVisionReview(textBlock.text);
   if(!parsed.ok) throw new Error(parsed.reason);
   return {model,review:parsed.review};
+}
+
+function currentGitHead(){
+  return new Promise((resolve,reject)=>{
+    execFile('git',['rev-parse','HEAD'],{cwd:path.resolve(__dirname,'../..')},(err,stdout,stderr)=>{
+      if(err){ reject(new Error(stderr||err.message)); return; }
+      resolve(String(stdout||'').trim());
+    });
+  });
+}
+
+async function fetchWorkflowRunsForSha(sha){
+  const repoName=process.env.TAKY_GITHUB_REPOSITORY||'hns140412-glitch/TAKY-WORK-OS';
+  const headers={'accept':'application/vnd.github+json','x-github-api-version':'2022-11-28'};
+  const token=process.env.GITHUB_TOKEN||process.env.TAKY_GITHUB_TOKEN;
+  if(token) headers.authorization='Bearer '+token;
+  const url='https://api.github.com/repos/'+repoName+'/actions/runs?head_sha='+encodeURIComponent(sha)+'&per_page=100';
+  const response=await fetch(url,{headers});
+  if(!response.ok) throw new Error('GITHUB_ACTIONS_HTTP_'+response.status+':'+(await response.text()).slice(0,500));
+  const data=await response.json();
+  return Array.isArray(data.workflow_runs)?data.workflow_runs:[];
+}
+
+async function verifyCurrentCIGreen(){
+  if(process.env.TAKY_SKIP_CI_ATTESTATION==='1'){
+    return {ok:true,skipped:true,reason:'TEST_ONLY_SKIP'};
+  }
+  const sha=await currentGitHead();
+  const runs=await fetchWorkflowRunsForSha(sha);
+  const evaluated=CIGate.evaluateWorkflowRuns(runs);
+  return {...evaluated,commit_sha:sha};
 }
 
 function projectSafe(rawPath){
@@ -311,7 +343,16 @@ export function buildServer(){
         exposure_target:z.enum(['VALIDATED_PREVIEW','USER_VISIBLE','FINAL_APPROVABLE']).default('FINAL_APPROVABLE')
       })
     },
-    async(input)=>result(Pipeline.finalizeStagedProduction(input))
+    async(input)=>{
+      try{
+        const ci=await verifyCurrentCIGreen();
+        if(!ci.ok) return result({ok:false,stage:'CI_ATTESTATION',detail:ci});
+        const finalized=Pipeline.finalizeStagedProduction(input);
+        return result({...finalized,ci_attestation:ci});
+      }catch(error){
+        return result({ok:false,stage:'CI_ATTESTATION',detail:{reason:'CI_ATTESTATION_FAILED',error:String(error?.message||error)}});
+      }
+    }
   );
 
   server.registerTool(
