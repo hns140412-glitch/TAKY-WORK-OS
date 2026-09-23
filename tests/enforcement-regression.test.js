@@ -752,18 +752,22 @@ function minimalPackage(){
     JSON.stringify(missing.evidence.refEffectSet,null,2)
   );
 
-  const unimplemented=ReferenceCompiler.compileReferenceProfile({
+  const stagedTechnical=ReferenceCompiler.compileReferenceProfile({
     reference_ids:['SOM_FOSTER_TECHNICAL_CLARITY'],
     context:{scale:'1:200',output_size:'A3',source_density:'HIGH'}
   });
-  const unsupported=Measurement.verifyReferenceEffectSet(
-    [lineReceipt.receipt,layoutReceipt.receipt],
+  assert.equal(stagedTechnical.compiled[0].effect_metric,'TAKY_TECHNICAL_SYSTEM_READABILITY_DELTA_V1');
+  const technicalClaimability=ReferenceCompiler.validateClaimability(stagedTechnical);
+  assert.equal(technicalClaimability.ok,false);
+  assert.equal(technicalClaimability.reason,'REFERENCE_NOT_PRODUCTION_CLAIMABLE');
+  assert(technicalClaimability.deferred_reference_ids.includes('SOM_FOSTER_TECHNICAL_CLARITY'));
+  const technicalNoReceipt=Measurement.verifyReferenceEffectSet(
+    [],
     artifactDigest,
-    unimplemented
+    stagedTechnical
   );
-  assert.equal(unsupported.ok,false);
-  assert.equal(unsupported.reason,'REFERENCE_EFFECT_METRIC_NOT_IMPLEMENTED');
-  assert(unsupported.reference_ids.includes('SOM_FOSTER_TECHNICAL_CLARITY'));
+  assert.equal(technicalNoReceipt.ok,false);
+  assert.equal(technicalNoReceipt.reason,'REFERENCE_EFFECT_RECEIPT_SET_REQUIRED');
 })();
 
 (function testSignedAuthorizationIsSerializable(){
