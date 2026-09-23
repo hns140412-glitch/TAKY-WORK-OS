@@ -8,6 +8,9 @@ on:
     paths:
       - 'runtime/**'
       - 'tests/**'
+      - 'MCP/**'
+      - 'tools/drawing_geometry_primitive_adapter.py'
+      - 'tools/drawing_geometry_primitive_adapter.test.py'
       - '.github/workflows/enforcement-regression.yml'
 
 jobs:
@@ -21,3 +24,7 @@ jobs:
           node-version: '20'
       - name: Run enforcement regression
         run: node tests/enforcement-regression.test.js
+      - name: Install MCP gateway dependencies
+        run: npm install --prefix MCP/gateway --ignore-scripts
+      - name: Run MCP gateway smoke test
+        run: node MCP/gateway/server.test.mjs
