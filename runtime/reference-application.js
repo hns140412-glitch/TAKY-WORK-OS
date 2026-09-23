@@ -126,6 +126,50 @@ function validateSourceStyleApplication(application={},compiled={}){
   });
 }
 
+function validateApplicationCoverage(application={},sourceStyleApplications=[],compiled={}){
+  if(!compiled?.ok) return Object.freeze({ok:false,reason:'COMPILED_REFERENCE_REQUIRED'});
+
+  const covered=new Set();
+  const findings=[];
+
+  if(application?.ok && application.compile_digest===compiled.compile_digest){
+    for(const item of application.applied_parameters||[]){
+      if(item?.reference_id) covered.add(item.reference_id);
+    }
+  }else if(application?.ok){
+    findings.push(Object.freeze({reason:'REFERENCE_COMPILE_DIGEST_MISMATCH',component:'PROFILE_APPLICATION'}));
+  }
+
+  const styleList=Array.isArray(sourceStyleApplications)
+    ? sourceStyleApplications
+    : (sourceStyleApplications && typeof sourceStyleApplications==='object' ? [sourceStyleApplications] : []);
+
+  for(const style of styleList){
+    const checked=validateSourceStyleApplication(style,compiled);
+    if(checked.ok && checked.reference_id){
+      covered.add(checked.reference_id);
+    }else if(style && Object.keys(style).length){
+      findings.push(Object.freeze({
+        reason:checked.reason||'SOURCE_STYLE_APPLICATION_INVALID',
+        reference_id:style.reference_id||null
+      }));
+    }
+  }
+
+  const expected=(compiled.compiled||[]).map(x=>x.reference_id);
+  const missing=expected.filter(id=>!covered.has(id));
+  for(const id of missing){
+    findings.push(Object.freeze({reason:'REFERENCE_CAUSAL_APPLICATION_MISSING',reference_id:id}));
+  }
+
+  return Object.freeze({
+    ok:findings.length===0,
+    covered_reference_ids:Object.freeze([...covered].sort()),
+    missing_reference_ids:Object.freeze(missing),
+    findings:Object.freeze(findings)
+  });
+}
+
 function validateApplication(application={},compiled={}){
   if(!application?.ok) return Object.freeze({ok:false,reason:'REFERENCE_APPLICATION_REQUIRED'});
   if(application.compile_digest!==compiled?.compile_digest){
@@ -144,5 +188,6 @@ module.exports=Object.freeze({
   version:'1.0.0',
   applyToPresentationProfile,
   validateApplication,
+  validateApplicationCoverage,
   validateSourceStyleApplication
 });
