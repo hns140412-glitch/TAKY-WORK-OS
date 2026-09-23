@@ -6,15 +6,11 @@ import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
-import os from 'node:os';
-import crypto from 'node:crypto';
 
 const require=createRequire(import.meta.url);
 const __filename=fileURLToPath(import.meta.url);
 const __dirname=path.dirname(__filename);
 const geometryAdapter=path.resolve(__dirname,'../../tools/drawing_geometry_primitive_adapter.py');
-const visualAdapter=path.resolve(__dirname,'../../tools/drawing_visual_metric_extractor.py');
-const reviewImageExporter=path.resolve(__dirname,'../../tools/drawing_review_image_exporter.py');
 const controlledPresentationPipeline=path.resolve(__dirname,'../../tools/drawing_controlled_presentation_pipeline.py');
 const a3BundleExporter=path.resolve(__dirname,'../../tools/drawing_a3_bundle_exporter.py');
 const a3BoardCli=path.resolve(__dirname,'../../runtime/drawing-a3-board-cli.js');
@@ -23,9 +19,6 @@ const Router=require('../../runtime/work-os-router.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
 const Pipeline=require('../../runtime/production-pipeline.js');
 const ReferenceCompiler=require('../../runtime/reference-compiler.js');
-const Measurement=require('../../runtime/visual-measurement-receipt.js');
-const VisionReview=require('../../runtime/vision-review-receipt.js');
-const VisionParser=require('../../runtime/vision-review-parser.js');
 const CIGate=require('../../runtime/ci-attestation-gate.js');
 
 function runPython(args){
@@ -42,31 +35,7 @@ function runPython(args){
   });
 }
 
-function runVisualPython(args){
-  return new Promise((resolve,reject)=>{
-    const python=process.env.TAKY_PYTHON||'python3';
-    execFile(python,[visualAdapter,...args],{maxBuffer:20*1024*1024},(err,stdout,stderr)=>{
-      if(err){ reject(new Error(stderr||err.message)); return; }
-      try{ resolve(JSON.parse(stdout)); }
-      catch(parseErr){ reject(new Error('VISUAL_METRIC_JSON_INVALID:'+parseErr.message)); }
-    });
-  });
-}
-
-function renderReviewPng(sourcePath,pageIndex=0){
-  return new Promise((resolve,reject)=>{
-    const python=process.env.TAKY_PYTHON||'python3';
-    const out=path.join(os.tmpdir(),'taky-review-'+crypto.randomUUID()+'.png');
-    execFile(python,[
-      reviewImageExporter,sourcePath,'--out',out,'--page',String(pageIndex),'--max-edge','2000'
-    ],{maxBuffer:20*1024*1024},(err,stdout,stderr)=>{
-      if(err){ reject(new Error(stderr||err.message)); return; }
-      resolve(out);
-    });
-  });
-}
-
-async function callIndependentVision({baselinePng,candidatePng,referencePngs=[]}){
+function callIndependentVision({baselinePng,candidatePng,referencePngs=[]}){
   const apiKey=process.env.ANTHROPIC_API_KEY;
   if(!apiKey) throw new Error('ANTHROPIC_API_KEY_REQUIRED');
   const model=process.env.TAKY_VISION_MODEL||'claude-sonnet-5';
@@ -376,111 +345,6 @@ export function buildServer(){
         return result(await runPython(args));
       }catch(error){
         return result({ok:false,reason:'GEOMETRY_ADAPTER_FAILED',error:String(error?.message||error)});
-      }
-    }
-  );
-
-  server.registerTool(
-    'review-visual-artifact',
-    {
-      description:'Independently review baseline, candidate, and professional reference images with Claude Vision. Issues a signed candidate-digest-bound VISION_VALIDATOR_V1 receipt. Geometry and facts are intentionally out of scope.',
-      inputSchema:z.object({
-        baseline_path:z.string().min(1),
-        candidate_path:z.string().min(1),
-        reference_paths:z.array(z.string().min(1)).min(1).max(3),
-        page_index:z.number().int().min(0).default(0)
-      })
-    },
-    async(input)=>{
-      const temp=[];
-      try{
-        const paths=[input.baseline_path,input.candidate_path,...input.reference_paths];
-        if(paths.some(p=>!projectSafe(p))) return result({ok:false,reason:'VISION_REVIEW_PATH_OUTSIDE_PROJECT'});
-
-        const baseline=await renderReviewPng(input.baseline_path,input.page_index??0); temp.push(baseline);
-        const candidate=await renderReviewPng(input.candidate_path,input.page_index??0); temp.push(candidate);
-        const refs=[];
-        for(const refPath of input.reference_paths){
-          const p=await renderReviewPng(refPath,input.page_index??0); temp.push(p); refs.push(p);
-        }
-
-        const candidateDigest=ArtifactBroker.sha256File(input.candidate_path);
-        const reviewed=await callIndependentVision({
-          baselinePng:baseline,
-          candidatePng:candidate,
-          referencePngs:refs
-        });
-        const signed=VisionReview.signReview({
-          artifact_digest:candidateDigest,
-          ...reviewed.review
-        });
-        return result({
-          ...signed,
-          artifact_digest:candidateDigest,
-          validator_id:VisionReview.VALIDATOR_ID,
-          model:reviewed.model,
-          review:reviewed.review
-        });
-      }catch(error){
-        return result({ok:false,reason:'VISION_REVIEW_FAILED',error:String(error?.message||error)});
-      }finally{
-        for(const p of temp){ try{ fs.unlinkSync(p); }catch(e){} }
-      }
-    }
-  );
-
-  server.registerTool(
-    'measure-visual-artifact',
-    {
-      description:'Measure objective visual properties from a project PDF/PNG/JPG/WEBP and issue a signed receipt bound to the exact artifact SHA256. Does not claim professional quality.',
-      inputSchema:z.object({
-        artifact_path:z.string().min(1),
-        page_index:z.number().int().min(0).default(0)
-      })
-    },
-    async(input)=>{
-      try{
-        if(!projectSafe(input.artifact_path)) return result({ok:false,reason:'ARTIFACT_PATH_OUTSIDE_PROJECT'});
-        const digest=ArtifactBroker.sha256File(input.artifact_path);
-        const metrics=await runVisualPython([input.artifact_path,'--page',String(input.page_index??0)]);
-        const issued=Measurement.issueVisualMeasurement({artifact_digest:digest,metrics});
-        return result({...issued,artifact_digest:digest,metrics});
-      }catch(error){
-        return result({ok:false,reason:'VISUAL_MEASUREMENT_FAILED',error:String(error?.message||error)});
-      }
-    }
-  );
-
-  server.registerTool(
-    'measure-reference-effect',
-    {
-      description:'Compare reference-off baseline and reference-on candidate artifacts objectively and issue a signed candidate-digest-bound effect receipt. Professional-family judgment remains separate.',
-      inputSchema:z.object({
-        baseline_path:z.string().min(1),
-        candidate_path:z.string().min(1),
-        reference_ids:z.array(z.string()).min(1),
-        page_index:z.number().int().min(0).default(0)
-      })
-    },
-    async(input)=>{
-      try{
-        if(!projectSafe(input.baseline_path)||!projectSafe(input.candidate_path)){
-          return result({ok:false,reason:'REFERENCE_ARTIFACT_PATH_OUTSIDE_PROJECT'});
-        }
-        const baselineDigest=ArtifactBroker.sha256File(input.baseline_path);
-        const candidateDigest=ArtifactBroker.sha256File(input.candidate_path);
-        const measured=await runVisualPython([
-          input.candidate_path,'--page',String(input.page_index??0),'--baseline',input.baseline_path
-        ]);
-        const issued=Measurement.issueReferenceEffect({
-          baseline_digest:baselineDigest,
-          candidate_digest:candidateDigest,
-          reference_ids:input.reference_ids,
-          comparison:measured.comparison
-        });
-        return result({...issued,baseline_digest:baselineDigest,candidate_digest:candidateDigest,comparison:measured.comparison});
-      }catch(error){
-        return result({ok:false,reason:'REFERENCE_EFFECT_MEASUREMENT_FAILED',error:String(error?.message||error)});
       }
     }
   );
