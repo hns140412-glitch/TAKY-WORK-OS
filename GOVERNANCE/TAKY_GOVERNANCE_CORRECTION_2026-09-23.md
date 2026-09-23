@@ -135,6 +135,70 @@ REFERENCE
 Reference authority never becomes geometry / fact authority.
 If a profile already satisfies the reference and no parameter is actually changed, the system must not distort the result merely to create a visible delta; it simply cannot claim causal reference effect for that run.
 
+## REFERENCE APPLICABILITY / MULTI-REFERENCE CLAIMS
+
+Reference mining knowledge is preserved even when an execution adapter does not yet exist.
+Production claimability is separate from mined knowledge.
+
+Applicability classes:
+
+- `FULL`
+  - current engine can implement the declared reference intent directly
+  - current example: `DIVISARE_EDITORIAL_RESTRAINT`
+  - claim scope: `EDITORIAL_LAYOUT_RESTRAINT`
+
+- `PARTIAL`
+  - only a safe subset is implemented
+  - current example: `ARCHDAILY_PLAN_HIERARCHY`
+  - safe claim scope: `SOURCE_LINE_HIERARCHY_ONLY`
+  - current implementation uses measured source stroke-width rank only
+  - it does NOT claim verified CUT / PRIMARY / SECONDARY architectural semantics
+
+- `DEFERRED`
+  - mined knowledge remains available
+  - production claim is forbidden until an executable adapter + effect metric exists
+  - current examples:
+    - `OMA_RELATION_FIRST` — diagram component adapter not active
+    - `BIG_ONE_MOVE` — diagram component adapter not active
+    - `SOM_FOSTER_TECHNICAL_CLARITY` — verified presentation roles required
+
+Multi-reference production requires:
+
+REFERENCE SET  
+→ one compile digest  
+→ causal application evidence for EVERY claimed reference  
+→ correct effect metric receipt for EVERY claimed reference / effect schema  
+→ source-fidelity lineage where required  
+→ independent visual / human-intent review
+
+A valid effect from one reference cannot authorize another reference claim.
+
+Defensive balance:
+- DEFERRED references remain available for mining, study and staging
+- they are not deleted or treated as useless
+- only the unsupported production claim is blocked
+
+## SOURCE-STYLE RANK — SAFE PARTIAL LINE-HIERARCHY ADAPTER
+
+When verified architectural roles are unavailable, the engine may use source presentation values only:
+
+source stroke width  
+→ distinct width order  
+→ semantic-free rank  
+→ bounded multiplier  
+→ geometry fingerprint equality  
+→ monotonic rank preservation
+
+Hard locks:
+- no architectural semantic labels are created
+- no geometry-bearing attribute may change
+- original relative stroke-width order may not reverse
+- no effect claim if no actual style change occurred
+- global image delta is not substituted for a line-hierarchy-specific metric
+
+The first percentile-frequency implementation was rejected on real Hannam 2F because a dominant 0.24 width collapsed the ranks.
+The corrected implementation ranks DISTINCT source widths, preserving the source presentation order.
+
 ## HOST POLICY
 
 Generic Python / HTML / ReportLab / direct image generation may remain available for diagnostic / staging use.
