@@ -213,6 +213,7 @@ function minimalPackage(){
     facts:[],review_items:[],cases:[],methods:[],pages:[]
   };
   const artifactDigest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
+  const sourceDigest='1111111111111111111111111111111111111111111111111111111111111111';
 
   const humanIntent=HumanIntent.compileHumanIntent({
     desired_outcome:'Preserve authoritative drawing geometry while producing a clear A3 report for human decision.',
@@ -280,15 +281,36 @@ function minimalPackage(){
   });
   assert.equal(vision.ok,true);
 
+  const sourceFidelity=TestSigner.signSourceFidelity({
+    evidence:{
+      schema:'TAKY_SOURCE_FIDELITY_EVIDENCE_V1',
+      ok:true,
+      semantic_inference:false,
+      source_sha256:sourceDigest,
+      source_page_index:0,
+      source_geometry_fingerprint:'fixture-geometry',
+      controlled_geometry_fingerprint:'fixture-geometry',
+      controlled_geometry_match:true,
+      canonical_svg_sha256:'2222222222222222222222222222222222222222222222222222222222222222',
+      candidate_sha256:artifactDigest,
+      source_viewbox_match:true,
+      canonical_inline_match:true,
+      inline_transform_safe:true,
+      artifact_parity:{type:'PDF',ok:true,score:1.0}
+    }
+  });
+  assert.equal(sourceFidelity.ok,true);
+
   const r=Pipeline.runProduction({
     task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
     artifact_digest:artifactDigest,
     source_identity:{
-      current_content:'same-source-content',
-      previous_content:'same-source-content',
+      current_hash:sourceDigest,
+      previous_hash:sourceDigest,
       current_modified_at:'2026-09-23T10:00:00+09:00',
       previous_modified_at:'2026-09-23T09:00:00+09:00'
     },
+    source_fidelity_receipt:sourceFidelity.receipt,
     geometry:{
       source:{primitives},output:{primitives},
       protected_anchors_source:['WALL','CORE','ENTRY'],
@@ -729,6 +751,30 @@ function minimalPackage(){
   const v=VisionReview.verifyReview(signed.receipt,digest,intentB.intent_digest);
   assert.equal(v.ok,false);
   assert.equal(v.reason,'VISION_REVIEW_INTENT_MISMATCH');
+})();
+
+
+(function testSelfReportedGeometryCannotReplaceArtifactFidelity(){
+  const primitives=[{id:'W1',role:'GEOMETRY',type:'LINE',x1:0,y1:0,x2:1,y2:1}];
+  const result=Pipeline.runProduction({
+    task:{task_type:'ARCH_REPORT_ASSEMBLY',requested_output:'USER_FACING'},
+    artifact_digest:'9999999999999999999999999999999999999999999999999999999999999999',
+    source_identity:{current_hash:'8888888888888888888888888888888888888888888888888888888888888888'},
+    geometry:{source:{primitives},output:{primitives}},
+    semantics:[],
+    claims:[],
+    human_intent:{desired_outcome:'Fixture'},
+    reference:{
+      reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+      context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
+    },
+    reference_application:{},
+    provenance:{source_ids:['SRC'],module_ids:['REPORT_ENGINE_V2']},
+    report_package:minimalPackage()
+  });
+  assert.equal(result.ok,false);
+  assert.equal(result.stage,'VALIDATION');
+  assert.equal(result.evidence.sourceFidelity.ok,false);
 })();
 
 console.log('TAKY enforcement regression: PASS');
