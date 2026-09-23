@@ -60,11 +60,13 @@
         "RELATION_FIRST"
       ],
       "presentation": [
-        "parking field neutral warm gray",
-        "core/vertical circulation darker neutral",
-        "retaining/ground condition separate tonal family",
-        "vehicle and pedestrian access use one accent family",
-        "dimensions remain readable but subordinate"
+        "ROAD = cool neutral; SOIL/GROUND = warm neutral/earth; never same tone/texture",
+        "parking field off-white / very light warm gray",
+        "core darker neutral",
+        "retaining wall heavy/dark if verified",
+        "site boundary remains source-derived",
+        "vehicle/pedestrian access use one accent family only",
+        "source line final"
       ],
       "hard_gates": [
         "site boundary preserved",
@@ -131,11 +133,15 @@
         "BACKGROUND"
       ],
       "presentation": [
-        "cut plane dominant",
-        "soil/ground readable but not decorative",
-        "level labels remain exact source evidence",
-        "human scale optional and minimal",
-        "background context reduced"
+        "BUILDING_CUT near-black/dark warm gray poche",
+        "ROAD cool neutral solid plane",
+        "SOIL warm earth hatch/stipple",
+        "GROUND finished surface warm pale",
+        "STRUCTURE mid hierarchy",
+        "INTERIOR_SPACE off-white",
+        "BACKGROUND very light",
+        "human scale minimal",
+        "source levels and profile unchanged"
       ],
       "hard_gates": [
         "levels unchanged",
@@ -151,5 +157,94 @@
     "main drawing identifiable within 2 seconds",
     "support diagrams do not compete with hero",
     "unknown semantic content remains unknown"
+  ],
+  "semantic_presentation_tokens": {
+    "ROAD": {
+      "role": "vehicular surface / public edge",
+      "fill": "COOL_NEUTRAL_LIGHT",
+      "texture": "VERY_LIGHT_FINE_GRAIN",
+      "hatch": "NONE",
+      "edge": "CRISP",
+      "rule": "Never share the same fill/texture as SOIL or GROUND."
+    },
+    "GROUND": {
+      "role": "finished ground / exterior ground plane",
+      "fill": "WARM_NEUTRAL_PALE",
+      "texture": "SUBTLE_PAPER_GRAIN",
+      "hatch": "NONE",
+      "edge": "SOFT_SECONDARY"
+    },
+    "SOIL": {
+      "role": "earth / backfill / cut ground",
+      "fill": "WARM_EARTH_PALE",
+      "texture": "EARTH_GRAIN",
+      "hatch": "DIAGONAL_OR_STIPPLE",
+      "edge": "SECONDARY",
+      "rule": "In section, SOIL must read materially different from ROAD and FLOOR."
+    },
+    "RETAINING_WALL": {
+      "role": "retaining / cut structural edge",
+      "fill": "DARK_NEUTRAL",
+      "texture": "NONE",
+      "hatch": "SOLID_POCHE_IF_VERIFIED",
+      "edge": "HEAVY"
+    },
+    "BUILDING_CUT": {
+      "role": "section cut structure",
+      "fill": "NEAR_BLACK_OR_DARK_WARM_GRAY",
+      "texture": "NONE",
+      "hatch": "SOLID_POCHE",
+      "edge": "HEAVIEST"
+    },
+    "STRUCTURE": {
+      "role": "uncut structural / envelope",
+      "fill": "LIGHT_NEUTRAL",
+      "texture": "NONE",
+      "hatch": "NONE",
+      "edge": "PRIMARY"
+    },
+    "INTERIOR_SPACE": {
+      "role": "usable interior",
+      "fill": "OFF_WHITE",
+      "texture": "NONE",
+      "hatch": "NONE",
+      "edge": "PRIMARY_OR_SECONDARY"
+    },
+    "PARKING_FIELD": {
+      "role": "parking / circulation floor",
+      "fill": "VERY_LIGHT_WARM_GRAY",
+      "texture": "NONE",
+      "hatch": "NONE",
+      "edge": "SECONDARY"
+    },
+    "CORE": {
+      "role": "vertical circulation / service core",
+      "fill": "MID_NEUTRAL",
+      "texture": "NONE",
+      "hatch": "NONE",
+      "edge": "PRIMARY"
+    },
+    "LANDSCAPE": {
+      "role": "verified planted area only",
+      "fill": "MUTED_GREEN",
+      "texture": "SOFT_ORGANIC",
+      "hatch": "NONE",
+      "edge": "LIGHT",
+      "rule": "Never add if not present in source."
+    },
+    "CONTEXT": {
+      "role": "adjacent / background",
+      "fill": "VERY_LIGHT_GRAY",
+      "texture": "NONE",
+      "hatch": "NONE",
+      "edge": "LIGHTEST"
+    }
+  },
+  "reference_translation_rules": [
+    "ArchDaily/section practice -> material/ground/soil/structure layers must be visually distinct, not just line-weight distinct.",
+    "OMA relation-first -> one semantic role per graphic treatment; avoid decorative duplication.",
+    "Drawing Matter -> omission and hierarchy are allowed; geometry relocation is not.",
+    "BIG one-move -> supporting diagrams explain one relation only.",
+    "Divisare/Domus restraint -> low saturation, material contrast by tone/texture rather than loud color."
   ]
 }
