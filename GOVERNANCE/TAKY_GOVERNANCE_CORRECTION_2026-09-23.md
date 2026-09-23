@@ -274,6 +274,33 @@ Rules:
 The former `TAKY_SKIP_CI_ATTESTATION` production escape hatch is removed.
 There is no environment-variable bypass for production exact-head CI attestation.
 
+## SIGNED VALIDATION READINESS ATTESTATION
+
+Production Gateway and Independent Validator remain separate trust domains.
+
+To avoid forcing a human/agent to manually reconcile two readiness outputs:
+
+`get-validation-readiness`
+→ calculates objective / vision / user-facing validation readiness
+→ when measurement signing key is valid, issues a short-lived signed
+  `TAKY_VALIDATION_READINESS_RECEIPT`
+→ receipt contains readiness booleans, vision public-key fingerprint and model
+→ no private key or API secret value is included
+
+`get-production-readiness(validation_readiness_receipt)`
+→ verifies the receipt with configured measurement public key
+→ verifies the attested vision public-key fingerprint matches production configuration
+→ combines validator readiness with exact-head CI + durable gateway keys
+
+Readiness meanings:
+- `staging_ready` — internal work can continue
+- `production_gateway_ready` — gateway/CI/public-key/durable-capability prerequisites are ready
+- `overall_user_facing_ready` / `production_ready` — gateway ready AND signed validator readiness is valid
+
+A signed but NOT-ready validator receipt cannot become a production-ready result.
+
+The readiness receipt is short-lived and is not a substitute for the artifact-specific validation receipts required during finalization.
+
 ## REPOSITORY PROTECTION LAYER
 
 Runtime production enforcement and repository branch protection are separate controls.
