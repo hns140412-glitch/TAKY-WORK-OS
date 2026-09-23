@@ -127,12 +127,14 @@
     });
 
     const sourcePlaced=
+      '<defs><clipPath id="source-a3-clip" clipPathUnits="userSpaceOnUse"><rect x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" width="'+(hero.width-16)+'" height="'+(hero.height-16)+'"/></clipPath></defs>'+
+      '<g clip-path="url(#source-a3-clip)">'+
       '<svg id="source-slot" data-source-geometry="locked" '+
       'x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" '+
       'width="'+(hero.width-16)+'" height="'+(hero.height-16)+'" '+
       'viewBox="'+sb.x+' '+sb.y+' '+sb.width+' '+sb.height+'" '+
-      'preserveAspectRatio="xMidYMid meet" overflow="hidden">'+
-      body+'</svg>';
+      'preserveAspectRatio="xMidYMid meet">'+
+      body+'</svg></g>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
