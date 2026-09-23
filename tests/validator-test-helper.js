@@ -21,6 +21,9 @@ module.exports=Object.freeze({
   signReferenceEffect(input){
     return {ok:true,receipt:Signer.signReferenceEffect(input)};
   },
+  signSourceFidelity(input){
+    return {ok:true,receipt:Signer.signSourceFidelity(input)};
+  },
   signVisionReview(input){
     return {ok:true,receipt:Signer.signVisionReview(input)};
   }
