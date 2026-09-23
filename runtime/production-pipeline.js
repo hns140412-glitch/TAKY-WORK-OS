@@ -9,6 +9,7 @@ const FactGate=require('./fact-evidence-validator.js');
 const SemanticGate=require('./semantic-gate.js');
 const NarrativeGate=require('./narrative-evidence-gate.js');
 const ReferenceCompiler=require('./reference-compiler.js');
+const ReferenceApplication=require('./reference-application.js');
 const VisualQuality=require('./visual-quality-validator.js');
 const Measurement=require('./visual-measurement-receipt.js');
 const VisionReview=require('./vision-review-receipt.js');
@@ -61,6 +62,10 @@ function runProduction(input={}){
   const narrative=NarrativeGate.validateClaims(input.claims||[]);
 
   const refCompile=ReferenceCompiler.compileReferenceProfile(input.reference||{});
+  const refApplication=ReferenceApplication.validateApplication(
+    input.reference_application||{},
+    refCompile
+  );
 
   const visualMeasurement=Measurement.verifyVisualMeasurement(
     input.visual_measurement_receipt,
@@ -74,7 +79,8 @@ function runProduction(input={}){
     ? Measurement.verifyReferenceEffect(
         input.reference_effect_receipt,
         input.artifact_digest||null,
-        input.reference?.reference_ids||[]
+        input.reference?.reference_ids||[],
+        refCompile.compile_digest||null
       )
     : Object.freeze({ok:false,reason:'REFERENCE_NOT_COMPILED'});
 
@@ -99,7 +105,7 @@ function runProduction(input={}){
     GEOMETRY_GATE:geometryCompare.ok && geometry.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:refCompile.ok && refEffect.ok && visionReview.ok?'PASS':'FAIL',
+    REFERENCE_EFFECT_GATE:refCompile.ok && refApplication.ok && refEffect.ok && visionReview.ok?'PASS':'FAIL',
     ARCHITECTURAL_READABILITY_GATE:visualMeasurement.ok && readability.ok?'PASS':'FAIL',
     A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
@@ -115,6 +121,7 @@ function runProduction(input={}){
     semantics,
     narrative,
     refCompile,
+    refApplication,
     visualMeasurement,
     refEffect,
     visionReview,
