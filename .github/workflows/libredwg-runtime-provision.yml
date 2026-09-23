@@ -1,0 +1,55 @@
+name: provision-libredwg-runtime
+
+on:
+  push:
+    branches:
+      - surgery/enforcement-v1-2026-09-23
+    paths:
+      - .github/workflows/libredwg-runtime-provision.yml
+
+jobs:
+  build-libredwg:
+    runs-on: ubuntu-latest
+    timeout-minutes: 12
+    steps:
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y --no-install-recommends \
+            build-essential autoconf automake libtool pkg-config \
+            libpcre2-dev libxml2-dev zlib1g-dev gettext
+
+      - name: Fetch pinned GNU LibreDWG source
+        env:
+          LIBREDWG_COMMIT: 34f02f54b9aacb5708c1d3d2070efb3e4b2d8c43
+        run: |
+          set -euo pipefail
+          git init /tmp/libredwg
+          git -C /tmp/libredwg remote add origin https://github.com/LibreDWG/libredwg.git
+          git -C /tmp/libredwg fetch --depth=1 origin "$LIBREDWG_COMMIT"
+          git -C /tmp/libredwg checkout --detach FETCH_HEAD
+          test "$(git -C /tmp/libredwg rev-parse HEAD)" = "$LIBREDWG_COMMIT"
+
+      - name: Build dwgread
+        run: |
+          set -euo pipefail
+          cd /tmp/libredwg
+          sh ./autogen.sh
+          ./configure --disable-bindings --disable-docs --disable-shared
+          make -j2
+          mkdir -p /tmp/libredwg-runtime
+          cp programs/dwgread /tmp/libredwg-runtime/dwgread
+          cp programs/dwg2dxf /tmp/libredwg-runtime/dwg2dxf
+          chmod +x /tmp/libredwg-runtime/dwgread /tmp/libredwg-runtime/dwg2dxf
+          /tmp/libredwg-runtime/dwgread --version
+          ldd /tmp/libredwg-runtime/dwgread
+          sha256sum /tmp/libredwg-runtime/dwgread /tmp/libredwg-runtime/dwg2dxf > /tmp/libredwg-runtime/SHA256SUMS
+          printf '%s\n' '34f02f54b9aacb5708c1d3d2070efb3e4b2d8c43' > /tmp/libredwg-runtime/UPSTREAM_COMMIT
+
+      - name: Upload decoder runtime
+        uses: actions/upload-artifact@v4
+        with:
+          name: libredwg-runtime-linux-x64
+          path: /tmp/libredwg-runtime
+          if-no-files-found: error
+          retention-days: 1
