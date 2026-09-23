@@ -34,15 +34,15 @@ assert(x.ready.every(v=>v.layer_id==='L8_USER_EXPOSURE_GATE'));
 assert.equal(x.ready.length,2);
 
 const saleL8=plan.finalization.find(v=>v.work_unit_id==='SALE:L8');
-const gates={SOURCE:'PASS',GEOMETRY:'PASS',FACT:'PASS',SEMANTIC:'PASS',REFERENCE_EFFECT:'PASS',ARCHITECTURAL_READABILITY:'PASS',USER_EFFECT:'PASS'};
+const validation={source_gate_pass:true,geometry_gate_pass:true,fact_gate_pass:true,semantic_gate_pass:true,reference_effect_pass:true,architectural_readability_pass:true,user_effect_pass:true,defects:[]};
 assert.equal(r.executeUserExposure({
   unit:saleL8,
-  production_context:{artifact_class:'FINAL',execution_route:'AUTHORIZED_ENGINE',engine_id:'DRAWING_ENGINE_V2',operations:['VECTOR_STYLE_LAYER'],gates}
+  production_context:{artifact_class:'FINAL',execution_route:'AUTHORIZED_ENGINE',engine_id:'DRAWING_ENGINE_V2',operations:['VECTOR_STYLE_LAYER'],validation_evidence:validation}
 }).decision,'SHOW');
 
 assert.equal(r.executeUserExposure({
   unit:saleL8,
-  production_context:{artifact_class:'FINAL',execution_route:'ONE_OFF_SCRIPT',one_off:true,operations:['ONE_OFF_RENDERER'],gates}
+  production_context:{artifact_class:'FINAL',execution_route:'ONE_OFF_SCRIPT',one_off:true,operations:['ONE_OFF_RENDERER'],validation_evidence:validation}
 }).decision,'HOLD');
 
 console.log('drawing-work-unit-runner: PASS');
