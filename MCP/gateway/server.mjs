@@ -23,6 +23,7 @@ const ReferenceCompiler=require('../../runtime/reference-compiler.js');
 const ReferenceApplication=require('../../runtime/reference-application.js');
 const CIGate=require('../../runtime/ci-attestation-gate.js');
 const Capability=require('../../runtime/capability-token.js');
+const Readiness=require('../../runtime/readiness-evaluator.js');
 
 function runPython(args){
   return new Promise((resolve,reject)=>{
@@ -146,17 +147,18 @@ export function buildServer(){
         const visionPem=process.env.TAKY_VISION_PUBLIC_KEY_PEM||'';
         const measurementFp=publicKeyFingerprint(measurementPem);
         const visionFp=publicKeyFingerprint(visionPem);
-        const keysReady=Boolean(measurementFp && visionFp);
         const persistentCapability=Capability.key_mode==='CONFIGURED_PRIVATE';
-        const warnings=[];
-        if(!measurementFp) warnings.push('MEASUREMENT_PUBLIC_KEY_NOT_READY');
-        if(!visionFp) warnings.push('VISION_PUBLIC_KEY_NOT_READY');
-        if(!persistentCapability) warnings.push('CAPABILITY_KEY_NOT_PERSISTENT_ACROSS_PROCESS_RESTART');
+        const evaluated=Readiness.evaluateProductionReadiness({
+          ci,
+          measurement_public_key_ready:Boolean(measurementFp),
+          vision_public_key_ready:Boolean(visionFp),
+          persistent_capability_key:persistentCapability
+        });
 
         return result({
           ok:true,
-          production_ready:Boolean(ci.ok && keysReady),
-          staging_ready:true,
+          production_ready:evaluated.production_ready,
+          staging_ready:evaluated.staging_ready,
           current_git_head:ci.commit_sha||null,
           exact_head_ci:ci,
           validation_public_keys:{
@@ -167,7 +169,7 @@ export function buildServer(){
           },
           capability_key_mode:Capability.key_mode,
           persistent_capability_key:persistentCapability,
-          warnings
+          warnings:[...evaluated.warnings]
         });
       }catch(error){
         return result({
