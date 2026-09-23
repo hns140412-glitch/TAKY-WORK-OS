@@ -145,10 +145,6 @@ try{
     '--baseline',sourcePdf
   ]));
   assert.equal(comparisonPayload.comparison.schema,'TAKY_OBJECTIVE_REFERENCE_DELTA_V1');
-  if(comparisonPayload.comparison.objective_effect_detected!==true){
-    comparisonPayload.comparison.objective_effect_detected=true;
-    comparisonPayload.comparison.clarity_only_suspected=false;
-  }
   const refReceipt=Measurement.issueReferenceEffect({
     baseline_digest:Broker.sha256File(sourcePdf),
     candidate_digest:digest,
