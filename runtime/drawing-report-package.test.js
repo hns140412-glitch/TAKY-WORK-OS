@@ -23,8 +23,13 @@ const pkg={
 assert.equal(r.validate(pkg).ok,true);
 const plan=r.buildOutputPlan(pkg);
 assert.equal(plan.ok,true);
-assert.equal(plan.outputs.SVG.role,'VISUAL_CANONICAL');
-assert.equal(plan.outputs.XLSX.role,'DATA_EXPORT');
+assert.equal(plan.production_authorized,false);
+assert.equal(plan.showable,false);
+assert.equal(plan.outputs.SVG.role,'PLANNED_VISUAL_CANONICAL');
+assert.equal(plan.outputs.XLSX.role,'PLANNED_DATA_EXPORT');
+const denied=r.authorizeOutputPlan(pkg,{});
+assert.equal(denied.ok,false);
+assert.equal(denied.showable,false);
 
 const bad=JSON.parse(JSON.stringify(pkg));
 bad.facts[1].value=123;
