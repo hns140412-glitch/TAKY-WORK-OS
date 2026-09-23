@@ -17,6 +17,11 @@ assert "PowerShell" in deny
 assert "Edit(/artifacts/production/**)" in deny
 assert "Edit(/.claude/**)" in deny
 assert "Edit(/.mcp.json)" in deny
+assert "Edit(/MCP/**)" in deny
+assert "Edit(/runtime/**)" in deny
+assert "Edit(/.github/workflows/**)" in deny
+assert "Edit(/tests/**)" in deny
+assert "Edit(/tools/drawing_*.py)" in deny
 assert permissions.get("disableBypassPermissionsMode")=="disable"
 assert permissions.get("disableAutoMode")=="disable"
 
