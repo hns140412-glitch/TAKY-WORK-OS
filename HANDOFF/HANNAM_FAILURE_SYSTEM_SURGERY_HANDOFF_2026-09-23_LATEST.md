@@ -40,17 +40,19 @@ taky/hannam-system-governance-correction-2026-09-23
 Local targeted regression:
 - drawing-production-gate.test: PASS
 - drawing-reference-compiler.test: PASS
+- protected-anchor and semantic deterministic gates: IMPLEMENTED; exact current-head regression rerun required before CI PASS claim
+- REPORT_PACKAGE production admission integration: IMPLEMENTED; exact current-head regression rerun required
 
 GitHub combined status observation returned no status contexts on the surgery branch at the observed head. Do not claim CI PASS until an Actions/check run is observed.
 Branch protection on the prior drawing-engine branch was disabled; required-check enforcement remains a governance gap.
 
 ## Next work only
 Continue SYSTEM IMPROVEMENT:
-1. wire protected-anchor diff evidence into production admission
-2. add semantic verification regression fixture
-3. add actual A3 visual/reference-effect fixture
-4. observe/fix CI
-5. cross-validate central TAKY vs implementation repo
+1. connect actual-source geometry/edge/protected-anchor/semantic evidence producers end-to-end into production admission
+2. add actual A3 before/after reference-effect visual regression
+3. observe/fix CI and require the check before production promotion
+4. cross-validate central TAKY vs implementation repo
+5. aggressively audit remaining bypass-capable output paths
 6. only after all blockers pass, decide promotion/merge
 
 Do not build a Hannam report page.
