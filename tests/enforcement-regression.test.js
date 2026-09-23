@@ -11,6 +11,7 @@ const Exposure=require('../runtime/exposure-gate.js');
 const Report=require('../runtime/drawing-report-package.js');
 const ReferenceCompiler=require('../runtime/reference-compiler.js');
 const ReferenceApplication=require('../runtime/reference-application.js');
+const HumanIntent=require('../runtime/human-intent-contract.js');
 const GeometryGuard=require('../runtime/geometry-guard.js');
 const SemanticGate=require('../runtime/semantic-gate.js');
 const NarrativeGate=require('../runtime/narrative-evidence-gate.js');
@@ -213,6 +214,16 @@ function minimalPackage(){
   };
   const artifactDigest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
+  const humanIntent=HumanIntent.compileHumanIntent({
+    desired_outcome:'Preserve authoritative drawing geometry while producing a clear A3 report for human decision.',
+    success_criteria:[
+      'source geometry remains unchanged',
+      'presentation hierarchy is visibly improved',
+      'unsupported claims are excluded'
+    ]
+  });
+  assert.equal(humanIntent.ok,true);
+
   const compiledReference=ReferenceCompiler.compileReferenceProfile({
     reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
     context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
@@ -261,6 +272,7 @@ function minimalPackage(){
 
   const vision=TestSigner.signVisionReview({
     artifact_digest:artifactDigest,
+    intent_digest:humanIntent.intent_digest,
     professional_family_pass:true,
     reference_effect_visible_without_explanation:true,
     generic_layout_detected:false,
@@ -288,6 +300,10 @@ function minimalPackage(){
     },
     semantics:[{region_id:'ROAD-1',state:'VERIFIED',presentation_token:'ROAD'}],
     claims:[{claim_id:'C1',evidence_refs:['SRC-1'],evidence_state:'SUPPORTED',strength:'SUPPORTED',text:'도면상 독립성이 강화된 구성으로 읽힌다'}],
+    human_intent:{
+      desired_outcome:humanIntent.desired_outcome,
+      success_criteria:[...humanIntent.success_criteria]
+    },
     reference:{
       reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
@@ -632,8 +648,10 @@ function minimalPackage(){
 })();
 
 (function testVisionReceiptBoundToArtifactDigest(){
+  const intent=HumanIntent.compileHumanIntent({desired_outcome:'Fixture decision support'});
   const signed=TestSigner.signVisionReview({
     artifact_digest:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
+    intent_digest:intent.intent_digest,
     professional_family_pass:true,
     reference_effect_visible_without_explanation:true,
     generic_layout_detected:false,
@@ -641,7 +659,8 @@ function minimalPackage(){
   });
   const v=VisionReview.verifyReview(
     signed.receipt,
-    'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee'
+    'eeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeeee',
+    intent.intent_digest
   );
   assert.equal(v.ok,false);
   assert.equal(v.reason,'VISION_REVIEW_DIGEST_MISMATCH');
@@ -692,6 +711,24 @@ function minimalPackage(){
   assert.equal(second.reason,'EXPOSURE_GRANT_REPLAYED');
 
   fs.rmSync(tmp,{recursive:true,force:true});
+})();
+
+
+(function testVisionReceiptIntentMismatch(){
+  const intentA=HumanIntent.compileHumanIntent({desired_outcome:'Option A decision support'});
+  const intentB=HumanIntent.compileHumanIntent({desired_outcome:'Option B decision support'});
+  const digest='ffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff';
+  const signed=TestSigner.signVisionReview({
+    artifact_digest:digest,
+    intent_digest:intentA.intent_digest,
+    professional_family_pass:true,
+    reference_effect_visible_without_explanation:true,
+    generic_layout_detected:false,
+    decision_value_pass:true
+  });
+  const v=VisionReview.verifyReview(signed.receipt,digest,intentB.intent_digest);
+  assert.equal(v.ok,false);
+  assert.equal(v.reason,'VISION_REVIEW_INTENT_MISMATCH');
 })();
 
 console.log('TAKY enforcement regression: PASS');
