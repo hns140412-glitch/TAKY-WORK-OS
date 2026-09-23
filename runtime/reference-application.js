@@ -93,6 +93,39 @@ function applyToPresentationProfile(profile={},compiled={}){
   });
 }
 
+function validateSourceStyleApplication(application={},compiled={}){
+  if(!application || application.schema!=='TAKY_SOURCE_STYLE_RANK_V1'){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_APPLICATION_REQUIRED'});
+  }
+  if(application.compile_digest!==compiled?.compile_digest){
+    return Object.freeze({ok:false,reason:'REFERENCE_COMPILE_DIGEST_MISMATCH'});
+  }
+  if(application.mode!=='SOURCE_STYLE_RANK'){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_MODE_INVALID'});
+  }
+  if(application.semantic_inference!==false){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_SEMANTIC_INFERENCE_FORBIDDEN'});
+  }
+  if(application.geometry_preserved!==true){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_GEOMETRY_PRESERVATION_REQUIRED'});
+  }
+  if(application.monotonic_order_preserved!==true){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_ORDER_PRESERVATION_REQUIRED'});
+  }
+  if(application.applied!==true || Number(application.styled_elements||0)<=0){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_EFFECT_NOT_APPLIED'});
+  }
+  const refs=new Set((compiled?.compiled||[]).map(x=>x.reference_id));
+  if(application.reference_id && !refs.has(application.reference_id)){
+    return Object.freeze({ok:false,reason:'SOURCE_STYLE_REFERENCE_ID_MISMATCH'});
+  }
+  return Object.freeze({
+    ok:true,
+    reference_id:application.reference_id||null,
+    styled_elements:Number(application.styled_elements||0)
+  });
+}
+
 function validateApplication(application={},compiled={}){
   if(!application?.ok) return Object.freeze({ok:false,reason:'REFERENCE_APPLICATION_REQUIRED'});
   if(application.compile_digest!==compiled?.compile_digest){
@@ -110,5 +143,6 @@ function validateApplication(application={},compiled={}){
 module.exports=Object.freeze({
   version:'1.0.0',
   applyToPresentationProfile,
-  validateApplication
+  validateApplication,
+  validateSourceStyleApplication
 });
