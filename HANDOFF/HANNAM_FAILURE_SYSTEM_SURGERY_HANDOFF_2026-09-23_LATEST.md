@@ -56,3 +56,6 @@ Continue SYSTEM IMPROVEMENT:
 6. only after all blockers pass, decide promotion/merge
 
 Do not build a Hannam report page.
+
+## Latest CI forensic note
+A PR-triggered run failed because the new protected-anchor regression test mutated a frozen result array with .sort(). The test was corrected to sort a copy. This is a test-harness defect, not evidence that the protected-anchor gate failed to detect deletion. Exact corrected-head CI remains required before PASS.
