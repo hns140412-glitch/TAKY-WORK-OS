@@ -16,6 +16,23 @@ Branch:
 7. `runtime/production-pipeline.js`
 8. `runtime/drawing-production-e2e.test.js`
 
+재개 직후 고정 SHA를 authority로 쓰지 마.
+
+LIVE AUTHORITY 복원 순서:
+1. `taky-validation.get-validation-readiness` 실행
+2. 반환된 `validation_readiness_receipt` 확보
+3. `taky-production.get-production-readiness`에 receipt 전달
+4. current_git_head와 exact-head CI 확인
+5. staging_ready / production_gateway_ready / overall_user_facing_ready를 구분
+6. 문서 속 과거 SHA는 provenance로만 사용
+
+현재 원칙:
+- readiness FAIL이어도 staging/diagnostic 작업은 계속 가능
+- user-facing production은 fail-closed
+- 사용자에게 키/CI/validator 상태를 디버깅시키지 말 것
+- `TAKY_SKIP_CI_ATTESTATION` 같은 production bypass를 만들지 말 것
+- branch protection은 별도 ADMIN_REQUIRED / OPEN이며 runtime production gate와 혼동하지 말 것
+
 GLOBAL AI ACTIVITY SLOGAN을 자의적으로 재해석하지 마.
 
 HUMAN INTENT / DESIRED OUTCOME
