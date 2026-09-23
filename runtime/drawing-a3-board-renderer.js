@@ -145,24 +145,23 @@
     const sourceDoc=String(source_svg||'').trim();
     if(!sourceDoc || !/^<svg\b/i.test(sourceDoc)) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
     const rootBox=sourceRootViewBox(sourceDoc)||sb;
-    const sourceUri=String(source_href||'').trim() || svgDataUri(sourceDoc);
-    if(!sourceUri) return {ok:false,reason:'SOURCE_SVG_ENCODING_FAILED'};
+    const sourceVectorBody=sourceBody(sourceDoc);
+    if(!sourceVectorBody) return {ok:false,reason:'SOURCE_SVG_BODY_REQUIRED'};
 
     const fit=fitTransform(sb,{
       x:hero.x+8,y:hero.y+8,width:hero.width-16,height:hero.height-16
     });
 
-    // Isolate the complete source SVG as an embedded SVG image. This preserves
-    // its own namespaces, clip paths and defs and prevents ID collisions or
-    // viewport leakage into the A3 board. The outer viewBox performs crop only.
+    // Keep source geometry as real inline vectors inside the canonical A3 SVG.
+    // A data-URI <image> is intentionally not used because PDF/SVG converters
+    // may ignore embedded external images, silently dropping the source drawing.
     const sourcePlaced=
       '<svg id="source-slot" data-source-geometry="locked" '+
       'x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" '+
       'width="'+(hero.width-16)+'" height="'+(hero.height-16)+'" '+
       'viewBox="'+sb.x+' '+sb.y+' '+sb.width+' '+sb.height+'" '+
       'preserveAspectRatio="xMidYMid meet" overflow="hidden">'+
-        '<image x="'+rootBox.x+'" y="'+rootBox.y+'" width="'+rootBox.width+'" height="'+rootBox.height+'" '+
-        'href="'+sourceUri+'" preserveAspectRatio="none"/>'+
+        '<g id="source-inline-vector" data-authority="source">'+sourceVectorBody+'</g>'+
       '</svg>';
 
     const project=package_data.project||{};
