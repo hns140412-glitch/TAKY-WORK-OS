@@ -11,5 +11,17 @@
         ]
       }
     ]
+  },
+  "permissions": {
+    "deny": [
+      "Bash",
+      "PowerShell",
+      "Edit(/artifacts/production/**)",
+      "Edit(/.claude/**)",
+      "Edit(/.mcp.json)",
+      "Edit(/MCP/HOST_TOOL_PERMISSION_POLICY_V1.json)"
+    ],
+    "disableBypassPermissionsMode": "disable",
+    "disableAutoMode": "disable"
   }
 }
