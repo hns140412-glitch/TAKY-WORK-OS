@@ -191,6 +191,60 @@ Negative regression fixtures:
 No Hannam report/design/PDF/HTML/mockup was generated as part of the real-source dry pilot.
 DWG remained unparsed because no trusted direct DWG decoder is connected.
 
+## REAL-SOURCE REFERENCE APPLICATION PILOT
+
+Actual Hannam 2F source was used in staging only.
+
+Source-style rank findings:
+- geometry fingerprint before/after: identical
+- semantic inference: false
+- styled elements: 32,739
+- distinct source widths: 0.01 / 0.1167 / 0.24 / 0.54 / 1.02
+
+Initial percentile-frequency implementation FAILED defensively:
+- LIGHT: 793
+- SECONDARY: 0
+- PRIMARY: 0
+- HEAVY: 31,946
+- cause: dominant 0.24 source width collapsed q25/q50/q75
+
+Correction:
+rank by DISTINCT SOURCE WIDTH ORDER, not by element-frequency percentile.
+
+Corrected real-source distribution:
+- LIGHT: 793
+- SECONDARY: 28,636
+- PRIMARY: 3,176
+- HEAVY: 134
+
+Line-hierarchy-specific measurement:
+- schema: `TAKY_LINE_HIERARCHY_DELTA_V1`
+- objective effect detected: true
+- source dynamic range: 102.0
+- candidate dynamic range: 137.58139534883722
+- dynamic-range gain: 1.3488372093023258
+- minimum adjacent separation gain: 1.0943396226415094
+- monotonic source order preserved: true
+
+Global whole-page visual delta remained small.
+Therefore source-style rank is classified as a micro hierarchy support mechanism and does not independently prove professional-family reference effect.
+Independent Vision review remains mandatory for user-facing production.
+
+Reference applicability after real-source attack review:
+- DIVISARE_EDITORIAL_RESTRAINT = FULL / EDITORIAL_LAYOUT_RESTRAINT
+- ARCHDAILY_PLAN_HIERARCHY = PARTIAL / SOURCE_LINE_HIERARCHY_ONLY
+- OMA_RELATION_FIRST = DEFERRED
+- BIG_ONE_MOVE = DEFERRED
+- SOM_FOSTER_TECHNICAL_CLARITY = DEFERRED
+
+Multi-reference correction:
+- one reference effect can no longer authorize an entire reference set
+- every claimed reference requires causal application coverage
+- every effect schema requires its own signed receipt
+- missing receipt for one reference -> FAIL
+- reference with no implemented effect metric -> production claim FAIL
+- staging/mining knowledge remains available
+
 ## CURRENT VERIFIED STATE
 
 Branch:
@@ -200,8 +254,8 @@ Verified code HEAD before this closure update:
 `fe4650f517272e0e01f5419a3c1b74a1320807cd`
 
 GitHub Actions on that HEAD:
-- TAKY Enforcement Regression #237 — SUCCESS
-- drawing-engine-core #693 — SUCCESS
+- TAKY Enforcement Regression #332 — SUCCESS
+- drawing-engine-core #788 — SUCCESS
 
 The exact closure-document commit created after this point must be revalidated because both workflows run on every push.
 
@@ -212,7 +266,7 @@ The exact closure-document commit created after this point must be revalidated b
   - TAKY_VISION_PRIVATE_KEY_PEM
   - corresponding production public keys
   - ANTHROPIC_API_KEY for live independent visual review
-- live real-project pilot has not been run in this surgery conversation
+- user-facing real-project production pilot has not been run; read-only/staging real-source pilots have passed
 - DWG remains conversion-required unless a trusted DWG decoder is connected
 - source-role-dependent references such as plan line hierarchy remain deferred when verified presentation roles are unavailable
 - CI synthetic Vision receipt proves trust plumbing, not a live Anthropic API quality judgment
@@ -225,5 +279,5 @@ MCP_PRODUCTION_VALIDATION_SEPARATION = IMPLEMENTED
 REFERENCE_CAUSALITY = IMPLEMENTED  
 HUMAN_INTENT_BINDING = IMPLEMENTED  
 SYNTHETIC_SOURCE_TO_PRODUCTION_E2E = PASS  
-LIVE_REAL_PROJECT_PILOT = NOT_RUN  
+REAL_SOURCE_READ_ONLY_STAGING_PILOT = PASS\nLIVE_USER_FACING_REAL_PROJECT_PRODUCTION_PILOT = NOT_RUN  
 REPORT_PRODUCTION = NOT_RESUMED
