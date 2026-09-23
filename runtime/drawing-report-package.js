@@ -68,6 +68,8 @@
       execution_path:authorization.execution_path||'',
       gates:authorization.gates||{},
       geometry_diff:authorization.geometry_diff,
+      protected_anchor_check:authorization.protected_anchor_check,
+      semantic_check:authorization.semantic_check,
       source_digest_before:authorization.source_digest_before,
       source_digest_after:authorization.source_digest_after,
       freshness_basis:authorization.freshness_basis,
