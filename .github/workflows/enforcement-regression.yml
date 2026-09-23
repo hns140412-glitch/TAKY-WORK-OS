@@ -9,6 +9,8 @@ on:
       - 'runtime/**'
       - 'tests/**'
       - 'MCP/**'
+      - '.claude/**'
+      - '.mcp.json'
       - 'tools/drawing_geometry_primitive_adapter.py'
       - 'tools/drawing_geometry_primitive_adapter.test.py'
       - '.github/workflows/enforcement-regression.yml'
@@ -24,6 +26,8 @@ jobs:
           node-version: '20'
       - name: Run enforcement regression
         run: node tests/enforcement-regression.test.js
+      - name: Run Claude host guard regression
+        run: python tests/claude-host-guard.test.py
       - name: Install MCP gateway dependencies
         run: npm install --prefix MCP/gateway --ignore-scripts
       - name: Run MCP gateway smoke test
