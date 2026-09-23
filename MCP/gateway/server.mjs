@@ -132,7 +132,13 @@ export function buildServer(){
         page_index:z.number().int().min(0).default(0),
         job_id:z.string().min(1),
         edit_plan:z.record(z.string(),z.any()).optional(),
-        role_styles:z.record(z.string(),z.any()).optional()
+        role_styles:z.record(z.string(),z.any()).optional(),
+        reference_ids:z.array(z.string()).optional(),
+        reference_context:z.object({
+          scale:z.string().min(1),
+          output_size:z.string().min(1),
+          source_density:z.string().min(1)
+        }).optional()
       })
     },
     async(input)=>{
@@ -155,6 +161,34 @@ export function buildServer(){
           args.push('--styles',p);
         }
 
+        let referenceCompile=null;
+        let referenceProfileApplication=null;
+        let sourceStyleRequest=null;
+        if(Array.isArray(input.reference_ids) && input.reference_ids.length){
+          if(!input.reference_context){
+            return result({ok:false,reason:'REFERENCE_CONTEXT_REQUIRED'});
+          }
+          referenceCompile=ReferenceCompiler.compileReferenceProfile({
+            reference_ids:input.reference_ids,
+            context:input.reference_context
+          });
+          if(!referenceCompile.ok){
+            return result({ok:false,reason:'REFERENCE_COMPILE_FAILED',compiled:referenceCompile});
+          }
+          referenceProfileApplication=ReferenceApplication.applyToPresentationProfile({},referenceCompile);
+          sourceStyleRequest=(referenceProfileApplication.source_style_requests||[])[0]||null;
+          if(sourceStyleRequest){
+            const p=path.join(dir,'source-style-policy.json');
+            fs.writeFileSync(p,JSON.stringify({
+              ...sourceStyleRequest.policy,
+              compile_digest:sourceStyleRequest.compile_digest,
+              reference_id:sourceStyleRequest.reference_id,
+              mode:sourceStyleRequest.mode
+            },null,2));
+            args.push('--source-style-policy',p);
+          }
+        }
+
         const python=process.env.TAKY_PYTHON||'python3';
         await new Promise((resolve,reject)=>{
           execFile(python,args,{maxBuffer:40*1024*1024},(err,stdout,stderr)=>{
@@ -173,7 +207,10 @@ export function buildServer(){
           geometry_preserved:true,
           out_svg:outSvg,
           manifest_path:manifest,
-          manifest:data
+          manifest:data,
+          reference_compile:referenceCompile,
+          reference_profile_application:referenceProfileApplication,
+          source_style_request:sourceStyleRequest
         });
       }catch(error){
         return result({ok:false,reason:'CONTROLLED_PRESENTATION_FAILED',error:String(error?.message||error)});
