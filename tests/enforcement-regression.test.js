@@ -1,5 +1,7 @@
 'use strict';
 
+process.env.TAKY_ENFORCEMENT_SECRET='test-only-enforcement-secret-20260923';
+
 const assert=require('assert');
 const Router=require('../runtime/work-os-router.js');
 const Contract=require('../runtime/execution-contract.js');
@@ -11,6 +13,8 @@ const GeometryGuard=require('../runtime/geometry-guard.js');
 const SemanticGate=require('../runtime/semantic-gate.js');
 const NarrativeGate=require('../runtime/narrative-evidence-gate.js');
 const Pipeline=require('../runtime/production-pipeline.js');
+const ArtifactBroker=require('../runtime/artifact-broker.js');
+const Capability=require('../runtime/capability-token.js');
 
 function minimalPackage(){
   return {
@@ -46,15 +50,9 @@ function minimalPackage(){
 })();
 
 (function testForgedAuthorizationDenied(){
-  const forged={
-    kind:'TAKY_PRODUCTION_AUTHORIZATION',
-    task_type:'ARCH_REPORT_ASSEMBLY',
-    producer_id:'REPORT_ENGINE_V2',
-    execution_graph_id:'A3_REPORT_ASSEMBLY_V2'
-  };
+  const forged='not-a-valid-signed-token';
   const r=Contract.verifyProductionAuthorization(forged);
   assert.equal(r.ok,false);
-  assert.equal(r.reason,'INVALID_OR_FORGED_AUTHORIZATION');
 })();
 
 (function testLegacyBuildOutputPlanCannotBypassAuthorization(){
@@ -73,7 +71,7 @@ function minimalPackage(){
   const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
   const r=Validator.validateForExposure({
     authorization:routed.authorization,
-    validator_id:routed.authorization.producer_id,
+    validator_id:'REPORT_ENGINE_V2',
     gate_results:gates
   });
   assert.equal(r.ok,false);
@@ -241,6 +239,86 @@ function minimalPackage(){
   });
   assert.equal(r.ok,true);
   assert.equal(r.status,'FINAL_APPROVABLE');
+})();
+
+
+(function testSignedAuthorizationIsSerializable(){
+  const routed=Router.routeProductionTask({
+    task_type:'ARCH_REPORT_ASSEMBLY',
+    requested_output:'USER_FACING'
+  });
+  assert.equal(routed.ok,true);
+  assert.equal(typeof routed.authorization,'string');
+  const copied=JSON.parse(JSON.stringify({token:routed.authorization})).token;
+  const verified=Contract.verifyProductionAuthorization(copied,{
+    producer_id:'REPORT_ENGINE_V2',
+    execution_graph_id:'A3_REPORT_ASSEMBLY_V2'
+  });
+  assert.equal(verified.ok,true);
+})();
+
+(function testArtifactBrokerRequiresExposureGrant(){
+  const denied=ArtifactBroker.registerProductionArtifact({
+    artifact_id:'A1',
+    artifact_type:'PDF',
+    producer_id:'REPORT_ENGINE_V2',
+    execution_graph_id:'A3_REPORT_ASSEMBLY_V2'
+  });
+  assert.equal(denied.ok,false);
+  assert.equal(denied.reason,'VALID_EXPOSURE_GRANT_REQUIRED');
+})();
+
+(function testArtifactBrokerAcceptsValidatedProductionOnly(){
+  const routed=Router.routeProductionTask({
+    task_type:'ARCH_REPORT_ASSEMBLY',
+    requested_output:'USER_FACING'
+  });
+  const gates=Object.fromEntries(Validator.MANDATORY_GATES.map(g=>[g,'PASS']));
+  const v=Validator.validateForExposure({
+    authorization:routed.authorization,
+    validator_id:'VALIDATION_ENGINE_V1',
+    gate_results:gates
+  });
+  assert.equal(v.ok,true);
+  const e=Exposure.authorizeExposure({
+    authorization:routed.authorization,
+    validation_receipt:v.receipt,
+    target:'USER_VISIBLE'
+  });
+  assert.equal(e.ok,true);
+
+  const auth=Contract.verifyProductionAuthorization(routed.authorization);
+  assert.equal(auth.ok,true);
+
+  const registered=ArtifactBroker.registerProductionArtifact({
+    artifact_id:'A2',
+    artifact_type:'PDF',
+    producer_id:auth.payload.producer_id,
+    execution_graph_id:auth.payload.execution_graph_id,
+    source_ids:['SRC-1'],
+    exposure_grant:e.grant
+  });
+  assert.equal(registered.ok,true);
+  assert.equal(registered.record.status,'REGISTERED_PRODUCTION_ARTIFACT');
+})();
+
+(function testTamperedExposureGrantRejected(){
+  const signed=Capability.signPayload('TAKY_EXPOSURE_GRANT',{
+    target:'USER_VISIBLE',
+    producer_id:'REPORT_ENGINE_V2',
+    execution_graph_id:'A3_REPORT_ASSEMBLY_V2',
+    validation_status:'PASS'
+  });
+  assert.equal(signed.ok,true);
+  const tampered=signed.token.slice(0,-1)+(signed.token.endsWith('A')?'B':'A');
+  const r=ArtifactBroker.registerProductionArtifact({
+    artifact_id:'A3',
+    artifact_type:'PDF',
+    producer_id:'REPORT_ENGINE_V2',
+    execution_graph_id:'A3_REPORT_ASSEMBLY_V2',
+    exposure_grant:tampered
+  });
+  assert.equal(r.ok,false);
 })();
 
 console.log('TAKY enforcement regression: PASS');
