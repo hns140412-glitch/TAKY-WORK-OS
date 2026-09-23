@@ -11,20 +11,20 @@ assert.equal(f.nextAction({fidelity:'PASS',quality:'NEEDS_REVISION',formats:'PAS
 assert.equal(f.nextAction({fidelity:'PASS',quality:'PASS',formats:'FAIL'}),'REEXPORT_A3_BUNDLE');
 assert.equal(f.nextAction({fidelity:'PASS',quality:'PASS',formats:'PASS'}),'SHIP');
 
-const gates={SOURCE:'PASS',GEOMETRY:'PASS',FACT:'PASS',SEMANTIC:'PASS',REFERENCE_EFFECT:'PASS',ARCHITECTURAL_READABILITY:'PASS',USER_EFFECT:'PASS'};
+const validation={source_gate_pass:true,geometry_gate_pass:true,fact_gate_pass:true,semantic_gate_pass:true,reference_effect_pass:true,architectural_readability_pass:true,user_effect_pass:true,defects:[]};
 assert.equal(f.decideUserExposure({
   artifact_class:'FINAL',execution_route:'AUTHORIZED_ENGINE',engine_id:'DRAWING_ENGINE_V2',
-  operations:['VECTOR_STYLE_LAYER'],gates
+  operations:['VECTOR_STYLE_LAYER'],validation_evidence:validation
 }).decision,'SHOW');
 
 assert.equal(f.decideUserExposure({
   artifact_class:'FINAL',execution_route:'ONE_OFF_SCRIPT',one_off:true,
-  operations:['ONE_OFF_RENDERER'],gates
+  operations:['ONE_OFF_RENDERER'],validation_evidence:validation
 }).decision,'HOLD');
 
 assert.equal(f.decideUserExposure({
   artifact_class:'PREVIEW',execution_route:'AUTHORIZED_ENGINE',engine_id:'DRAWING_ENGINE_V2',
-  operations:['GENERATIVE_GEOMETRY_REDRAW'],gates
+  operations:['GENERATIVE_GEOMETRY_REDRAW'],validation_evidence:validation
 }).decision,'HOLD');
 
 console.log('drawing-finalization-orchestrator: PASS');
