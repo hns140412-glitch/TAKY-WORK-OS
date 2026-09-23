@@ -32,6 +32,28 @@
     return m?m[1]:text;
   }
 
+  function sourceRootViewBox(svg){
+    const text=String(svg||'');
+    const m=text.match(/^<svg\b[^>]*\bviewBox=["']([^"']+)["']/i);
+    if(m) return parseViewBox(m[1]);
+    const wm=text.match(/^<svg\b[^>]*\bwidth=["']([0-9.]+)["']/i);
+    const hm=text.match(/^<svg\b[^>]*\bheight=["']([0-9.]+)["']/i);
+    if(wm&&hm) return {x:0,y:0,width:Number(wm[1]),height:Number(hm[1])};
+    return null;
+  }
+
+  function svgDataUri(svg){
+    const text=String(svg||'');
+    if(typeof Buffer!=='undefined'){
+      return 'data:image/svg+xml;base64,'+Buffer.from(text,'utf8').toString('base64');
+    }
+    if(typeof btoa==='function'){
+      const bytes=unescape(encodeURIComponent(text));
+      return 'data:image/svg+xml;base64,'+btoa(bytes);
+    }
+    return null;
+  }
+
   function fitTransform(sourceBox,target){
     const scale=Math.min(target.width/sourceBox.width,target.height/sourceBox.height);
     const w=sourceBox.width*scale;
@@ -121,26 +143,26 @@
     if(!sb) return {ok:false,reason:'SOURCE_VIEWBOX_REQUIRED'};
     const sourceDoc=String(source_svg||'').trim();
     if(!sourceDoc || !/^<svg\b/i.test(sourceDoc)) return {ok:false,reason:'SOURCE_SVG_REQUIRED'};
-    const sourceDocClipped=/\boverflow\s*=/.test(sourceDoc)
-      ? sourceDoc
-      : sourceDoc.replace(/^<svg\b/i,'<svg overflow="hidden"');
+    const rootBox=sourceRootViewBox(sourceDoc)||sb;
+    const sourceUri=svgDataUri(sourceDoc);
+    if(!sourceUri) return {ok:false,reason:'SOURCE_SVG_ENCODING_FAILED'};
 
     const fit=fitTransform(sb,{
       x:hero.x+8,y:hero.y+8,width:hero.width-16,height:hero.height-16
     });
 
-    // Keep the source SVG root intact. Stripping it breaks source-local namespaces,
-    // clip paths, xlink references, and can leak content outside the intended crop.
-    // Geometry is never rewritten: crop is achieved only by outer clip + transform.
+    // Isolate the complete source SVG as an embedded SVG image. This preserves
+    // its own namespaces, clip paths and defs and prevents ID collisions or
+    // viewport leakage into the A3 board. The outer viewBox performs crop only.
     const sourcePlaced=
-      '<defs>'+
-        '<clipPath id="source-a3-clip" clipPathUnits="userSpaceOnUse"><rect x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" width="'+(hero.width-16)+'" height="'+(hero.height-16)+'"/></clipPath>'+
-        '<clipPath id="source-local-clip" clipPathUnits="userSpaceOnUse"><rect x="'+sb.x+'" y="'+sb.y+'" width="'+sb.width+'" height="'+sb.height+'"/></clipPath>'+
-      '</defs>'+
-      '<g id="source-slot" data-source-geometry="locked" clip-path="url(#source-a3-clip)" '+
-      'transform="translate('+fit.x.toFixed(4)+' '+fit.y.toFixed(4)+') scale('+fit.scale.toFixed(8)+')">'+
-        '<g clip-path="url(#source-local-clip)">'+sourceDocClipped+'</g>'+
-      '</g>';
+      '<svg id="source-slot" data-source-geometry="locked" '+
+      'x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" '+
+      'width="'+(hero.width-16)+'" height="'+(hero.height-16)+'" '+
+      'viewBox="'+sb.x+' '+sb.y+' '+sb.width+' '+sb.height+'" '+
+      'preserveAspectRatio="xMidYMid meet" overflow="hidden">'+
+        '<image x="'+rootBox.x+'" y="'+rootBox.y+'" width="'+rootBox.width+'" height="'+rootBox.height+'" '+
+        'href="'+sourceUri+'" preserveAspectRatio="none"/>'+
+      '</svg>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
