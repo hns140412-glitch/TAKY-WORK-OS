@@ -239,6 +239,57 @@ Defensive balance:
 - user-facing production does
 - existing geometry diagnostics are preserved, but demoted from authority
 
+## LIVE AUTHORITY / READINESS
+
+Committed documents may contain historical checkpoint SHAs, but a document edit changes HEAD immediately.
+Therefore an embedded SHA is NEVER the current authority by itself.
+
+Live authority protocol:
+
+`get-production-readiness`
+→ current local git HEAD
+→ GitHub exact-head required CI
+→ production verification public-key readiness
+→ persistent capability-key mode
+→ production_ready / staging_ready
+
+`get-validation-readiness`
+→ objective measurement signing-key readiness
+→ vision signing-key readiness
+→ Anthropic API presence
+→ objective / vision / user-facing validation readiness
+
+Rules:
+- historical checkpoint SHA = provenance only
+- current authority = live current HEAD + exact-head CI evidence
+- staging may remain available when production readiness is false
+- `production_ready=true` requires:
+  - exact-head CI green
+  - measurement public key ready
+  - vision public key ready
+  - persistent configured capability private key
+- ephemeral process capability keys are NOT durable production readiness
+- no readiness tool may expose secret values; only booleans / public-key fingerprints / modes
+
+The former `TAKY_SKIP_CI_ATTESTATION` production escape hatch is removed.
+There is no environment-variable bypass for production exact-head CI attestation.
+
+## REPOSITORY PROTECTION LAYER
+
+Runtime production enforcement and repository branch protection are separate controls.
+
+Current branch protection is not enabled on the surgery branch.
+The available GitHub connector exposes branch-protection/ruleset reads but no administration write path.
+
+Therefore:
+
+`REPOSITORY_BRANCH_PROTECTION = ADMIN_REQUIRED / OPEN`
+
+Compensating control:
+user-facing production remains blocked unless the running exact HEAD has both required GitHub Actions green.
+
+This OPEN must not be misreported as runtime production enforcement failure, and runtime enforcement must not be misreported as repository branch protection.
+
 ## HUMAN AUTHORITY
 
 Human final authority is preserved.
