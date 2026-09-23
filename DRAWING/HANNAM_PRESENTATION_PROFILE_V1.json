@@ -113,7 +113,9 @@
         "no invented landscaping",
         "A/B geometry unchanged",
         "vertical relation with 1F stays traceable"
-      ]
+      ],
+      "subtitle": "A/B BUILDING ORGANIZATION",
+      "scale_label": "SOURCE PLAN / SCALE 1:200"
     },
     "P07": {
       "title": "Section / Height / Ground",
@@ -246,5 +248,6 @@
     "Drawing Matter -> omission and hierarchy are allowed; geometry relocation is not.",
     "BIG one-move -> supporting diagrams explain one relation only.",
     "Divisare/Domus restraint -> low saturation, material contrast by tone/texture rather than loud color."
-  ]
+  ],
+  "debug_labels": false
 }
