@@ -27,6 +27,9 @@ Implemented in this branch:
 - runtime/drawing-reference-compiler.js
 - runtime/drawing-report-package.js now requires production admission
 - regression tests for bypass/no-show/reference compilation
+- protected-anchor preservation gate + wall/core/entry deletion regression
+- semantic proposal-vs-verified gate + regression
+- REPORT_PACKAGE output planning now blocks without production admission
 - router and engine contract hard locks
 - pre-user validation spec
 - failure/root-cause/bypass/governance/regression ledgers
@@ -39,12 +42,11 @@ taky/hannam-system-governance-correction-2026-09-23
 - OS/WORK_OS.md hard lock
 
 ## Open realization
-- protected-anchor fixture for wall/core/entry deletion
 - real geometry/edge-diff fixture integration into production gate evidence producer
-- semantic proposal-vs-verified fixture
-- visual/reference-effect fixture using actual A3 output comparison
-- GitHub Actions run observation / branch protection or required check configuration
+- actual A3 visual/reference-effect fixture using before/after output comparison
+- GitHub Actions run observation / required-check enforcement
 - cross-repo merge/promotion decision
+- production evidence adapter: feed real geometry/edge diff + protected anchors + semantic verification from actual source pipeline rather than synthetic fixtures only
 
 C2S rule:
 C2S_CLOSED does not mean RELEASE_PASS. Remaining items are explicit downstream realization gaps.
