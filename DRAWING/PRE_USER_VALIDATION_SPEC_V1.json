@@ -1,0 +1,55 @@
+{
+  "schema": "PRE_USER_VALIDATION_SPEC_V1",
+  "status": "ACTIVE_CANDIDATE",
+  "principle": "HUMAN_IS_THE_KEY_NOT_THE_DEBUGGER",
+  "invariant": "NO_PASS_NO_SHOW",
+  "layers": [
+    "L0_SOURCE_AUTHORITY",
+    "L1_GEOMETRY",
+    "L2_SEMANTIC",
+    "L3_PRESENTATION",
+    "L4_ENTOURAGE",
+    "L5_ANNOTATION",
+    "L6_AI_ATMOSPHERE",
+    "L7_FINAL_VALIDATION",
+    "L8_USER_EXPOSURE_GATE"
+  ],
+  "hard_failures": [
+    "SOURCE_CROP_ERROR",
+    "WALL_DELETED",
+    "CORE_DELETED",
+    "ENTRY_DELETED",
+    "UNAUTHORIZED_GEOMETRY_REDRAW",
+    "WRONG_FURNITURE_BOX",
+    "WRONG_ROTATION",
+    "INVENTED_SEMANTICS",
+    "UNSUPPORTED_NARRATIVE",
+    "REFERENCE_EFFECT_ABSENT",
+    "GENERIC_REPORT_LAYOUT",
+    "A3_INTEGRITY_FAIL"
+  ],
+  "required_gates": [
+    "SOURCE",
+    "GEOMETRY",
+    "FACT",
+    "SEMANTIC",
+    "REFERENCE_EFFECT",
+    "ARCHITECTURAL_READABILITY",
+    "USER_EFFECT"
+  ],
+  "conditional_gates": {
+    "narrative": "NARRATIVE_EVIDENCE",
+    "a3": "A3"
+  },
+  "human_approval_scope": [
+    "design_choice",
+    "presentation_choice",
+    "recipe_lock"
+  ],
+  "human_approval_forbidden_scope": [
+    "finding_deleted_wall",
+    "finding_deleted_core",
+    "finding_bad_crop",
+    "finding_unsupported_fact"
+  ]
+}
