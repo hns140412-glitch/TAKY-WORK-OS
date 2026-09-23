@@ -106,9 +106,11 @@ def apply_source_style_rank(svg_text: str, policy: Dict[str,Any] | None=None) ->
             "svg":svg_text,
         }
 
-    q25=_percentile(widths,0.25)
-    q50=_percentile(widths,0.50)
-    q75=_percentile(widths,0.75)
+    unique_values=sorted(set(round(v,8) for v in widths))
+    width_rank={}
+    for index,width in enumerate(unique_values):
+        band=min(len(RANKS)-1,(index*len(RANKS))//len(unique_values))
+        width_rank[width]=RANKS[band]
 
     raw_multipliers=policy.get("multipliers") or DEFAULT_MULTIPLIERS
     multipliers={}
@@ -126,7 +128,7 @@ def apply_source_style_rank(svg_text: str, policy: Dict[str,Any] | None=None) ->
     changed=0
     samples=[]
     for elem,width in elements:
-        rank=_rank(width,q25,q50,q75)
+        rank=width_rank[round(width,8)]
         rank_counts[rank]+=1
         new_width=width*multipliers[rank]
         elem.set("data-presentation-rank",rank)
@@ -148,7 +150,7 @@ def apply_source_style_rank(svg_text: str, policy: Dict[str,Any] | None=None) ->
         raise RuntimeError("GEOMETRY_MUTATION_DETECTED")
 
     rank_order={
-        rank:sorted(width*multipliers[rank] for _,width in elements if _rank(width,q25,q50,q75)==rank)
+        rank:sorted(width*multipliers[rank] for _,width in elements if width_rank[round(width,8)]==rank)
         for rank in RANKS
     }
     nonempty=[(rank,vals) for rank,vals in rank_order.items() if vals]
@@ -173,9 +175,8 @@ def apply_source_style_rank(svg_text: str, policy: Dict[str,Any] | None=None) ->
             "min":min(widths),
             "max":max(widths),
             "unique":len(unique),
-            "q25":q25,
-            "q50":q50,
-            "q75":q75,
+            "rank_basis":"DISTINCT_SOURCE_WIDTH_ORDER",
+            "width_rank_map":{str(k):v for k,v in width_rank.items()},
         },
         "rank_counts":dict(rank_counts),
         "multipliers":multipliers,
