@@ -66,6 +66,39 @@
       "authority": "UNKNOWN",
       "purpose": "protect unresolved source content from accidental cleanup",
       "may_change": false
+    },
+    {
+      "mask_id": "INTERIOR_FURNITURE",
+      "authority": "SOURCE_DERIVED_OR_USER_CONFIRMED",
+      "purpose": "interior/furniture/material regions used only as presentation guidance",
+      "may_change": true,
+      "constraints": [
+        "must not move wall/column/opening geometry",
+        "fixed fixtures remain source-controlled unless explicitly separated",
+        "may be omitted when source/user cannot verify"
+      ]
+    },
+    {
+      "mask_id": "SECTION_CUT",
+      "authority": "SOURCE_DERIVED_OR_USER_CONFIRMED",
+      "purpose": "verified section-cut poche region",
+      "may_change": true,
+      "constraints": [
+        "cut boundary must come from source or explicit user confirmation",
+        "solid poche may change presentation only",
+        "must not invent cut geometry"
+      ]
+    },
+    {
+      "mask_id": "DEPTH_GUIDE",
+      "authority": "DERIVED_PRESENTATION_GUIDE",
+      "purpose": "optional depth guidance for controlled generative rendering",
+      "may_change": false,
+      "constraints": [
+        "never becomes geometry authority",
+        "must remain subordinate to SOURCE_LINE",
+        "use only for depth/lighting guidance"
+      ]
     }
   ],
   "output_profiles": {
@@ -102,6 +135,24 @@
         "level relationships preserved",
         "background subordinate",
         "geometry preserved"
+      ]
+    },
+    "SECTION_PERSPECTIVE": {
+      "required": [
+        "SOURCE_LINE",
+        "INTERIOR_FURNITURE",
+        "SECTION_CUT"
+      ],
+      "optional": [
+        "DEPTH_GUIDE",
+        "ANNOTATION"
+      ],
+      "completion_checks": [
+        "source line geometry preserved",
+        "section cut poche dominant",
+        "interior/material layer subordinate to source line",
+        "AI render never becomes geometry authority",
+        "source line reapplied on final composite"
       ]
     }
   }
