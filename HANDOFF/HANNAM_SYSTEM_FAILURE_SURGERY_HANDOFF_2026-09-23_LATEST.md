@@ -60,6 +60,34 @@ Evidence:
 
 After any new commit, do not reuse this evidence. Recheck the new exact HEAD.
 
+## REAL-SOURCE DRY PILOT UPDATE
+
+The actual Work-folder issued PDF was used read-only for geometry ingest/load validation.
+
+Source:
+`2026-0923_한남동 737-21일원 고급주택(4세대) 규모검토.pdf`
+
+SHA-256:
+`d81740e1aec0e9e80a50cc1fdc23c41b227f52377e0139dbf5a620b6fab10278`
+
+Real primitive counts:
+`7880 / 46288 / 49294 / 8917`
+
+Result:
+- vector ingest PASS
+- semantic inference remained false
+- ~50k-primitive fingerprint/compare viable
+- single primitive mutation rejected
+
+New P0 found and closed:
+caller-provided `geometry.output` is no longer production authority.
+User-facing GEOMETRY_GATE requires a signed artifact-bound source-fidelity receipt over actual source/canonical/candidate bytes.
+
+New invariant:
+`NO_ARTIFACT_BOUND_SOURCE_FIDELITY -> NO_GEOMETRY_PASS`
+
+The dry pilot did NOT resume Hannam report production and did NOT create a Hannam presentation artifact.
+
 ## OPEN NEXT
 
 Only address these if the next goal requires them:
