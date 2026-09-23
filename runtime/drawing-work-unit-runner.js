@@ -1,8 +1,11 @@
 (function(root,factory){
-  const api=factory();
+  const finalizer=(typeof module==='object'&&module.exports)
+    ? require('./drawing-finalization-orchestrator')
+    : root.TakyDrawingFinalizer;
+  const api=factory(finalizer);
   if(typeof module==='object'&&module.exports) module.exports=api;
   else root.TakyDrawingWorkUnitRunner=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(finalizer){
   'use strict';
 
   function groupReady({plan,completed=[]}={}){
@@ -45,5 +48,22 @@
     });
   }
 
-  return Object.freeze({version:'1.0.0',groupReady});
+  function executeUserExposure({unit,production_context={}}={}){
+    if(!unit || unit.layer_id!=='L8_USER_EXPOSURE_GATE'){
+      return Object.freeze({ok:false,decision:'HOLD',reason:'L8_USER_EXPOSURE_UNIT_REQUIRED'});
+    }
+    if(!finalizer || typeof finalizer.decideUserExposure!=='function'){
+      return Object.freeze({ok:false,decision:'HOLD',reason:'FINALIZER_UNAVAILABLE'});
+    }
+    const result=finalizer.decideUserExposure(production_context);
+    return Object.freeze({
+      ok:result.ok===true,
+      decision:result.decision,
+      blocks:result.blocks||Object.freeze([]),
+      work_unit_id:unit.work_unit_id,
+      invariant:'NO_PASS_NO_SHOW'
+    });
+  }
+
+  return Object.freeze({version:'2.0.0',groupReady,executeUserExposure});
 });
