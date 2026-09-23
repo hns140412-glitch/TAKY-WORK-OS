@@ -40,7 +40,7 @@ function result(value){
   };
 }
 
-serveStdio(()=>{
+export function buildServer(){
   const server=new McpServer({
     name:'taky-work-os-production-gateway',
     version:'0.1.0'
@@ -153,4 +153,8 @@ serveStdio(()=>{
   );
 
   return server;
-});
+}
+
+if(process.env.TAKY_MCP_SMOKE_ONLY!=='1'){
+  serveStdio(()=>buildServer());
+}
