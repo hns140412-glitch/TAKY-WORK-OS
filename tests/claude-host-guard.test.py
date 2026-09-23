@@ -7,6 +7,18 @@ from pathlib import Path
 
 ROOT=Path(__file__).resolve().parents[1]
 HOOK=ROOT/".claude"/"hooks"/"taky-production-guard.py"
+SETTINGS=ROOT/".claude"/"settings.json"
+
+settings=json.loads(SETTINGS.read_text(encoding="utf-8"))
+permissions=settings.get("permissions",{})
+deny=set(permissions.get("deny",[]))
+assert "Bash" in deny
+assert "PowerShell" in deny
+assert "Edit(/artifacts/production/**)" in deny
+assert "Edit(/.claude/**)" in deny
+assert "Edit(/.mcp.json)" in deny
+assert permissions.get("disableBypassPermissionsMode")=="disable"
+assert permissions.get("disableAutoMode")=="disable"
 
 def run(tool_name, tool_input):
     payload=json.dumps({"tool_name":tool_name,"tool_input":tool_input})
