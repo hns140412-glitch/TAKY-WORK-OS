@@ -163,7 +163,7 @@ Results:
 
 No user-facing Hannam report artifact was produced in this surgery track.
 
-DWG remains conversion-required until a trusted direct DWG decoder exists.
+DWG now has a strict GNU LibreDWG `dwgread` staging bridge. It preserves the original DWG digest, fails closed on risky decoder diagnostics, re-parses the derived DXF, and remains `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE` / `production_claimable=false` until real source-equivalence proof exists.
 
 ## REFERENCE MINING — CURRENT EXECUTION STATUS
 
@@ -318,7 +318,7 @@ user-facing production refuses a non-green exact HEAD.
 
 1. provision real validator / gateway secrets outside the repo
 2. live user-facing real-project production pilot — NOT RUN
-3. trusted direct DWG decoding — NOT CONNECTED
+3. DWG live-runtime `dwgread` provisioning + real-project source-equivalence validation — OPEN; bridge code exists, production authority does not
 4. implement SOM/Foster verified-role adapter + effect metric if/when verified architectural presentation-role authority is available
 5. repository branch protection — ADMIN REQUIRED
 6. run actual live Vision review only when readiness says configured model is healthy

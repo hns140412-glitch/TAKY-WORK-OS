@@ -189,7 +189,7 @@ Negative regression fixtures:
 - final candidate artifact mutation -> FAIL
 
 No Hannam report/design/PDF/HTML/mockup was generated as part of the real-source dry pilot.
-DWG remained unparsed because no trusted direct DWG decoder is connected.
+At the time of that real-source pilot, DWG remained unparsed because no trusted decoder path was connected.
 
 ## REAL-SOURCE REFERENCE APPLICATION PILOT
 
@@ -357,6 +357,26 @@ Negative behavior preserved:
 
 `SOM_FOSTER_TECHNICAL_CLARITY` remains DEFERRED because STRUCTURE / PROGRAM / ENVELOPE are architectural semantic roles and require verified presentation-role authority.
 
+## DWG OPEN REDUCTION — 2026-09-24
+
+A strict GNU LibreDWG `dwgread` bridge now exists.
+
+Implemented:
+- runtime decoder identity probe
+- original DWG digest preservation
+- strict failure on risky LibreDWG diagnostics
+- derived DXF parse validation through ezdxf
+- derived geometry primitive extraction
+- authority lock: `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE`
+- `production_claimable=false`
+
+Not yet proven:
+- live production/validator runtime has `dwgread` provisioned
+- actual project DWG conversion has passed source-equivalence validation
+- converted DWG geometry has been admitted as production authority
+
+Therefore the old OPEN “no trusted DWG decoder path” is reduced, not falsely closed.
+
 ## OPEN — REAL-WORLD / OPERATIONAL
 
 - live validator secrets must be provisioned outside the repo:
@@ -365,7 +385,7 @@ Negative behavior preserved:
   - corresponding production public keys
   - ANTHROPIC_API_KEY for live independent visual review
 - user-facing real-project production pilot has not been run; read-only/staging real-source pilots have passed
-- DWG remains conversion-required unless a trusted DWG decoder is connected
+- strict GNU LibreDWG `dwgread` bridge is IMPLEMENTED for staging, but live runtime decoder presence + real DWG→DXF source-equivalence validation remain OPEN; authority stays `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE` and `production_claimable=false`
 - SOM/Foster technical-clarity reference remains deferred until verified STRUCTURE / PROGRAM / ENVELOPE presentation roles are available
 - CI synthetic Vision receipt proves trust plumbing, not a live Anthropic API quality judgment
 

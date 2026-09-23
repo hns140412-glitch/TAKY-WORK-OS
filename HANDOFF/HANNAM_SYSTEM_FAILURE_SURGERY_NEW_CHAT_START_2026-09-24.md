@@ -114,6 +114,15 @@ Declared diagram-role adapter rule:
 - application/effect proof는 final canonical SVG digest에 bind
 - 이미 compliant한 diagram을 effect 생성 목적으로 왜곡하지 않음
 
+DWG current state:
+- GNU LibreDWG `dwgread` strict bridge code = IMPLEMENTED
+- original DWG SHA-256 preserved
+- risky decoder diagnostics = fail closed
+- derived DXF re-parse required
+- authority = `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE`
+- production_claimable = false
+- live runtime decoder presence + real source-equivalence pilot = OPEN
+
 Readiness:
 - API key 존재만으로 Vision READY 처리하지 마.
 - configured Vision model live health probe까지 PASS해야 user-facing Vision readiness=true.
@@ -123,7 +132,7 @@ Readiness:
 현재 known OPEN:
 - live validator/gateway secrets provisioning
 - live user-facing real-project production pilot
-- trusted direct DWG decoder
+- DWG live-runtime `dwgread` provisioning + real source-equivalence validation (bridge implemented; `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE`, production claim forbidden)
 - SOM/Foster verified-role executable adapter/effect metric
 - repository branch protection = ADMIN_REQUIRED / OPEN
 

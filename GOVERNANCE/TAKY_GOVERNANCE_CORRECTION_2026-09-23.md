@@ -263,6 +263,21 @@ Defensive balance:
 - user-facing production does
 - existing geometry diagnostics are preserved, but demoted from authority
 
+## DWG DERIVED-VECTOR BRIDGE
+
+Direct DWG parsing is not treated as solved merely because a converter can emit DXF.
+
+A strict staging bridge may use GNU LibreDWG `dwgread` only when:
+- decoder identity is verified at runtime
+- the original DWG SHA-256 is preserved
+- decoder diagnostics indicating unsupported / invalid content fail closed
+- the derived DXF is independently re-parsed
+- semantic inference remains false
+- authority remains `DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE`
+- `production_claimable=false` until real source-equivalence evidence exists
+
+This bridge preserves work continuity without promoting a derived conversion into source authority.
+
 ## LIVE AUTHORITY / READINESS
 
 Committed documents may contain historical checkpoint SHAs, but a document edit changes HEAD immediately.
