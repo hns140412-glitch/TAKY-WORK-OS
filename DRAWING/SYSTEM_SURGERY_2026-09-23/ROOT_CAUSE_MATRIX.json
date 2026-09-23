@@ -1,0 +1,65 @@
+{
+  "version": "2026-09-23.1",
+  "thesis": "The dominant defect is enforcement separation: governance describes constraints, but artifact-producing routes are not capability-restricted and gate receipts are not required before exposure.",
+  "clusters": [
+    {
+      "id": "RC-01",
+      "name": "DECLARATIVE_GOVERNANCE_WITHOUT_RUNTIME_AUTHORITY",
+      "failures": [
+        "F-A-ENGINE-BYPASS",
+        "F-B-RASTER-MASK",
+        "F-C-GENERATIVE-REDRAW",
+        "F-G-ONE-OFF"
+      ],
+      "system_fix": "Production router issues authorization receipts only to registered engines; user-facing artifact creation requires receipt."
+    },
+    {
+      "id": "RC-02",
+      "name": "VALIDATION_NOT_ON_CRITICAL_PATH",
+      "failures": [
+        "F-B-RASTER-MASK",
+        "F-C-GENERATIVE-REDRAW",
+        "F-E-QUALITY-GATE",
+        "F-F-USER-DEBUGGER"
+      ],
+      "system_fix": "L7 validation and L8 exposure become blocking state transitions; NO_PASS_NO_SHOW."
+    },
+    {
+      "id": "RC-03",
+      "name": "REFERENCE_AS_KNOWLEDGE_NOT_EXECUTABLE_PARAMETERS",
+      "failures": [
+        "F-D-REFERENCE",
+        "F-E-QUALITY-GATE"
+      ],
+      "system_fix": "Mandatory reference compiler and effect receipts."
+    },
+    {
+      "id": "RC-04",
+      "name": "AUTHORITY_COLLAPSE_ACROSS_LAYERS",
+      "failures": [
+        "F-B-RASTER-MASK",
+        "F-C-GENERATIVE-REDRAW",
+        "F-I-SEMANTIC"
+      ],
+      "system_fix": "L0-L6 capability ACL: lower layers cannot mutate higher-authority layers."
+    },
+    {
+      "id": "RC-05",
+      "name": "EVIDENCE_GAP_BETWEEN_FACTS_AND_NARRATIVE",
+      "failures": [
+        "F-H-FRESHNESS",
+        "F-I-SEMANTIC",
+        "F-J-NARRATIVE"
+      ],
+      "system_fix": "Content identity, semantic verification, claim evidence gates."
+    },
+    {
+      "id": "RC-06",
+      "name": "CONTINUITY_WITHOUT_ARCHITECTURE_HEALTH_CHECK",
+      "failures": [
+        "F-K-HANDOFF"
+      ],
+      "system_fix": "Resume mode split and surgery trigger."
+    }
+  ]
+}
