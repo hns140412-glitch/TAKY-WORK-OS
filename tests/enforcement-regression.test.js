@@ -10,6 +10,7 @@ const Validator=require('../runtime/independent-validator.js');
 const Exposure=require('../runtime/exposure-gate.js');
 const Report=require('../runtime/drawing-report-package.js');
 const ReferenceCompiler=require('../runtime/reference-compiler.js');
+const ReferenceApplication=require('../runtime/reference-application.js');
 const GeometryGuard=require('../runtime/geometry-guard.js');
 const SemanticGate=require('../runtime/semantic-gate.js');
 const NarrativeGate=require('../runtime/narrative-evidence-gate.js');
@@ -144,7 +145,7 @@ function minimalPackage(){
   assert.equal(c.status,'COMPILED');
 
   const weak=ReferenceCompiler.validateReferenceEffect({
-    TRACEABILITY_PASS:true,
+    APPLICATION_TRACE_PASS:true,
     EFFECT_PASS:true,
     FIT_PASS:true,
     FIDELITY_PASS:true,
@@ -154,7 +155,7 @@ function minimalPackage(){
   assert.equal(weak.status,'CANDIDATE');
 
   const strong=ReferenceCompiler.validateReferenceEffect({
-    TRACEABILITY_PASS:true,
+    APPLICATION_TRACE_PASS:true,
     EFFECT_PASS:true,
     FIT_PASS:true,
     FIDELITY_PASS:true,
@@ -212,6 +213,17 @@ function minimalPackage(){
   };
   const artifactDigest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
+  const compiledReference=ReferenceCompiler.compileReferenceProfile({
+    reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+    context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
+  });
+  assert.equal(compiledReference.ok,true);
+  const appliedReference=ReferenceApplication.applyToPresentationProfile({
+    a3:{margin_mm:8,layout:{hero_ratio:0.60,support_ratio:0.40}}
+  },compiledReference);
+  assert.equal(appliedReference.ok,true);
+  assert(appliedReference.applied_parameters.length>0);
+
   const visual=TestSigner.signVisualMeasurement({
     artifact_digest:artifactDigest,
     metrics:{
@@ -234,7 +246,8 @@ function minimalPackage(){
   const ref=TestSigner.signReferenceEffect({
     baseline_digest:'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
     candidate_digest:artifactDigest,
-    reference_ids:['ARCHDAILY_PLAN_HIERARCHY','OMA_RELATION_FIRST'],
+    reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
+    reference_compile_digest:compiledReference.compile_digest,
     comparison:{
       schema:'TAKY_OBJECTIVE_REFERENCE_DELTA_V1',
       measurement_scope:'OBJECTIVE_ONLY',
@@ -276,9 +289,10 @@ function minimalPackage(){
     semantics:[{region_id:'ROAD-1',state:'VERIFIED',presentation_token:'ROAD'}],
     claims:[{claim_id:'C1',evidence_refs:['SRC-1'],evidence_state:'SUPPORTED',strength:'SUPPORTED',text:'도면상 독립성이 강화된 구성으로 읽힌다'}],
     reference:{
-      reference_ids:['ARCHDAILY_PLAN_HIERARCHY','OMA_RELATION_FIRST'],
+      reference_ids:['DIVISARE_EDITORIAL_RESTRAINT'],
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
     },
+    reference_application:appliedReference,
     visual_measurement_receipt:visual.receipt,
     reference_effect_receipt:ref.receipt,
     vision_review_receipt:vision.receipt,
@@ -400,7 +414,7 @@ function minimalPackage(){
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
     },
     reference_effect_proof:{
-      TRACEABILITY_PASS:true,EFFECT_PASS:true,FIT_PASS:true,FIDELITY_PASS:true,REFERENCE_ABLATION_TEST_PASS:true
+      APPLICATION_TRACE_PASS:true,EFFECT_PASS:true,FIT_PASS:true,FIDELITY_PASS:true,REFERENCE_ABLATION_TEST_PASS:true
     },
     external_gates:{
       SOURCE_GATE:'PASS',
@@ -602,7 +616,7 @@ function minimalPackage(){
       context:{scale:'1:200',output_size:'A3',source_density:'MEDIUM'}
     },
     reference_effect_proof:{
-      TRACEABILITY_PASS:true,EFFECT_PASS:true,FIT_PASS:true,FIDELITY_PASS:true,REFERENCE_ABLATION_TEST_PASS:true
+      APPLICATION_TRACE_PASS:true,EFFECT_PASS:true,FIT_PASS:true,FIDELITY_PASS:true,REFERENCE_ABLATION_TEST_PASS:true
     },
     visual_metrics:{
       a3:{width_mm:420,height_mm:297},
