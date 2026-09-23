@@ -291,6 +291,7 @@ function minimalPackage(){
       source_geometry_fingerprint:'fixture-geometry',
       controlled_geometry_fingerprint:'fixture-geometry',
       controlled_geometry_match:true,
+      controlled_svg_sha256:'3333333333333333333333333333333333333333333333333333333333333333',
       canonical_svg_sha256:'2222222222222222222222222222222222222222222222222222222222222222',
       candidate_sha256:artifactDigest,
       source_viewbox_match:true,
