@@ -32,7 +32,10 @@ assert.equal(fan.shared_precompute.length,3);
 assert.equal(fan.shared_precompute[0].work_unit_id,'SRC-A:L0');
 assert(fan.parallel_view_work.some(x=>x.view_id==='SALE'&&x.layer_id==='L6_AI_ATMOSPHERE'));
 assert(fan.parallel_view_work.some(x=>x.view_id==='PUB'&&x.layer_id==='L3_PRESENTATION'));
-assert.equal(fan.finalization.length,2);
+assert.equal(fan.finalization.length,4);
+assert.equal(fan.finalization.filter(x=>x.layer_id==='L7_FINAL_OVERLAY_VALIDATION').length,2);
+assert.equal(fan.finalization.filter(x=>x.layer_id==='L8_USER_EXPOSURE_GATE').length,2);
+assert(fan.finalization.filter(x=>x.layer_id==='L8_USER_EXPOSURE_GATE').every(x=>x.depends_on.length===1&&x.depends_on[0].endsWith(':L7')));
 
 const all=[
   ...fan.shared_precompute.map(x=>x.work_unit_id),
