@@ -18,6 +18,7 @@ const ArtifactBroker=require('../runtime/artifact-broker.js');
 const Capability=require('../runtime/capability-token.js');
 const Measurement=require('../runtime/visual-measurement-receipt.js');
 const VisionReview=require('../runtime/vision-review-receipt.js');
+const TestSigner=require('./validator-test-helper.js');
 const fs=require('fs');
 const os=require('os');
 const path=require('path');
@@ -211,7 +212,7 @@ function minimalPackage(){
   };
   const artifactDigest='aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa';
 
-  const visual=Measurement.issueVisualMeasurement({
+  const visual=TestSigner.signVisualMeasurement({
     artifact_digest:artifactDigest,
     metrics:{
       schema:'TAKY_OBJECTIVE_VISUAL_METRICS_V1',
@@ -230,7 +231,7 @@ function minimalPackage(){
   });
   assert.equal(visual.ok,true);
 
-  const ref=Measurement.issueReferenceEffect({
+  const ref=TestSigner.signReferenceEffect({
     baseline_digest:'bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb',
     candidate_digest:artifactDigest,
     reference_ids:['ARCHDAILY_PLAN_HIERARCHY','OMA_RELATION_FIRST'],
@@ -245,7 +246,7 @@ function minimalPackage(){
   });
   assert.equal(ref.ok,true);
 
-  const vision=VisionReview.signReview({
+  const vision=TestSigner.signVisionReview({
     artifact_digest:artifactDigest,
     professional_family_pass:true,
     reference_effect_visible_without_explanation:true,
@@ -617,7 +618,7 @@ function minimalPackage(){
 })();
 
 (function testVisionReceiptBoundToArtifactDigest(){
-  const signed=VisionReview.signReview({
+  const signed=TestSigner.signVisionReview({
     artifact_digest:'dddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddddd',
     professional_family_pass:true,
     reference_effect_visible_without_explanation:true,
