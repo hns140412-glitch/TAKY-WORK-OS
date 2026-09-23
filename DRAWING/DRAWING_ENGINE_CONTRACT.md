@@ -106,3 +106,18 @@ V1 core implementation lives in:
 - `ROUTERS/DRAWING_ROUTER.md`
 
 External adapters such as DXF/vector-PDF extraction, raster semantic segmentation, SVG/source overlay and pixel/geometry diff remain explicit follow-on implementations.
+
+
+## V2 enforcement correction — 2026-09-23
+
+The V1 statement that heavy validation is not mandatory cannot be used to bypass production exposure controls. Validation remains proportional during work, but user-facing architectural production has mandatory pre-user gates.
+
+New invariant:
+- `EXPERIMENT / DIAGNOSTIC` may use one-off tools.
+- `PREVIEW / FINAL / USER_FACING` must use an authorized engine route.
+- L0 Source, L1 Geometry, L2 Semantic outrank all presentation/generative layers.
+- L7 validation is followed by L8 USER EXPOSURE GATE.
+- any applicable gate not PASS => artifact cannot be presented as production output.
+- modified time alone cannot establish content freshness.
+- reference mining must compile to engine parameters and observable effect.
+- human approval is for design/presentation choice, never for finding pipeline defects.
