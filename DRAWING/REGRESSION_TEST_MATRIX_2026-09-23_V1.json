@@ -1,0 +1,86 @@
+{
+  "version": "2026-09-23.1",
+  "tests": [
+    {
+      "id": "REG-001",
+      "failure": "F-HAN-001",
+      "given": "direct drawing-report-package production planning",
+      "expect": "PRODUCTION_ROUTER_REQUIRED"
+    },
+    {
+      "id": "REG-002",
+      "failure": "F-HAN-007",
+      "given": "PYTHON/REPORTLAB/GENERIC_HTML executor in PRODUCTION",
+      "expect": "ONE_OFF_EXECUTOR_FORBIDDEN_FOR_PRODUCTION"
+    },
+    {
+      "id": "REG-003",
+      "failure": "F-HAN-002",
+      "given": "geometry_diff > 0",
+      "expect": "NO_PASS_NO_SHOW"
+    },
+    {
+      "id": "REG-004",
+      "failure": "F-HAN-002",
+      "given": "wall/core/entry missing",
+      "expect": "PROTECTED_GEOMETRY_MISSING"
+    },
+    {
+      "id": "REG-005",
+      "failure": "F-HAN-003",
+      "given": "generative redraw changes geometry",
+      "expect": "GEOMETRY_GATE FAIL"
+    },
+    {
+      "id": "REG-006",
+      "failure": "F-HAN-004",
+      "given": "no compiled references",
+      "expect": "REFERENCE_COMPILE_FAIL"
+    },
+    {
+      "id": "REG-007",
+      "failure": "F-HAN-005",
+      "given": "reference compiled but effect not visible",
+      "expect": "REFERENCE_EFFECT_GATE FAIL"
+    },
+    {
+      "id": "REG-008",
+      "failure": "F-HAN-009",
+      "given": "semantic inference unverified",
+      "expect": "SEMANTIC_GATE FAIL"
+    },
+    {
+      "id": "REG-009",
+      "failure": "F-HAN-010",
+      "given": "unsupported narrative claims",
+      "expect": "FACT_GATE FAIL"
+    },
+    {
+      "id": "REG-010",
+      "failure": "F-HAN-006",
+      "given": "user_debug_required=true",
+      "expect": "USER_EFFECT_GATE FAIL"
+    },
+    {
+      "id": "REG-011",
+      "failure": "F-HAN-011",
+      "given": "handoff structural defect",
+      "expect": "SURGERY or RE_ARCHITECTURE mode, not RESUME"
+    },
+    {
+      "id": "REG-012",
+      "failure": "F-HAN-008",
+      "given": "same content newer mtime",
+      "expect": "must not auto-supersede without content/revision delta evidence"
+    }
+  ],
+  "automation": {
+    "current_file": "tests/drawing-governance-surgery.test.js",
+    "ci": ".github/workflows/drawing-governance-surgery.yml",
+    "remaining_runtime_tests": [
+      "content fingerprint freshness test",
+      "protected geometry fingerprint from real drawing fixtures",
+      "visual/reference-effect fixture test"
+    ]
+  }
+}
