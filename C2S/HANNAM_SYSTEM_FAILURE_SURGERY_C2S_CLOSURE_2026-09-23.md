@@ -133,6 +133,64 @@ References requiring verified presentation roles remain DEFERRED instead of inve
    - attack: cross-project contamination
    - defense: project-specific footer moved into project presentation profile
 
+## REAL-SOURCE DRY PILOT — 2026-09-23
+
+Purpose:
+validate the repaired system against the actual Hannam issued source without resuming report production.
+
+Source authority:
+- Work / `2026-0923_한남동 737-21일원 고급주택(4세대) 규모검토.dwg`
+- Work / `2026-0923_한남동 737-21일원 고급주택(4세대) 규모검토.pdf`
+- PNG extracts remain support-only
+
+Issued PDF dry-pilot facts:
+- SHA-256: `d81740e1aec0e9e80a50cc1fdc23c41b227f52377e0139dbf5a620b6fab10278`
+- pages: 4
+- page rect: 1191 x 842 on all pages
+- rotation: 0 on all pages
+- semantic inference: false
+- authority classification: DERIVED_VECTOR
+
+Primitive counts:
+- page 0: 7,880
+- page 1: 46,288
+- page 2: 49,294
+- page 3: 8,917
+
+Real-source load check:
+- ~49k primitive fingerprint: ~0.42 s
+- same-geometry compare: ~0.85 s
+- one-primitive mutation compare: ~1.0 s
+- mutation correctly rejected
+- observed process RSS peak during repeated benchmark: ~220 MB
+
+Conclusion:
+the geometry fingerprint path is heavy but currently viable for this real source.
+No performance-based weakening was justified.
+
+Attack finding:
+the production pipeline still allowed caller-supplied `geometry.output` to participate in GEOMETRY_GATE.
+A caller could submit source primitives as output evidence even if the actual candidate artifact were damaged.
+
+Correction:
+- added independent `drawing_source_fidelity_validator.py`
+- added signed `SOURCE_FIDELITY_VALIDATOR_V1` receipt
+- source PDF -> controlled SVG -> canonical inline source -> candidate artifact is re-read from actual files
+- candidate/source digests are bound into the receipt
+- source-slot crop/viewBox mutation is rejected
+- canonical inline-source mutation is rejected
+- final artifact mutation is rejected
+- production GEOMETRY_GATE now trusts artifact-bound source fidelity
+- caller geometry compare remains diagnostic only
+
+Negative regression fixtures:
+- controlled source geometry mutation -> FAIL
+- source-slot crop/viewBox mutation -> FAIL
+- final candidate artifact mutation -> FAIL
+
+No Hannam report/design/PDF/HTML/mockup was generated as part of the real-source dry pilot.
+DWG remained unparsed because no trusted direct DWG decoder is connected.
+
 ## CURRENT VERIFIED STATE
 
 Branch:
