@@ -21,10 +21,16 @@ const pkg={
 };
 
 assert.equal(r.validate(pkg).ok,true);
-const plan=r.buildOutputPlan(pkg);
-assert.equal(plan.ok,true);
-assert.equal(plan.outputs.SVG.role,'VISUAL_CANONICAL');
-assert.equal(plan.outputs.XLSX.role,'DATA_EXPORT');
+
+const blocked=r.buildOutputPlan(pkg);
+assert.equal(blocked.ok,false);
+assert.equal(blocked.reason,'PRODUCTION_ROUTER_REQUIRED');
+assert.equal(blocked.governance_code,'ENGINE_AVAILABLE_BYPASS_FORBIDDEN');
+
+const diagnostic=r.buildOutputPlan(pkg,{mode:'DIAGNOSTIC'});
+assert.equal(diagnostic.ok,true);
+assert.equal(diagnostic.user_facing,false);
+assert.equal(diagnostic.mode,'DIAGNOSTIC');
 
 const bad=JSON.parse(JSON.stringify(pkg));
 bad.facts[1].value=123;

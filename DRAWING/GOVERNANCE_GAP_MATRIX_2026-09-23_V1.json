@@ -1,0 +1,54 @@
+{
+  "version": "2026-09-23.1",
+  "gaps": [
+    {
+      "gap": "GOV-01",
+      "layer": "ROUTING",
+      "before": "engine optional",
+      "after": "production router exclusive",
+      "proof": "direct buildOutputPlan blocked"
+    },
+    {
+      "gap": "GOV-02",
+      "layer": "GEOMETRY",
+      "before": "source lock prose",
+      "after": "geometry diff + protected element checks",
+      "proof": "regression test blocks geometry_diff != 0"
+    },
+    {
+      "gap": "GOV-03",
+      "layer": "REFERENCE",
+      "before": "reference prose",
+      "after": "reference compiler",
+      "proof": "REFERENCE_REQUIRED / LINE_HIERARCHY_NOT_COMPILED"
+    },
+    {
+      "gap": "GOV-04",
+      "layer": "QUALITY",
+      "before": "fidelity proxy",
+      "after": "independent gates",
+      "proof": "required gate family"
+    },
+    {
+      "gap": "GOV-05",
+      "layer": "USER_EXPOSURE",
+      "before": "preview could precede validation",
+      "after": "NO PASS -> NO SHOW",
+      "proof": "router returns exposure BLOCKED"
+    },
+    {
+      "gap": "GOV-06",
+      "layer": "HANDOFF",
+      "before": "resume only",
+      "after": "resume/retrospective/surgery/re-architecture",
+      "proof": "central Work OS hard lock"
+    },
+    {
+      "gap": "GOV-07",
+      "layer": "FRESHNESS",
+      "before": "mtime could imply supersession",
+      "after": "DATE != CONTENT CHANGE",
+      "proof": "central governance hard lock"
+    }
+  ]
+}

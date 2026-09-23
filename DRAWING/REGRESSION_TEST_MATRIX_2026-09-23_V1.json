@@ -1,0 +1,105 @@
+{
+  "version": "2026-09-23.2",
+  "tests": [
+    {
+      "id": "REG-001",
+      "failure": "F-HAN-001",
+      "given": "direct drawing-report-package production planning",
+      "expect": "PRODUCTION_ROUTER_REQUIRED",
+      "proof": "runtime/drawing-report-package.test.js"
+    },
+    {
+      "id": "REG-002",
+      "failure": "F-HAN-007",
+      "given": "PYTHON/REPORTLAB/GENERIC_HTML executor in FINAL/PREVIEW/USER_FACING",
+      "expect": "HOLD",
+      "proof": "runtime/drawing-production-authority-gate.test.js + surgery suite"
+    },
+    {
+      "id": "REG-003",
+      "failure": "F-HAN-002",
+      "given": "protected WALL geometry changes",
+      "expect": "GEOMETRY_DRIFT and HOLD before user exposure",
+      "proof": "drawing-engine-core + surgery suite"
+    },
+    {
+      "id": "REG-004",
+      "failure": "F-HAN-002",
+      "given": "wall/core/entry deletion defect",
+      "expect": "PRE_USER FAIL / HOLD",
+      "proof": "drawing-pre-user-validation + surgery suite"
+    },
+    {
+      "id": "REG-005",
+      "failure": "F-HAN-003",
+      "given": "GENERATIVE_GEOMETRY_REDRAW production operation",
+      "expect": "HOLD",
+      "proof": "drawing-production-authority-gate"
+    },
+    {
+      "id": "REG-006",
+      "failure": "F-HAN-004",
+      "given": "reference lacks DNA/tokens/parameters/effect/probe",
+      "expect": "REFERENCE COMPILE FAIL",
+      "proof": "drawing-reference-compiler"
+    },
+    {
+      "id": "REG-007",
+      "failure": "F-HAN-005",
+      "given": "reference parameters/probes only self-asserted, no evidence",
+      "expect": "REFERENCE EFFECT FAIL",
+      "proof": "drawing-reference-compiler.validateApplied"
+    },
+    {
+      "id": "REG-008",
+      "failure": "F-HAN-009",
+      "given": "INVENTED_SEMANTICS / unverified semantic path",
+      "expect": "PRE_USER FAIL / production HOLD",
+      "proof": "drawing-pre-user-validation + production authority"
+    },
+    {
+      "id": "REG-009",
+      "failure": "F-HAN-010",
+      "given": "narrative present without NARRATIVE_EVIDENCE gate",
+      "expect": "HOLD",
+      "proof": "finalization surgery suite"
+    },
+    {
+      "id": "REG-010",
+      "failure": "F-HAN-006",
+      "given": "known mechanical defect before exposure",
+      "expect": "NO PASS -> NO SHOW",
+      "proof": "drawing-finalization-orchestrator"
+    },
+    {
+      "id": "REG-011",
+      "failure": "F-HAN-011",
+      "given": "structural failure handoff",
+      "expect": "SURGERY/RE_ARCHITECTURE continuation mode",
+      "proof": "TAKY OS hard lock + surgery handoff"
+    },
+    {
+      "id": "REG-012",
+      "failure": "F-HAN-008",
+      "given": "same content digest with newer modified date",
+      "expect": "CONTENT_IDENTICAL; supersession forbidden by date alone",
+      "proof": "drawing-source-freshness.test.js"
+    },
+    {
+      "id": "REG-013",
+      "failure": "F-HAN-001",
+      "given": "parallel/local substitute engine introduced during surgery",
+      "expect": "remove and fold correction into existing central modules",
+      "proof": "deleted experimental parallel modules; central-only surgery suite"
+    }
+  ],
+  "automation": {
+    "current_file": "tests/drawing-governance-surgery.test.js",
+    "ci": ".github/workflows/drawing-governance-surgery.yml",
+    "core_ci": "drawing-engine-core",
+    "open_strengthening": [
+      "image-level professional-family/reference-effect fixture can further strengthen VISUAL_PASS without changing production authority",
+      "real project drawing fixtures can extend current object-level key-state geometry regression"
+    ]
+  }
+}

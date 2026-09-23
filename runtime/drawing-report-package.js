@@ -50,40 +50,34 @@
       for(const id of p.source_visual_refs||[]) if(!sourceIds.has(id)) findings.push({code:'PAGE_SOURCE_NOT_FOUND',page_id:p.page_id,ref:id});
     }
 
-    return Object.freeze({
-      ok:findings.length===0,
-      findings:Object.freeze(findings)
-    });
+    return Object.freeze({ok:findings.length===0,findings:Object.freeze(findings)});
   }
 
-  function buildOutputPlan(pkg={}){
+  function buildOutputPlan(pkg={}, options={}){
     const v=validate(pkg);
     if(!v.ok) return Object.freeze({ok:false,reason:'PACKAGE_INVALID',findings:v.findings});
 
-    const pages=(pkg.pages||[]).map(p=>({
-      page_id:p.page_id,
-      title:p.title,
-      visual_state_id:'A3:'+p.page_id,
-      source_visual_refs:[...(p.source_visual_refs||[])],
-      method_refs:[...(p.method_refs||[])],
-      fact_refs:[...(p.fact_refs||[])],
-      review_refs:[...(p.review_refs||[])],
-      case_refs:[...(p.case_refs||[])]
-    }));
+    if(options.mode!=='DIAGNOSTIC'){
+      return Object.freeze({
+        ok:false,
+        reason:'PRODUCTION_ROUTER_REQUIRED',
+        governance_code:'ENGINE_AVAILABLE_BYPASS_FORBIDDEN',
+        message:'User-facing or production output plans must be created by runtime/drawing-production-router.js after all pre-user gates pass.'
+      });
+    }
 
     return Object.freeze({
       ok:true,
+      mode:'DIAGNOSTIC',
+      user_facing:false,
       content_canonical:'REPORT_PACKAGE',
       visual_canonical:'A3_SVG_BOARD_STATE',
-      pages:Object.freeze(pages),
-      outputs:Object.freeze({
-        PDF:{route:'A3_SVG_BOARD_STATE -> PDF',role:'PRIMARY_DELIVERABLE'},
-        HTML:{route:'A3_SVG_BOARD_STATE -> HTML',role:'INTERACTIVE_VIEW'},
-        PPTX:{route:'A3_SVG_BOARD_STATE -> PPTX',role:'EDITABLE_PRESENTATION'},
-        PNG:{route:'A3_SVG_BOARD_STATE -> PNG',role:'RASTER_PREVIEW'},
-        SVG:{route:'A3_SVG_BOARD_STATE',role:'VISUAL_CANONICAL'},
-        XLSX:{route:'REPORT_PACKAGE.tables/facts/cases/review_items -> XLSX',role:'DATA_EXPORT'}
-      })
+      pages:Object.freeze((pkg.pages||[]).map(p=>({
+        page_id:p.page_id,
+        title:p.title,
+        source_visual_refs:[...(p.source_visual_refs||[])],
+        method_refs:[...(p.method_refs||[])]
+      })))
     });
   }
 
@@ -102,10 +96,5 @@
     return copy;
   }
 
-  return Object.freeze({
-    version:'1.0.0',
-    validate,
-    buildOutputPlan,
-    applyFactPatch
-  });
+  return Object.freeze({version:'2.0.0',validate,buildOutputPlan,applyFactPatch});
 });

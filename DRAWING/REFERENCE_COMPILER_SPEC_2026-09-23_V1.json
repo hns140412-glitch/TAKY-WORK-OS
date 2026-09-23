@@ -1,0 +1,86 @@
+{
+  "version": "2026-09-23.1",
+  "purpose": "Convert mined reference DNA into executable parameters with causal traceability.",
+  "required_trace": [
+    "REFERENCE_NAME",
+    "MINED_DNA",
+    "DESIGN_TOKEN",
+    "ENGINE_PARAMETER",
+    "OUTPUT_EFFECT",
+    "BEFORE_AFTER_VALIDATION"
+  ],
+  "compilers": [
+    {
+      "reference": "ArchDaily",
+      "dna": "PLAN_LINE_HIERARCHY",
+      "tokens": {
+        "wall": 0.4,
+        "primary": 0.28,
+        "secondary": 0.18,
+        "annotation": 0.09
+      },
+      "effect": "source plan hierarchy visibly strengthened without geometry relocation"
+    },
+    {
+      "reference": "Divisare",
+      "dna": "EDITORIAL_RESTRAINT",
+      "tokens": {
+        "whitespace_ratio_min": 0.22,
+        "caption_density": "LOW",
+        "drawing_dominance": "HIGH"
+      },
+      "effect": "editorial restraint visible without explanation"
+    },
+    {
+      "reference": "OMA",
+      "dna": "RELATION_FIRST",
+      "tokens": {
+        "relations_per_diagram": 1,
+        "decoration": "SUPPRESSED"
+      },
+      "effect": "one relation is immediately legible"
+    },
+    {
+      "reference": "BIG",
+      "dna": "ONE_MOVE",
+      "tokens": {
+        "moves_per_diagram": 1,
+        "sequence": [
+          "CONSTRAINT",
+          "MOVE",
+          "RESULT"
+        ]
+      },
+      "effect": "single transformation logic is traceable"
+    },
+    {
+      "reference": "MVRDV",
+      "dna": "TYPE_COMPARISON",
+      "tokens": {
+        "same_scale": true,
+        "same_metric": true,
+        "exception_visibility": "REQUIRED"
+      },
+      "effect": "comparison is fair and exception is visible"
+    },
+    {
+      "reference": "SOM/Foster",
+      "dna": "TECHNICAL_CLARITY",
+      "tokens": {
+        "hierarchy": [
+          "STRUCTURE",
+          "PROGRAM",
+          "ENVELOPE"
+        ],
+        "ambiguity": "MINIMIZE"
+      },
+      "effect": "technical system hierarchy reads before decoration"
+    }
+  ],
+  "fail_rules": [
+    "REFERENCE_MENTIONED_WITHOUT_PARAMETER",
+    "PARAMETER_WITHOUT_OUTPUT_EFFECT",
+    "EFFECT_ONLY_EXPLAINABLE_IN_TEXT",
+    "REFERENCE_STYLE_PROMPT_WITHOUT_DNA_TRACE"
+  ]
+}

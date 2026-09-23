@@ -1,0 +1,64 @@
+{
+  "version": "2026-09-23.1",
+  "clusters": [
+    {
+      "id": "RC-01",
+      "name": "CAPABILITY_WITHOUT_EXECUTION_AUTHORITY",
+      "failures": [
+        "F-HAN-001",
+        "F-HAN-007"
+      ],
+      "cause": "Reusable engines existed but production result authority was not exclusive.",
+      "fix": "Mandatory production router + unauthorized executor block."
+    },
+    {
+      "id": "RC-02",
+      "name": "LAYER_AUTHORITY_INVERSION",
+      "failures": [
+        "F-HAN-002",
+        "F-HAN-003",
+        "F-HAN-009"
+      ],
+      "cause": "Presentation/AI operations could mutate or define higher-authority geometry/semantics.",
+      "fix": "L0-L8 authority order + geometry/semantic gates."
+    },
+    {
+      "id": "RC-03",
+      "name": "KNOWLEDGE_NOT_COMPILED_TO_EXECUTION",
+      "failures": [
+        "F-HAN-004",
+        "F-HAN-005"
+      ],
+      "cause": "Reference knowledge remained prose and was not bound to measurable renderer parameters/effects.",
+      "fix": "Reference Compiler + effect validation."
+    },
+    {
+      "id": "RC-04",
+      "name": "VALIDATION_AFTER_EXPOSURE",
+      "failures": [
+        "F-HAN-006"
+      ],
+      "cause": "User exposure was not a gated state.",
+      "fix": "L8 NO PASS -> NO SHOW."
+    },
+    {
+      "id": "RC-05",
+      "name": "EVIDENCE_MODEL_WEAKNESS",
+      "failures": [
+        "F-HAN-008",
+        "F-HAN-010"
+      ],
+      "cause": "Timestamp and narrative inference could outrun content/evidence strength.",
+      "fix": "DATE != CONTENT CHANGE + narrative evidence gate."
+    },
+    {
+      "id": "RC-06",
+      "name": "CONTINUITY_WITHOUT_STRUCTURAL_REVIEW",
+      "failures": [
+        "F-HAN-011"
+      ],
+      "cause": "Resume optimized continuity even when the preserved structure was defective.",
+      "fix": "RESUME/RETROSPECTIVE/SURGERY/RE_ARCHITECTURE modes."
+    }
+  ]
+}
