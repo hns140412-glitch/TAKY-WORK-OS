@@ -268,5 +268,9 @@
     "BIG one-move -> supporting diagrams explain one relation only.",
     "Divisare/Domus restraint -> low saturation, material contrast by tone/texture rather than loud color."
   ],
-  "debug_labels": false
+  "debug_labels": false,
+  "footer": {
+    "left": "YKH ASSOCIATES · HANNAM-DONG 737-21",
+    "right": "2026.09"
+  }
 }
