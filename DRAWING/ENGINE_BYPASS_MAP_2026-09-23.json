@@ -1,0 +1,45 @@
+{
+  "schema": "ENGINE_BYPASS_MAP_V1",
+  "date": "2026-09-23",
+  "rule": "ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE",
+  "authorized_path": [
+    "TASK",
+    "ROUTER",
+    "AUTHORIZED_ENGINE",
+    "PRE_USER_VALIDATION",
+    "USER_EXPOSURE_GATE",
+    "OUTPUT"
+  ],
+  "production_artifact_classes": [
+    "PREVIEW",
+    "FINAL",
+    "USER_FACING"
+  ],
+  "forbidden_production_paths": [
+    {
+      "path": "TASK -> ad-hoc Python -> artifact",
+      "reason": "ONE_OFF_RENDERER"
+    },
+    {
+      "path": "TASK -> generic HTML/ReportLab -> artifact",
+      "reason": "ONE_OFF_RENDERER"
+    },
+    {
+      "path": "SOURCE -> destructive raster masking -> artifact",
+      "reason": "DESTRUCTIVE_RASTER_MASK"
+    },
+    {
+      "path": "SOURCE -> generative redraw -> artifact",
+      "reason": "GENERATIVE_GEOMETRY_REDRAW"
+    }
+  ],
+  "allowed_nonproduction": {
+    "EXPERIMENT": [
+      "one-off analysis script",
+      "diagnostic conversion",
+      "temporary inspection"
+    ],
+    "restriction": "cannot become PREVIEW/FINAL/USER_FACING"
+  },
+  "enforcement": "runtime/drawing-production-authority-gate.js"
+}
