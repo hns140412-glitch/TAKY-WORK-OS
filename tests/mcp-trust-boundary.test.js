@@ -29,12 +29,37 @@ for(const tool of productiveStagingTools){
   assert(gateway.includes("'"+tool+"'"),'staging capability must remain available: '+tool);
 }
 
+assert(gateway.includes("'get-production-readiness'"));
+assert(validator.includes("'get-validation-readiness'"));
+assert(!gateway.includes('TAKY_SKIP_CI_ATTESTATION'));
+
 assert(config.mcpServers['taky-production']);
 assert(config.mcpServers['taky-validation']);
 assert.notEqual(
   config.mcpServers['taky-production'].args[0],
   config.mcpServers['taky-validation'].args[0]
 );
+
+// Defensive balance: production may verify receipts, but must not possess validator private keys.
+for(const forbidden of ['TAKY_MEASUREMENT_PRIVATE_KEY_PEM','TAKY_VISION_PRIVATE_KEY_PEM','ANTHROPIC_API_KEY']){
+  assert(!gateway.includes(forbidden),'production gateway contains validator private-key/API authority: '+forbidden);
+}
+
+// Validator private-key env names are allowed only inside the validation trust domain.
+assert(validator.includes('TAKY_MEASUREMENT_PRIVATE_KEY_PEM'));
+assert(validator.includes('TAKY_VISION_PRIVATE_KEY_PEM'));
+assert(validator.includes('ANTHROPIC_API_KEY'));
+
+// Shared MCP config must not embed secret values.
+const mcpText=fs.readFileSync(path.join(ROOT,'.mcp.json'),'utf8');
+for(const forbidden of [
+  'TAKY_MEASUREMENT_PRIVATE_KEY_PEM',
+  'TAKY_VISION_PRIVATE_KEY_PEM',
+  'ANTHROPIC_API_KEY',
+  'TAKY_CAPABILITY_PRIVATE_KEY_PEM'
+]){
+  assert(!mcpText.includes(forbidden),'shared MCP config must not embed secret env: '+forbidden);
+}
 
 // Defensive balance: production may verify receipts, but must not possess validator private keys.
 const verifiers=[
