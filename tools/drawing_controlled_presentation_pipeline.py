@@ -18,6 +18,7 @@ from drawing_pdf_vector_adapter import extract_pdf
 from drawing_pdf_svg_exporter import export_page
 from drawing_svg_selective_editor import apply_edit_plan
 from drawing_svg_presentation_styler import apply_styles
+from drawing_svg_source_style_ranker import apply_source_style_rank
 
 
 def run_pipeline(
@@ -26,6 +27,7 @@ def run_pipeline(
     page_index: int = 0,
     edit_plan: dict | None = None,
     role_styles: dict | None = None,
+    source_style_policy: dict | None = None,
 ) -> dict:
     vector = extract_pdf(pdf_path, include_paths=True)
     source_svg = export_page(pdf_path, page_index)
@@ -41,6 +43,17 @@ def run_pipeline(
                 "findings": edit_result["findings"],
             }
         current_svg = edit_result["svg"]
+
+    source_style_result = None
+    if source_style_policy:
+        source_style_result = apply_source_style_rank(current_svg, source_style_policy)
+        if not source_style_result["ok"]:
+            return {
+                "ok": False,
+                "stage": "SOURCE_STYLE_RANK",
+                "findings": [source_style_result],
+            }
+        current_svg = source_style_result["svg"]
 
     style_result = None
     if role_styles:
@@ -59,11 +72,15 @@ def run_pipeline(
         "edit_result": None if not edit_result else {
             k:v for k,v in edit_result.items() if k != "svg"
         },
+        "source_style_result": None if not source_style_result else {
+            k:v for k,v in source_style_result.items() if k != "svg"
+        },
         "style_result": None if not style_result else {
             k:v for k,v in style_result.items() if k != "svg"
         },
         "geometry_preserved": (
             (edit_result is None or edit_result["geometry_preserved"])
+            and (source_style_result is None or source_style_result["geometry_preserved"])
             and (style_result is None or style_result["geometry_preserved"])
         ),
         "final_svg": current_svg,
@@ -71,6 +88,8 @@ def run_pipeline(
             "NO_GENERATIVE_REDRAW",
             "NO_UNVERIFIED_SEMANTIC_EDIT",
             "EXACT_PATH_ID_ONLY",
+            "NO_SEMANTIC_INFERENCE_IN_SOURCE_STYLE_RANK",
+            "SOURCE_STYLE_RANK_ORDER_MUST_BE_PRESERVED",
             "GEOMETRY_FINGERPRINT_MUST_MATCH",
         ],
     }
@@ -82,13 +101,21 @@ def main() -> None:
     p.add_argument("--page", type=int, default=0)
     p.add_argument("--edit-plan")
     p.add_argument("--styles")
+    p.add_argument("--source-style-policy")
     p.add_argument("--out-svg", required=True)
     p.add_argument("--manifest", required=True)
     args = p.parse_args()
 
     edit_plan = json.loads(Path(args.edit_plan).read_text(encoding="utf-8")) if args.edit_plan else None
     styles = json.loads(Path(args.styles).read_text(encoding="utf-8")) if args.styles else None
-    result = run_pipeline(args.pdf, page_index=args.page, edit_plan=edit_plan, role_styles=styles)
+    source_style_policy = json.loads(Path(args.source_style_policy).read_text(encoding="utf-8")) if args.source_style_policy else None
+    result = run_pipeline(
+        args.pdf,
+        page_index=args.page,
+        edit_plan=edit_plan,
+        role_styles=styles,
+        source_style_policy=source_style_policy,
+    )
     if not result["ok"]:
         raise SystemExit(json.dumps(result, ensure_ascii=False, indent=2))
 
