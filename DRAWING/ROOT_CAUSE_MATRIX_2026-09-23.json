@@ -1,5 +1,5 @@
 {
-  "schema": "ROOT_CAUSE_MATRIX_V1",
+  "schema": "ROOT_CAUSE_MATRIX_V2",
   "clusters": [
     {
       "id": "RC-01",
@@ -62,6 +62,16 @@
         "F-J"
       ],
       "fix": "narrative evidence conditional hard gate before exposure"
+    },
+    {
+      "id": "RC-08",
+      "name": "ENGINE_ACTIVATION_AND_DOMAIN_BOUNDARY_COLLAPSED",
+      "failures": [
+        "F-A",
+        "F-G",
+        "F-L"
+      ],
+      "fix": "Separate GENERIC_ENGINE from PROJECT_PACK; default router may only advertise/authorize promoted generic engine capabilities. Feature-branch existence != active engine availability."
     }
   ]
 }
