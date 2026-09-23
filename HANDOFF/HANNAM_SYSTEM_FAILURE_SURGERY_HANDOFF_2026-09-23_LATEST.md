@@ -50,15 +50,11 @@ Do not strengthen restrictions merely because a failure can be imagined.
 - human desired-outcome binding to user-effect review
 - project-specific metadata removed from shared renderer
 
-## LAST VERIFIED CODE HEAD
+## HISTORICAL CHECKPOINT ONLY
 
-`fe4650f517272e0e01f5419a3c1b74a1320807cd`
+Any SHA written in this document is provenance, not live authority.
+Use `get-production-readiness` for the current HEAD and exact-head CI state.
 
-Evidence:
-- TAKY Enforcement Regression #332 — SUCCESS
-- drawing-engine-core #788 — SUCCESS
-
-After any new commit, do not reuse this evidence. Recheck the new exact HEAD.
 
 ## REAL-SOURCE DRY PILOT UPDATE
 
@@ -119,6 +115,38 @@ Current reference applicability:
 
 Multi-reference production now requires complete per-reference application/effect coverage.
 A reference name without its own causal evidence cannot inherit PASS from another reference.
+
+## LIVE AUTHORITY — READ THIS BEFORE ANY RESUME
+
+Do NOT treat an embedded SHA in this file as current authority.
+
+On resume:
+1. call / use `get-production-readiness`
+2. read `current_git_head`
+3. require exact-head `TAKY Enforcement Regression` + `drawing-engine-core` green
+4. inspect `production_ready` and warnings
+5. use `get-validation-readiness` when user-facing validation is needed
+
+Meaning:
+- fixed SHA in handoff = historical checkpoint
+- live readiness = current authority
+- staging_ready may be true while production_ready is false
+- ephemeral capability key mode is not durable production readiness
+
+Removed bypass:
+`TAKY_SKIP_CI_ATTESTATION` must never reappear in production gateway.
+
+Repository protection:
+- branch protection is currently ADMIN_REQUIRED / OPEN
+- current connector cannot write branch protection/rulesets
+- runtime production gate compensates by refusing non-green exact HEAD
+
+Latest checkpoint before this handoff update:
+`d2bdf78f2efdfabe82c25613e20639092cd9546a`
+- Enforcement #352 — SUCCESS
+- Drawing Core #808 — SUCCESS
+
+After this handoff commit, query live readiness again.
 
 ## OPEN NEXT
 
