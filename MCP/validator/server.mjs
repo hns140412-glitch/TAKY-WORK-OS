@@ -15,6 +15,7 @@ const __dirname=path.dirname(__filename);
 const projectRoot=path.resolve(__dirname,'../..');
 const visualAdapter=path.resolve(projectRoot,'tools/drawing_visual_metric_extractor.py');
 const reviewImageExporter=path.resolve(projectRoot,'tools/drawing_review_image_exporter.py');
+const sourceFidelityAdapter=path.resolve(projectRoot,'tools/drawing_source_fidelity_validator.py');
 
 const Signer=require('./receipt-signer.cjs');
 const VisionParser=require('../../runtime/vision-review-parser.js');
@@ -32,6 +33,17 @@ function projectSafe(rawPath){
 
 function sha256File(filePath){
   return crypto.createHash('sha256').update(fs.readFileSync(filePath)).digest('hex');
+}
+
+function runJsonPython(script,args){
+  return new Promise((resolve,reject)=>{
+    const python=process.env.TAKY_PYTHON||'python3';
+    execFile(python,[script,...args],{maxBuffer:40*1024*1024},(err,stdout,stderr)=>{
+      if(err){ reject(new Error(stderr||stdout||err.message)); return; }
+      try{ resolve(JSON.parse(stdout)); }
+      catch(e){ reject(new Error('VALIDATOR_JSON_INVALID:'+e.message)); }
+    });
+  });
 }
 
 function runVisualPython(args){
@@ -111,6 +123,45 @@ async function callIndependentVision({baselinePng,candidatePng,referencePngs=[],
 
 export function buildServer(){
   const server=new McpServer({name:'taky-independent-validation',version:'0.1.0'});
+
+  server.registerTool(
+    'verify-source-fidelity',
+    {
+      description:'Independently verify source PDF -> controlled SVG -> canonical SVG -> actual candidate artifact fidelity and sign an artifact-bound receipt.',
+      inputSchema:z.object({
+        source_pdf_path:z.string().min(1),
+        controlled_svg_path:z.string().min(1),
+        canonical_svg_path:z.string().min(1),
+        candidate_path:z.string().min(1),
+        page_index:z.number().int().min(0).default(0)
+      })
+    },
+    async(input)=>{
+      try{
+        const paths=[input.source_pdf_path,input.controlled_svg_path,input.canonical_svg_path,input.candidate_path];
+        if(paths.some(p=>!projectSafe(p))) return result({ok:false,reason:'SOURCE_FIDELITY_PATH_OUTSIDE_PROJECT'});
+        const evidence=await runJsonPython(sourceFidelityAdapter,[
+          input.source_pdf_path,
+          input.controlled_svg_path,
+          input.canonical_svg_path,
+          input.candidate_path,
+          '--page',String(input.page_index??0)
+        ]);
+        if(evidence.ok!==true) return result({ok:false,reason:'SOURCE_FIDELITY_FAIL',evidence});
+        const receipt=Signer.signSourceFidelity({evidence});
+        return result({
+          ok:true,
+          receipt,
+          candidate_digest:evidence.candidate_sha256,
+          source_digest:evidence.source_sha256,
+          validator_id:'SOURCE_FIDELITY_VALIDATOR_V1',
+          evidence
+        });
+      }catch(error){
+        return result({ok:false,reason:'SOURCE_FIDELITY_VALIDATION_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
 
   server.registerTool(
     'measure-visual-artifact',
