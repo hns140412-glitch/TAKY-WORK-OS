@@ -1,8 +1,11 @@
 (function(root,factory){
-  const api=factory();
+  const compiler=(typeof module==='object'&&module.exports)
+    ? require('./drawing-reference-compiler')
+    : root.TakyDrawingReferenceCompiler;
+  const api=factory(compiler);
   if(typeof module==='object'&&module.exports) module.exports=api;
   else root.TakyDrawingReferenceRouter=Object.freeze(api);
-})(typeof globalThis!=='undefined'?globalThis:this,function(){
+})(typeof globalThis!=='undefined'?globalThis:this,function(compiler){
   'use strict';
 
   const UTILIZATION=Object.freeze([
@@ -55,5 +58,35 @@
     });
   }
 
-  return Object.freeze({version:'1.0.0',UTILIZATION,classify});
+  function compileForEngine({reference_records=[]}={}){
+    if(!compiler || typeof compiler.compile!=='function'){
+      return Object.freeze({ok:false,decision:'HOLD',blocks:Object.freeze(['REFERENCE_COMPILER_UNAVAILABLE'])});
+    }
+    const compiled=compiler.compile(reference_records);
+    if(!compiled.ok){
+      return Object.freeze({ok:false,decision:'HOLD',blocks:compiled.blocks,effects:compiled.effects});
+    }
+    const engine_parameters={};
+    const validation_probes=[];
+    for(const effect of compiled.effects){
+      Object.assign(engine_parameters,effect.engine_parameters||{});
+      validation_probes.push(effect.validation_probe);
+    }
+    return Object.freeze({
+      ok:true,
+      decision:'READY',
+      engine_parameters:Object.freeze(engine_parameters),
+      validation_probes:Object.freeze(validation_probes),
+      compiled
+    });
+  }
+
+  function validateReferenceEffect({compiled,applied_parameters=[],passed_probes=[]}={}){
+    if(!compiler || typeof compiler.validateApplied!=='function'){
+      return Object.freeze({ok:false,reason:'REFERENCE_COMPILER_UNAVAILABLE'});
+    }
+    return compiler.validateApplied(compiled,{applied_parameters,passed_probes});
+  }
+
+  return Object.freeze({version:'2.0.0',UTILIZATION,classify,compileForEngine,validateReferenceEffect});
 });
