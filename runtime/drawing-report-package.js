@@ -73,18 +73,33 @@
 
     return Object.freeze({
       ok:true,
+      production_authorized:false,
+      showable:false,
+      authorization_required:'runtime/drawing-production-router.js',
       content_canonical:'REPORT_PACKAGE',
       visual_canonical:'A3_SVG_BOARD_STATE',
       pages:Object.freeze(pages),
       outputs:Object.freeze({
-        PDF:{route:'A3_SVG_BOARD_STATE -> PDF',role:'PRIMARY_DELIVERABLE'},
-        HTML:{route:'A3_SVG_BOARD_STATE -> HTML',role:'INTERACTIVE_VIEW'},
-        PPTX:{route:'A3_SVG_BOARD_STATE -> PPTX',role:'EDITABLE_PRESENTATION'},
-        PNG:{route:'A3_SVG_BOARD_STATE -> PNG',role:'RASTER_PREVIEW'},
-        SVG:{route:'A3_SVG_BOARD_STATE',role:'VISUAL_CANONICAL'},
-        XLSX:{route:'REPORT_PACKAGE.tables/facts/cases/review_items -> XLSX',role:'DATA_EXPORT'}
+        PDF:{route:'A3_SVG_BOARD_STATE -> PDF',role:'PLANNED_PRIMARY_DELIVERABLE'},
+        HTML:{route:'A3_SVG_BOARD_STATE -> HTML',role:'PLANNED_INTERACTIVE_VIEW'},
+        PPTX:{route:'A3_SVG_BOARD_STATE -> PPTX',role:'PLANNED_EDITABLE_PRESENTATION'},
+        PNG:{route:'A3_SVG_BOARD_STATE -> PNG',role:'PLANNED_RASTER_PREVIEW'},
+        SVG:{route:'A3_SVG_BOARD_STATE',role:'PLANNED_VISUAL_CANONICAL'},
+        XLSX:{route:'REPORT_PACKAGE.tables/facts/cases/review_items -> XLSX',role:'PLANNED_DATA_EXPORT'}
       })
     });
+  }
+
+  function authorizeOutputPlan(pkg={},execution={}){
+    const plan=buildOutputPlan(pkg);
+    if(!plan.ok) return plan;
+    if(typeof module!=='object' || !module.exports){
+      return Object.freeze({ok:false,reason:'PRODUCTION_ROUTER_REQUIRED',showable:false});
+    }
+    const router=require('./drawing-production-router');
+    const auth=router.authorizeProduction(execution);
+    if(!auth.ok) return Object.freeze({ok:false,reason:'PRODUCTION_NOT_AUTHORIZED',showable:false,findings:auth.findings});
+    return Object.freeze({...plan,production_authorized:true,showable:auth.showable,production_authorization:auth.receipt});
   }
 
   function applyFactPatch(pkg={},patches=[]){
@@ -103,9 +118,10 @@
   }
 
   return Object.freeze({
-    version:'1.0.0',
+    version:'2.0.0',
     validate,
     buildOutputPlan,
+    authorizeOutputPlan,
     applyFactPatch
   });
 });
