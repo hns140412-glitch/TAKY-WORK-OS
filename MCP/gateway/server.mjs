@@ -6,6 +6,7 @@ import { execFile } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import path from 'node:path';
 import fs from 'node:fs';
+import crypto from 'node:crypto';
 
 const require=createRequire(import.meta.url);
 const __filename=fileURLToPath(import.meta.url);
@@ -21,6 +22,7 @@ const Pipeline=require('../../runtime/production-pipeline.js');
 const ReferenceCompiler=require('../../runtime/reference-compiler.js');
 const ReferenceApplication=require('../../runtime/reference-application.js');
 const CIGate=require('../../runtime/ci-attestation-gate.js');
+const Capability=require('../../runtime/capability-token.js');
 
 function runPython(args){
   return new Promise((resolve,reject)=>{
@@ -58,13 +60,21 @@ async function fetchWorkflowRunsForSha(sha){
 }
 
 async function verifyCurrentCIGreen(){
-  if(process.env.TAKY_SKIP_CI_ATTESTATION==='1'){
-    return {ok:true,skipped:true,reason:'TEST_ONLY_SKIP'};
-  }
   const sha=await currentGitHead();
   const runs=await fetchWorkflowRunsForSha(sha);
   const evaluated=CIGate.evaluateWorkflowRuns(runs);
   return {...evaluated,commit_sha:sha};
+}
+
+function publicKeyFingerprint(pem){
+  if(!pem) return null;
+  try{
+    const key=crypto.createPublicKey(pem);
+    const der=key.export({type:'spki',format:'der'});
+    return crypto.createHash('sha256').update(der).digest('hex').slice(0,24);
+  }catch(e){
+    return null;
+  }
 }
 
 function projectSafe(rawPath){
@@ -122,6 +132,54 @@ export function buildServer(){
     name:'taky-work-os-production-gateway',
     version:'0.1.0'
   });
+
+  server.registerTool(
+    'get-production-readiness',
+    {
+      description:'Report live production readiness from current git HEAD, exact-head CI, verification public keys and capability-key mode without exposing secrets.',
+      inputSchema:z.object({})
+    },
+    async()=>{
+      try{
+        const ci=await verifyCurrentCIGreen();
+        const measurementPem=process.env.TAKY_MEASUREMENT_PUBLIC_KEY_PEM||'';
+        const visionPem=process.env.TAKY_VISION_PUBLIC_KEY_PEM||'';
+        const measurementFp=publicKeyFingerprint(measurementPem);
+        const visionFp=publicKeyFingerprint(visionPem);
+        const keysReady=Boolean(measurementFp && visionFp);
+        const persistentCapability=Capability.key_mode==='CONFIGURED_PRIVATE';
+        const warnings=[];
+        if(!measurementFp) warnings.push('MEASUREMENT_PUBLIC_KEY_NOT_READY');
+        if(!visionFp) warnings.push('VISION_PUBLIC_KEY_NOT_READY');
+        if(!persistentCapability) warnings.push('CAPABILITY_KEY_NOT_PERSISTENT_ACROSS_PROCESS_RESTART');
+
+        return result({
+          ok:true,
+          production_ready:Boolean(ci.ok && keysReady),
+          staging_ready:true,
+          current_git_head:ci.commit_sha||null,
+          exact_head_ci:ci,
+          validation_public_keys:{
+            measurement_present:Boolean(measurementFp),
+            measurement_fingerprint:measurementFp,
+            vision_present:Boolean(visionFp),
+            vision_fingerprint:visionFp
+          },
+          capability_key_mode:Capability.key_mode,
+          persistent_capability_key:persistentCapability,
+          warnings
+        });
+      }catch(error){
+        return result({
+          ok:false,
+          production_ready:false,
+          staging_ready:true,
+          reason:'PRODUCTION_READINESS_CHECK_FAILED',
+          error:String(error?.message||error)
+        });
+      }
+    }
+  );
 
   server.registerTool(
     'controlled-present-drawing',
