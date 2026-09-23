@@ -241,6 +241,26 @@
       "OWNER": "TAKY_HANDOFF",
       "DESTINATION": "C2S/HANDOFF central correction",
       "STATUS": "CENTRAL_TAKY_CANDIDATE_CI_PENDING"
+    },
+    {
+      "FAILURE_ID": "F-L",
+      "SYMPTOM": "ENGINE_PROMOTION_DOMAIN_CONTAMINATION",
+      "USER_OBSERVED": "Drawing Engine existed on a feature branch, while the same PR accumulated Hannam-specific report/profile/task/handoff artifacts.",
+      "EXPECTED_BEHAVIOR": "Generic engine availability is a promoted runtime capability; project packs stay isolated and cannot define engine authority.",
+      "ACTUAL_BEHAVIOR": "Feature-branch implementation and project-specific assets were co-located, making 'engine exists' ambiguous and default routing non-authoritative.",
+      "ROOT_CAUSE": "Implementation promotion state and domain ownership were not part of engine availability semantics.",
+      "WHY_EXISTING_GATE_FAILED": "Router/gates validated execution after entry but did not prove that the engine was the promoted default capability nor that its package was project-neutral.",
+      "BYPASS_PATH": "feature branch engine exists -> task runs elsewhere / local workaround; or broad project branch -> proposed central merge",
+      "MISSING_ENFORCEMENT": "ENGINE_PROMOTION_STATE + GENERIC_ENGINE/PROJECT_PACK boundary",
+      "SOURCE_IMPACT": "systemic",
+      "QUALITY_IMPACT": "high",
+      "USER_DEBUG_BURDEN": "high",
+      "RECURRENCE_RISK": "critical",
+      "FIX_LAYER": "ARCHITECTURE/ROUTING/HANDOFF",
+      "REGRESSION_TEST": "RT-O",
+      "OWNER": "WORK_OS + TAKY_GOVERNANCE",
+      "DESTINATION": "engine promotion registry + split integration PR",
+      "STATUS": "OPEN_SPLIT_REQUIRED"
     }
   ],
   "authority": "ACTIVE_SYSTEM_SURGERY_LEDGER",
