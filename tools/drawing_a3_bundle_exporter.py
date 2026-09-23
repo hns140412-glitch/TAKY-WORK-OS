@@ -15,7 +15,7 @@ import shutil
 from pathlib import Path
 from typing import Dict
 
-import fitz
+import pymupdf as fitz
 from PIL import Image
 from pptx import Presentation
 from openpyxl import Workbook
