@@ -43,3 +43,28 @@ x=r.classify({
 assert.equal(x.utilization,'VOLATILE_REFERENCE');
 
 console.log('drawing-reference-router: PASS');
+
+
+const compiled=r.compileForEngine({
+  reference_records:[{
+    reference_name:'ArchDaily',
+    mined_dna:'PLAN_LINE_HIERARCHY',
+    design_tokens:{wall_weight:0.40},
+    engine_parameters:{wall_lineweight:0.40},
+    output_effect:'cut walls dominate projection',
+    validation_probe:'PLAN_HIERARCHY_VISIBLE'
+  }]
+});
+assert.equal(compiled.ok,true);
+assert.equal(compiled.engine_parameters.wall_lineweight,0.40);
+assert.deepEqual(compiled.validation_probes,['PLAN_HIERARCHY_VISIBLE']);
+assert.equal(r.validateReferenceEffect({
+  compiled:compiled.compiled,
+  applied_parameters:['wall_lineweight'],
+  passed_probes:['PLAN_HIERARCHY_VISIBLE']
+}).ok,true);
+assert.equal(r.validateReferenceEffect({
+  compiled:compiled.compiled,
+  applied_parameters:[],
+  passed_probes:[]
+}).ok,false);
