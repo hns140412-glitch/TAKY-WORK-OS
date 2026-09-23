@@ -1,8 +1,8 @@
 {
-  "schema": "PRE_USER_VALIDATION_SPEC_V1",
-  "status": "ACTIVE_CANDIDATE",
+  "schema": "PRE_USER_VALIDATION_SPEC_V2",
+  "status": "ACTIVE_CANDIDATE_CI_PASS",
   "principle": "HUMAN_IS_THE_KEY_NOT_THE_DEBUGGER",
-  "invariant": "NO_PASS_NO_SHOW",
+  "invariant": "NO_PASS_NO_SHOW__NO_SELF_ASSERTED_PASS",
   "layers": [
     "L0_SOURCE_AUTHORITY",
     "L1_GEOMETRY",
@@ -51,5 +51,22 @@
     "finding_deleted_core",
     "finding_bad_crop",
     "finding_unsupported_fact"
+  ],
+  "evidence_contract": {
+    "validation_bundle_required": true,
+    "source_digest_required": true,
+    "artifact_digest_required": true,
+    "gate_entry_required_fields": [
+      "status",
+      "validator",
+      "evidence_refs"
+    ],
+    "execution_receipt_required_for_exposure": true,
+    "receipt_bundle_digest_match_required": true
+  },
+  "disallowed_evidence": [
+    "bare *_gate_pass boolean",
+    "bare execution_route string",
+    "bare engine_id string"
   ]
 }
