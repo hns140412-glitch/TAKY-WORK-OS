@@ -146,7 +146,7 @@ export function buildServer(){
   server.registerTool(
     'get-validation-readiness',
     {
-      description:'Report validator readiness without exposing private keys or API secrets.',
+      description:'Report validator readiness without exposing private keys or API secrets and issue a short-lived signed readiness attestation when possible.',
       inputSchema:z.object({})
     },
     async()=>{
@@ -160,6 +160,18 @@ export function buildServer(){
         vision_private_key_valid:vision.valid===true,
         anthropic_api_key_present:apiPresent
       });
+
+      let readinessReceipt=null;
+      if(measurement.valid===true){
+        readinessReceipt=Signer.signValidationReadiness({
+          objective_validation_ready:evaluated.objective_validation_ready,
+          vision_review_ready:evaluated.vision_review_ready,
+          user_facing_validation_ready:evaluated.user_facing_validation_ready,
+          vision_public_fingerprint:vision.public_fingerprint,
+          vision_model:model
+        });
+      }
+
       return result({
         ok:true,
         objective_validation_ready:evaluated.objective_validation_ready,
@@ -169,6 +181,8 @@ export function buildServer(){
         vision_key:vision,
         anthropic_api_key_present:apiPresent,
         vision_model:model,
+        validation_readiness_receipt:readinessReceipt,
+        receipt_ttl_ms:readinessReceipt?120000:null,
         warnings:[...evaluated.warnings]
       });
     }
