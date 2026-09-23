@@ -10,7 +10,16 @@ const REFERENCE_DNA=Object.freeze({
     engine_patch:Object.freeze({
       source_style_policy:Object.freeze({
         requires_verified_roles:true,
-        hierarchy:Object.freeze(['CUT','PRIMARY','SECONDARY','ANNOTATION'])
+        hierarchy:Object.freeze(['CUT','PRIMARY','SECONDARY','ANNOTATION']),
+        fallback_mode:'SOURCE_STYLE_RANK',
+        fallback_hierarchy:Object.freeze(['HEAVY','PRIMARY','SECONDARY','LIGHT']),
+        multipliers:Object.freeze({
+          HEAVY:1.16,
+          PRIMARY:1.06,
+          SECONDARY:0.96,
+          LIGHT:0.86
+        }),
+        semantic_inference:false
       })
     })
   }),
