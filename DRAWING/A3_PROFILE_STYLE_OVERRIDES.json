@@ -1,0 +1,186 @@
+{
+  "registry_version": "2026-09-23.1",
+  "rule": "Profiles override presentation only. Base A3 physical hierarchy remains the shared reference and geometry stays locked.",
+  "profiles": [
+    {
+      "profile_id": "SALES_PLAN",
+      "purpose": "buyer-facing plan readability and practical use",
+      "role_overrides": {
+        "CUT": {
+          "stroke_width_mm": 0.64,
+          "svg_stroke_width": "0.64mm"
+        },
+        "PRIMARY": {
+          "stroke_width_mm": 0.34,
+          "svg_stroke_width": "0.34mm"
+        },
+        "SECONDARY": {
+          "opacity": 0.78
+        },
+        "CONTEXT": {
+          "opacity": 0.28
+        },
+        "FURNITURE": {
+          "opacity": 0.88
+        },
+        "LANDSCAPE": {
+          "opacity": 0.52
+        },
+        "ANNOTATION": {
+          "opacity": 0.95
+        },
+        "SHADOW": {
+          "fill_opacity": 0.05
+        }
+      },
+      "composition": {
+        "white_space": "medium",
+        "material": "clear_but_restrained",
+        "furniture": "real_scale_high_value",
+        "annotation": "room_and_key_dimensions",
+        "atmosphere": "low"
+      },
+      "output_checks": [
+        "room relationships readable",
+        "circulation readable",
+        "furniture scale plausible",
+        "critical labels visible",
+        "no apparent room-size manipulation"
+      ]
+    },
+    {
+      "profile_id": "SECTION_PRESENTATION",
+      "purpose": "vertical spatial and ground-condition comprehension",
+      "role_overrides": {
+        "CUT": {
+          "stroke_width_mm": 0.8,
+          "svg_stroke_width": "0.80mm"
+        },
+        "PRIMARY": {
+          "stroke_width_mm": 0.4,
+          "svg_stroke_width": "0.40mm"
+        },
+        "SECONDARY": {
+          "opacity": 0.82
+        },
+        "CONTEXT": {
+          "opacity": 0.22
+        },
+        "FURNITURE": {
+          "opacity": 0.6
+        },
+        "LANDSCAPE": {
+          "opacity": 0.48
+        },
+        "ANNOTATION": {
+          "opacity": 0.92
+        },
+        "SHADOW": {
+          "fill_opacity": 0.04
+        }
+      },
+      "composition": {
+        "white_space": "high",
+        "cut_poche": "strong",
+        "near_mid_far": "explicit",
+        "ground_soil": "clear",
+        "atmosphere": "very_low"
+      },
+      "output_checks": [
+        "cut plane dominant",
+        "ground and soil readable",
+        "level relationships preserved",
+        "background subordinate"
+      ]
+    },
+    {
+      "profile_id": "PUBLICATION",
+      "purpose": "editorial architectural reading with restrained context",
+      "role_overrides": {
+        "CUT": {
+          "stroke_width_mm": 0.68,
+          "svg_stroke_width": "0.68mm"
+        },
+        "PRIMARY": {
+          "stroke_width_mm": 0.36,
+          "svg_stroke_width": "0.36mm"
+        },
+        "SECONDARY": {
+          "opacity": 0.72
+        },
+        "CONTEXT": {
+          "opacity": 0.35
+        },
+        "FURNITURE": {
+          "opacity": 0.58
+        },
+        "LANDSCAPE": {
+          "opacity": 0.46
+        },
+        "ANNOTATION": {
+          "opacity": 0.72
+        },
+        "SHADOW": {
+          "fill_opacity": 0.035
+        }
+      },
+      "composition": {
+        "white_space": "high",
+        "material": "restrained",
+        "entourage": "selective",
+        "annotation": "editorial_reduced",
+        "atmosphere": "low"
+      },
+      "output_checks": [
+        "figure-ground clear",
+        "white space preserved",
+        "context selective",
+        "architecture dominates graphics"
+      ]
+    },
+    {
+      "profile_id": "TECHNICAL_CLEAN",
+      "purpose": "clean technical drawing without presentation noise",
+      "role_overrides": {
+        "CUT": {
+          "stroke_width_mm": 0.7,
+          "svg_stroke_width": "0.70mm"
+        },
+        "PRIMARY": {
+          "stroke_width_mm": 0.38,
+          "svg_stroke_width": "0.38mm"
+        },
+        "SECONDARY": {
+          "opacity": 0.9
+        },
+        "CONTEXT": {
+          "opacity": 0.5
+        },
+        "FURNITURE": {
+          "opacity": 0.45
+        },
+        "LANDSCAPE": {
+          "opacity": 0.35
+        },
+        "ANNOTATION": {
+          "opacity": 1
+        },
+        "SHADOW": {
+          "fill_opacity": 0
+        }
+      },
+      "composition": {
+        "white_space": "functional",
+        "material": "minimal",
+        "entourage": "minimal",
+        "annotation": "technical",
+        "atmosphere": "none"
+      },
+      "output_checks": [
+        "technical line hierarchy clear",
+        "dimensions and labels readable",
+        "no decorative layer obscures information"
+      ]
+    }
+  ]
+}

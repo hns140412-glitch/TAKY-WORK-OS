@@ -1,0 +1,29 @@
+{
+  "contract_version": "2026-09-23.1",
+  "purpose": "Prevent SALES_TEXTURED from silently inventing room/material geometry while preserving forward progress.",
+  "requested_profiles": [
+    "SALES_PLAN",
+    "SALES_TEXTURED"
+  ],
+  "trusted_semantic_states": [
+    "CAD_RULE_VERIFIED",
+    "USER_CONFIRMED",
+    "SOURCE_EXPLICIT",
+    "VERIFIED_SEMANTIC"
+  ],
+  "hard_requirements": {
+    "SOURCE_LINE": "required",
+    "ROOM_MATERIAL": "required and semantically confirmed"
+  },
+  "conditional_requirements": {
+    "ANNOTATION": "if present, source trace or user confirmation required",
+    "FURNITURE": "verified semantic mask OR explicitly presentation-only and allowed by user intent",
+    "LANDSCAPE": "optional presentation layer subject to project constraints"
+  },
+  "fallback": {
+    "profile": "PUBLICATION",
+    "reason": "Keep work moving without converting unknown semantics into false geometry.",
+    "rule": "Fallback is automatic; it does not ask the user to debug the engine."
+  },
+  "unlock_rule": "A later verified CAD layer rule, explicit source semantic, or user-confirmed mask may unlock SALES_TEXTURED without recomputing L0/L1."
+}
