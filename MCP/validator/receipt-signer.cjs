@@ -25,6 +25,16 @@ function sign(type,validatorId,payload,privateEnv,ttlMs=600000){
   return encoded+'.'+sig;
 }
 
+function signValidationReadiness(payload={}){
+  return sign('TAKY_VALIDATION_READINESS_RECEIPT','VALIDATION_READINESS_V1',{
+    objective_validation_ready:payload.objective_validation_ready===true,
+    vision_review_ready:payload.vision_review_ready===true,
+    user_facing_validation_ready:payload.user_facing_validation_ready===true,
+    vision_public_fingerprint:payload.vision_public_fingerprint||null,
+    vision_model:payload.vision_model||null
+  },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM',120000);
+}
+
 function signVisualMeasurement({artifact_digest,metrics}={}){
   if(!artifact_digest) throw new Error('ARTIFACT_DIGEST_REQUIRED');
   if(!metrics || metrics.schema!=='TAKY_OBJECTIVE_VISUAL_METRICS_V1') throw new Error('OBJECTIVE_VISUAL_METRICS_REQUIRED');
@@ -97,6 +107,7 @@ function signVisionReview(payload={}){
 }
 
 module.exports=Object.freeze({
+  signValidationReadiness,
   signVisualMeasurement,
   signReferenceEffect,
   signSourceFidelity,
