@@ -11,6 +11,7 @@ import argparse
 import hashlib
 import json
 import math
+import tempfile
 from pathlib import Path
 from typing import Any, Dict, Iterable, List, Tuple
 
@@ -162,14 +163,39 @@ def extract(path: str | Path,source_type: str,page_index: int=0) -> Dict[str, An
     if s in {"PDF","VECTOR_PDF"}:
         return extract_pdf_primitives(path,page_index=page_index)
     if s=="DWG":
-        return {
-            "schema":"TAKY_GEOMETRY_PRIMITIVES_V1",
-            "source_type":"DWG",
-            "status":"CONVERSION_REQUIRED",
-            "blocker":"DWG_DECODER_REQUIRED",
-            "next_input":"DXF",
-            "semantic_inference":False,
-        }
+        try:
+            from drawing_dwg_bridge import convert_dwg_to_dxf
+        except ImportError:
+            return {
+                "schema":"TAKY_GEOMETRY_PRIMITIVES_V1",
+                "source_type":"DWG",
+                "status":"BLOCKED",
+                "blocker":"DWG_BRIDGE_MODULE_REQUIRED",
+                "semantic_inference":False,
+            }
+        with tempfile.TemporaryDirectory(prefix="taky-dwg-") as td:
+            dxf_path=Path(td)/"decoded.dxf"
+            decoded=convert_dwg_to_dxf(path,dxf_path,strict=True)
+            if decoded.get("ok") is not True:
+                return {
+                    "schema":"TAKY_GEOMETRY_PRIMITIVES_V1",
+                    "source_type":"DWG",
+                    "status":"BLOCKED",
+                    "blocker":decoded.get("reason") or "DWG_DECODE_FAILED",
+                    "decoder_manifest":decoded,
+                    "semantic_inference":False,
+                }
+            result=extract_dxf_primitives(dxf_path)
+            result["source_type"]="DWG_DERIVED_DXF"
+            result["source_sha256"]=decoded["source_sha256"]
+            result["derived_dxf_sha256"]=decoded["derived_dxf_sha256"]
+            result["authority"]="DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE"
+            result["production_claimable"]=False
+            result["decoder_manifest"]={
+                k:v for k,v in decoded.items()
+                if k!="derived_dxf_path"
+            }
+            return result
     raise ValueError("UNSUPPORTED_SOURCE_TYPE")
 
 

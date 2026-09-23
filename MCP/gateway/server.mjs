@@ -430,7 +430,7 @@ export function buildServer(){
   server.registerTool(
     'extract-geometry-primitives',
     {
-      description:'Parse local DXF or vector PDF source into normalized geometry primitives without architectural semantic inference. DWG remains conversion-required.',
+      description:'Parse local DXF/vector PDF into normalized geometry primitives. DWG uses the strict GNU LibreDWG dwgread bridge when available and remains derived/non-production-claimable pending source-equivalence proof.',
       inputSchema:z.object({
         source_path:z.string().min(1),
         source_type:z.enum(['DXF','PDF','VECTOR_PDF','DWG']),
