@@ -348,20 +348,6 @@ export function buildServer(){
     async(input)=>result(ReferenceCompiler.compileReferenceProfile(input))
   );
 
-  server.registerTool(
-    'validate-reference-effect',
-    {
-      description:'Promote compiled reference DNA to VERIFIED_EFFECTIVE only after traceability, effect, fit, fidelity and ablation proof all pass.',
-      inputSchema:z.object({
-        TRACEABILITY_PASS:z.boolean(),
-        EFFECT_PASS:z.boolean(),
-        FIT_PASS:z.boolean(),
-        FIDELITY_PASS:z.boolean(),
-        REFERENCE_ABLATION_TEST_PASS:z.boolean()
-      })
-    },
-    async(input)=>result(ReferenceCompiler.validateReferenceEffect(input))
-  );
 
   return server;
 }
