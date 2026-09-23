@@ -35,19 +35,25 @@ function signVisualMeasurement({artifact_digest,metrics}={}){
   },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
 }
 
-function signReferenceEffect({baseline_digest,candidate_digest,reference_ids,reference_compile_digest,comparison}={}){
+function signReferenceEffect({baseline_digest,candidate_digest,effect_input_digest=null,reference_ids,reference_compile_digest,comparison}={}){
   if(!baseline_digest || !candidate_digest) throw new Error('REFERENCE_DIGESTS_REQUIRED');
   if(!Array.isArray(reference_ids)||!reference_ids.length) throw new Error('REFERENCE_IDS_REQUIRED');
   if(!reference_compile_digest) throw new Error('REFERENCE_COMPILE_DIGEST_REQUIRED');
-  if(!comparison || comparison.schema!=='TAKY_OBJECTIVE_REFERENCE_DELTA_V1') throw new Error('OBJECTIVE_REFERENCE_COMPARISON_REQUIRED');
+  const allowed=new Set(['TAKY_OBJECTIVE_REFERENCE_DELTA_V1','TAKY_LINE_HIERARCHY_DELTA_V1']);
+  if(!comparison || !allowed.has(comparison.schema)) throw new Error('OBJECTIVE_REFERENCE_COMPARISON_REQUIRED');
+  if(comparison.schema==='TAKY_LINE_HIERARCHY_DELTA_V1' && !effect_input_digest){
+    throw new Error('REFERENCE_EFFECT_INPUT_DIGEST_REQUIRED');
+  }
   return sign('TAKY_REFERENCE_EFFECT_RECEIPT','OBJECTIVE_VISUAL_MEASURER_V1',{
     baseline_digest,
     candidate_digest,
+    effect_input_digest,
     reference_ids:[...reference_ids],
     reference_compile_digest,
+    effect_schema:comparison.schema,
     comparison,
     objective_effect_pass:comparison.objective_effect_detected===true,
-    clarity_only_suspected:comparison.clarity_only_suspected===true,
+    clarity_only_suspected:comparison.schema==='TAKY_OBJECTIVE_REFERENCE_DELTA_V1' && comparison.clarity_only_suspected===true,
     professional_family_claim:false
   },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
 }
@@ -63,6 +69,7 @@ function signSourceFidelity({evidence}={}){
     source_sha256:evidence.source_sha256,
     source_page_index:evidence.source_page_index,
     candidate_digest:evidence.candidate_sha256,
+    controlled_svg_sha256:evidence.controlled_svg_sha256,
     canonical_svg_sha256:evidence.canonical_svg_sha256,
     source_geometry_fingerprint:evidence.source_geometry_fingerprint,
     controlled_geometry_fingerprint:evidence.controlled_geometry_fingerprint,
