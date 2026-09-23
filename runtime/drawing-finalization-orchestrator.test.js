@@ -27,4 +27,14 @@ assert.equal(f.decideUserExposure({
   operations:['GENERATIVE_GEOMETRY_REDRAW'],validation_evidence:validation
 }).decision,'HOLD');
 
+assert.equal(f.decideUserExposure({
+  artifact_class:'FINAL',execution_route:'AUTHORIZED_ENGINE',engine_id:'DRAWING_ENGINE_V2',
+  operations:['VECTOR_STYLE_LAYER'],validation_evidence:{...validation,defects:['WALL_DELETED']}
+}).decision,'HOLD');
+
+assert.equal(f.decideUserExposure({
+  artifact_class:'FINAL',execution_route:'AUTHORIZED_ENGINE',engine_id:'DRAWING_ENGINE_V2',
+  operations:['VECTOR_STYLE_LAYER']
+}).decision,'HOLD');
+
 console.log('drawing-finalization-orchestrator: PASS');
