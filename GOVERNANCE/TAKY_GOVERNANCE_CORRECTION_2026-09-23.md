@@ -143,6 +143,38 @@ They do not receive production publication authority.
 The project-level Claude host guard blocks direct writes to `artifacts/production`.
 Validated staging → production publication occurs through the TAKY artifact broker.
 
+## ARTIFACT-BOUND SOURCE FIDELITY
+
+Production geometry PASS cannot be granted from caller-supplied `geometry.output`.
+
+For user-facing / final publication:
+- actual source bytes
+- controlled source SVG
+- canonical A3 SVG
+- actual candidate artifact bytes
+
+must be independently re-read and bound by a signed `SOURCE_FIDELITY_VALIDATOR_V1` receipt.
+
+The receipt verifies:
+- source PDF -> controlled SVG geometry parity
+- source-slot viewBox parity
+- canonical inline-source identity
+- absence of wrapper transform mutation
+- canonical SVG -> actual candidate artifact parity
+- exact candidate digest
+- exact source digest
+
+Caller-supplied geometry remains available only as diagnostic evidence and cannot authorize production.
+
+New invariant:
+
+**NO ARTIFACT-BOUND SOURCE FIDELITY → NO GEOMETRY PASS.**
+
+Defensive balance:
+- staging and diagnostics do not require this receipt
+- user-facing production does
+- existing geometry diagnostics are preserved, but demoted from authority
+
 ## HUMAN AUTHORITY
 
 Human final authority is preserved.
