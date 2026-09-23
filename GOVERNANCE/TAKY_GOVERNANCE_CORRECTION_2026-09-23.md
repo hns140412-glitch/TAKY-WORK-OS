@@ -1,32 +1,59 @@
 # TAKY GOVERNANCE CORRECTION — 2026-09-23
 
-## Correction
-TAKY governance is no longer considered implemented when a rule exists only in prose, JSON, a handoff, or a prompt.
+## TAKY FILTER
+Think Again, Keep Your Key.
+Think Again, You’re The Key.
+HUMAN IS THE KEY != HUMAN IS THE DEBUGGER.
+USER != DEBUGGER.
+SYSTEM PROVES. HUMAN CHOOSES.
 
-A governance rule is IMPLEMENTED only when at least one of the following is true:
-- execution permission blocks the forbidden path;
-- a required tool performs the logic;
-- independent validation blocks progression;
-- regression tests prove the failure is caught.
+## IMPLEMENTED DEFINITION
+TAKY governance is NOT implemented merely because a rule exists in prose, JSON, prompt, C2S or handoff.
 
-## Production authority
-Only an authorized route may issue a production authorization token.
-Diagnostic producers cannot issue user-facing artifacts.
+A governance rule is IMPLEMENTED only when its execution path is enforced by code/tool permission and regression evidence.
 
-## Validation authority
-Producer != validator.
-A producer cannot certify its own output.
+## PRODUCTION AUTHORITY
+TASK
+→ WORK OS ROUTER
+→ SIGNED PRODUCTION AUTHORIZATION
+→ AUTHORIZED EXECUTION GRAPH
+→ SPECIALIST ENGINE
+→ INDEPENDENT VALIDATION
+→ SIGNED EXPOSURE GRANT
+→ ARTIFACT BROKER
+→ HUMAN APPROVAL
 
-## Exposure authority
-User-visible or final-approvable state requires an authentic independent validation receipt.
-Default exposure state is hidden/internal.
+No valid authorization: no production.
+No valid validation receipt: no exposure.
+No valid exposure grant: no production artifact registration.
 
-## Human authority
-Human approval is for design/presentation choice, not defect detection.
+## CROSS-PROCESS / MCP CORRECTION
+In-memory WeakSet authorization was rejected as insufficient for MCP/process boundaries.
+Authorization, validation receipt and exposure grant now use signed serializable capability tokens.
+TAKY_ENFORCEMENT_SECRET is required.
 
-## Failure memory
-Critical failures must be converted into:
-FAILURE → ROOT_CAUSE → ANTI_PATTERN → ENFORCEMENT → REGRESSION_FIXTURE → CROSS_PROJECT_POLICY.
+## SELF-DECLARED PASS PROHIBITED
+Callers may not inject PASS strings for mandatory production gates.
+Source identity, geometry, fact evidence, semantics, narrative evidence, A3, architectural readability, provenance and user effect are evaluated by executable validators.
 
-## Resume mode
-Critical governance failures require SURGERY / RE_ARCHITECTURE mode until execution-path changes and regression evidence exist.
+## HOST POLICY
+MCP/HOST_TOOL_PERMISSION_POLICY_V1.json defines DEFAULT_DENY_PRODUCTION.
+
+Diagnostic-only:
+- PYTHON_ONE_OFF
+- GENERIC_HTML
+- REPORTLAB_ONE_OFF
+- IMAGE_GENERATOR_DIRECT
+
+Production:
+- DRAWING_ENGINE_V2
+- REPORT_ENGINE_V2
+through TAKY routing and artifact broker only.
+
+## HUMAN AUTHORITY
+Human approval selects design/presentation alternatives.
+Human approval is not defect detection and does not substitute for validation.
+
+## HOST EXCLUSIVITY LIMIT
+Repository code cannot physically stop a host that independently exposes unrestricted publishing/file-generation tools.
+Therefore HOST_ENFORCEMENT is CLOSED only after the actual host is configured so production publication is available exclusively through the TAKY gateway/broker.
