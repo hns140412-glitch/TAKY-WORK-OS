@@ -5,6 +5,12 @@ const crypto=require('crypto');
 const REFERENCE_DNA=Object.freeze({
   ARCHDAILY_PLAN_HIERARCHY:Object.freeze({
     intent:'PLAN_LINE_HIERARCHY',
+    applicability:Object.freeze({
+      status:'PARTIAL',
+      production_claimable:true,
+      claim_scope:'SOURCE_LINE_HIERARCHY_ONLY',
+      limitation:'NO_VERIFIED_CUT_PRIMARY_SECONDARY_SEMANTIC_ROLES'
+    }),
     relation:Object.freeze(['CUT','PRIMARY','SECONDARY','ANNOTATION']),
     expected_effect:Object.freeze(['VISIBLE_HIERARCHY','FIGURE_GROUND']),
     effect_metric:'TAKY_LINE_HIERARCHY_DELTA_V1',
@@ -26,6 +32,12 @@ const REFERENCE_DNA=Object.freeze({
   }),
   DIVISARE_EDITORIAL_RESTRAINT:Object.freeze({
     intent:'EDITORIAL_RESTRAINT',
+    applicability:Object.freeze({
+      status:'FULL',
+      production_claimable:true,
+      claim_scope:'EDITORIAL_LAYOUT_RESTRAINT',
+      limitation:null
+    }),
     relation:Object.freeze(['HERO_DOMINANT','WHITESPACE_PROTECTED','CAPTION_SUBORDINATE']),
     expected_effect:Object.freeze(['LOWER_NOISE','DRAWING_DOMINANCE']),
     effect_metric:'TAKY_OBJECTIVE_REFERENCE_DELTA_V1',
@@ -40,6 +52,12 @@ const REFERENCE_DNA=Object.freeze({
   }),
   OMA_RELATION_FIRST:Object.freeze({
     intent:'RELATION_FIRST',
+    applicability:Object.freeze({
+      status:'DEFERRED',
+      production_claimable:false,
+      claim_scope:null,
+      limitation:'DIAGRAM_COMPONENT_ADAPTER_NOT_ACTIVE'
+    }),
     relation:Object.freeze(['ONE_RELATION_PER_DIAGRAM','DECORATION_SUPPRESSED']),
     expected_effect:Object.freeze(['DECISION_CLARITY']),
     engine_patch:Object.freeze({
@@ -51,6 +69,12 @@ const REFERENCE_DNA=Object.freeze({
   }),
   BIG_ONE_MOVE:Object.freeze({
     intent:'ONE_MOVE',
+    applicability:Object.freeze({
+      status:'DEFERRED',
+      production_claimable:false,
+      claim_scope:null,
+      limitation:'DIAGRAM_COMPONENT_ADAPTER_NOT_ACTIVE'
+    }),
     relation:Object.freeze(['BASE_CONDITION','MOVE','RESULT']),
     expected_effect:Object.freeze(['SEQUENCE_CLARITY']),
     engine_patch:Object.freeze({
@@ -61,6 +85,12 @@ const REFERENCE_DNA=Object.freeze({
   }),
   SOM_FOSTER_TECHNICAL_CLARITY:Object.freeze({
     intent:'TECHNICAL_CLARITY',
+    applicability:Object.freeze({
+      status:'DEFERRED',
+      production_claimable:false,
+      claim_scope:null,
+      limitation:'VERIFIED_PRESENTATION_ROLES_REQUIRED'
+    }),
     relation:Object.freeze(['STRUCTURE','PROGRAM','ENVELOPE']),
     expected_effect:Object.freeze(['SYSTEM_READABILITY']),
     engine_patch:Object.freeze({
@@ -107,6 +137,12 @@ function compileReferenceProfile(input={}) {
     compiled.push(Object.freeze({
       reference_id:id,
       intent:dna.intent,
+      applicability:dna.applicability||Object.freeze({
+        status:'DEFERRED',
+        production_claimable:false,
+        claim_scope:null,
+        limitation:'APPLICABILITY_NOT_DECLARED'
+      }),
       relation:dna.relation,
       parameter_policy:'RELATION_LOCKED_VALUE_ADAPTED',
       adapter_context:Object.freeze({scale,output_size,source_density}),
@@ -120,7 +156,9 @@ function compileReferenceProfile(input={}) {
     reference_ids:[...reference_ids],
     context:{scale,output_size,source_density},
     compiled,
-    effect_metrics:[...new Set(compiled.map(x=>x.effect_metric).filter(Boolean))]
+    effect_metrics:[...new Set(compiled.map(x=>x.effect_metric).filter(Boolean))],
+    claimable_reference_ids:compiled.filter(x=>x.applicability?.production_claimable===true).map(x=>x.reference_id),
+    deferred_reference_ids:compiled.filter(x=>x.applicability?.production_claimable!==true).map(x=>x.reference_id)
   };
   const compile_digest=digest(canonical);
 
@@ -130,6 +168,9 @@ function compileReferenceProfile(input={}) {
     compile_digest,
     compiled:Object.freeze(compiled),
     effect_metrics:Object.freeze(canonical.effect_metrics),
+    claimable_reference_ids:Object.freeze(canonical.claimable_reference_ids),
+    deferred_reference_ids:Object.freeze(canonical.deferred_reference_ids),
+    applicability_status:canonical.deferred_reference_ids.length?'HAS_DEFERRED':'CLAIMABLE',
     proof_required:Object.freeze([
       'APPLICATION_TRACE_PASS',
       'EFFECT_PASS',
@@ -137,6 +178,28 @@ function compileReferenceProfile(input={}) {
       'FIDELITY_PASS',
       'REFERENCE_ABLATION_TEST_PASS'
     ])
+  });
+}
+
+function validateClaimability(compiled={}){
+  if(!compiled?.ok) return Object.freeze({ok:false,reason:'REFERENCE_NOT_COMPILED'});
+  const deferred=[...(compiled.deferred_reference_ids||[])];
+  if(deferred.length){
+    return Object.freeze({
+      ok:false,
+      reason:'REFERENCE_NOT_PRODUCTION_CLAIMABLE',
+      deferred_reference_ids:Object.freeze(deferred),
+      compiled:Object.freeze((compiled.compiled||[])
+        .filter(x=>deferred.includes(x.reference_id))
+        .map(x=>Object.freeze({
+          reference_id:x.reference_id,
+          applicability:x.applicability
+        })))
+    });
+  }
+  return Object.freeze({
+    ok:true,
+    claimable_reference_ids:Object.freeze([...(compiled.claimable_reference_ids||[])])
   });
 }
 
@@ -156,5 +219,6 @@ module.exports=Object.freeze({
   stable,
   digest,
   compileReferenceProfile,
+  validateClaimability,
   validateReferenceEffect
 });
