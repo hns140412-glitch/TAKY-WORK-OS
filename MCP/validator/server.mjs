@@ -26,6 +26,23 @@ function result(value){
   return {content:[{type:'text',text:JSON.stringify(value)}]};
 }
 
+function privateKeyReadiness(envName){
+  const pem=process.env[envName]||'';
+  if(!pem) return {present:false,valid:false,public_fingerprint:null};
+  try{
+    const privateKey=crypto.createPrivateKey(pem);
+    const publicKey=crypto.createPublicKey(privateKey);
+    const der=publicKey.export({type:'spki',format:'der'});
+    return {
+      present:true,
+      valid:true,
+      public_fingerprint:crypto.createHash('sha256').update(der).digest('hex').slice(0,24)
+    };
+  }catch(e){
+    return {present:true,valid:false,public_fingerprint:null};
+  }
+}
+
 function projectSafe(rawPath){
   const root=path.resolve(process.env.CLAUDE_PROJECT_DIR||projectRoot);
   const candidate=path.resolve(rawPath);
@@ -124,6 +141,38 @@ async function callIndependentVision({baselinePng,candidatePng,referencePngs=[],
 
 export function buildServer(){
   const server=new McpServer({name:'taky-independent-validation',version:'0.1.0'});
+
+  server.registerTool(
+    'get-validation-readiness',
+    {
+      description:'Report validator readiness without exposing private keys or API secrets.',
+      inputSchema:z.object({})
+    },
+    async()=>{
+      const measurement=privateKeyReadiness('TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
+      const vision=privateKeyReadiness('TAKY_VISION_PRIVATE_KEY_PEM');
+      const apiPresent=Boolean(process.env.ANTHROPIC_API_KEY);
+      const model=process.env.TAKY_VISION_MODEL||'claude-sonnet-5';
+
+      const objectiveReady=measurement.valid===true;
+      const visionReady=vision.valid===true && apiPresent;
+      return result({
+        ok:true,
+        objective_validation_ready:objectiveReady,
+        vision_review_ready:visionReady,
+        user_facing_validation_ready:Boolean(objectiveReady && visionReady),
+        measurement_key:measurement,
+        vision_key:vision,
+        anthropic_api_key_present:apiPresent,
+        vision_model:model,
+        warnings:[
+          ...(measurement.valid?[]:['MEASUREMENT_PRIVATE_KEY_NOT_READY']),
+          ...(vision.valid?[]:['VISION_PRIVATE_KEY_NOT_READY']),
+          ...(apiPresent?[]:['ANTHROPIC_API_KEY_NOT_READY'])
+        ]
+      });
+    }
+  );
 
   server.registerTool(
     'verify-source-fidelity',
