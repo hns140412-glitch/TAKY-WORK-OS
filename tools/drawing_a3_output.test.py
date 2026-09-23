@@ -46,3 +46,20 @@ with tempfile.TemporaryDirectory() as tmp:
     assert g.gate([bad])["status"] == "REEXPORT_REQUIRED"
 
 print("drawing_a3_output: PASS")
+
+
+def test_png_rounding_tolerance():
+    from PIL import Image
+    import tempfile
+    from pathlib import Path
+    from drawing_a3_output_validator import target, validate_png
+
+    t=target("landscape",144)
+    with tempfile.TemporaryDirectory() as d:
+        p=Path(d)/"rounding.png"
+        Image.new("RGB",(t["width_px"]+1,t["height_px"]),"white").save(p,dpi=(144,144))
+        r=validate_png(p,"landscape",144)
+        assert r["ok"] is True
+        assert any(x["code"]=="PNG_PIXEL_ROUNDING_TOLERANCE" for x in r["findings"])
+
+test_png_rounding_tolerance()
