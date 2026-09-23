@@ -1,0 +1,67 @@
+{
+  "schema": "ROOT_CAUSE_MATRIX_V1",
+  "clusters": [
+    {
+      "id": "RC-01",
+      "name": "ADVISORY_GOVERNANCE_WITHOUT_EXECUTION_AUTHORITY",
+      "failures": [
+        "F-A",
+        "F-F",
+        "F-G"
+      ],
+      "fix": "deny production artifacts outside AUTHORIZED_ENGINE"
+    },
+    {
+      "id": "RC-02",
+      "name": "SOURCE_LOCK_NOT_COUPLED_TO_ARTIFACT_ADMISSION",
+      "failures": [
+        "F-B",
+        "F-C",
+        "F-I"
+      ],
+      "fix": "immutable geometry authority + forbidden production operations + mandatory geometry/semantic gates"
+    },
+    {
+      "id": "RC-03",
+      "name": "REFERENCE_KNOWLEDGE_NOT_COMPILED",
+      "failures": [
+        "F-D",
+        "F-E"
+      ],
+      "fix": "reference compiler + applied-parameter/probe trace"
+    },
+    {
+      "id": "RC-04",
+      "name": "PASS_SEMANTICS_COLLAPSED",
+      "failures": [
+        "F-E",
+        "F-F"
+      ],
+      "fix": "SOURCE_FIDELITY != PRESENTATION_QUALITY != USER_EFFECT"
+    },
+    {
+      "id": "RC-05",
+      "name": "METADATA_CONFUSED_WITH_CONTENT",
+      "failures": [
+        "F-H"
+      ],
+      "fix": "content digest equivalence; DATE != CONTENT CHANGE"
+    },
+    {
+      "id": "RC-06",
+      "name": "RESUME_BIASED_TOWARD_CONTINUITY",
+      "failures": [
+        "F-K"
+      ],
+      "fix": "RESUME / RETROSPECTIVE / SURGERY modes"
+    },
+    {
+      "id": "RC-07",
+      "name": "EVIDENCE_GATE_NOT_FINAL_EXPOSURE_DEPENDENCY",
+      "failures": [
+        "F-J"
+      ],
+      "fix": "narrative evidence conditional hard gate before exposure"
+    }
+  ]
+}
