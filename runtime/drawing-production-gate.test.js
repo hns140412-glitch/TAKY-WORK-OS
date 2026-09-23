@@ -2,7 +2,7 @@ const assert=require('assert');
 const gate=require('./drawing-production-gate');
 
 function allPass(){
-  return Object.fromEntries(gate.REQUIRED_GATES.map(x=>[x,'PASS']));
+  return Object.fromEntries(gate.REQUIRED_GATES.map(x=>[x,{state:'PASS',validator_id:gate.EXPECTED_VALIDATORS[x],evidence_ref:'TEST:'+x}]));
 }
 
 {
@@ -16,7 +16,7 @@ function allPass(){
   assert(r.findings.some(x=>x.code==='PRODUCTION_BYPASS_PATH_FORBIDDEN'));
 }
 {
-  const g=allPass(); g.GEOMETRY_GATE='FAIL';
+  const g=allPass(); g.GEOMETRY_GATE={state:'FAIL',validator_id:gate.EXPECTED_VALIDATORS.GEOMETRY_GATE,evidence_ref:'TEST:GEOMETRY_FAIL'};
   const r=gate.evaluate({artifact_class:'PREVIEW',engine:'DRAWING_ENGINE',execution_path:'AUTHORIZED_ENGINE',gates:g,geometry_diff:{pass:false}});
   assert.equal(r.show,false);
   assert(r.findings.some(x=>x.code==='GEOMETRY_DIFF_FAIL'));
@@ -40,6 +40,12 @@ function allPass(){
   const r=gate.evaluate({artifact_class:'FINAL',engine:'DRAWING_ENGINE',execution_path:'AUTHORIZED_ENGINE',gates:allPass(),geometry_diff:{pass:true},semantic_check:{ok:false,findings:[{code:'UNVERIFIED_SEMANTIC_USED'}]}});
   assert.equal(r.show,false);
   assert(r.findings.some(x=>x.code==='SEMANTIC_VERIFICATION_FAIL'));
+}
+{
+  const raw=Object.fromEntries(gate.REQUIRED_GATES.map(x=>[x,'PASS']));
+  const r=gate.evaluate({artifact_class:'FINAL',engine:'DRAWING_ENGINE',execution_path:'AUTHORIZED_ENGINE',gates:raw,geometry_diff:{pass:true}});
+  assert.equal(r.show,false);
+  assert(r.findings.some(x=>x.code==='UNATTESTED_GATE_STATUS'));
 }
 assert.equal(gate.classifyOneOff({purpose:'FINAL'}).ok,false);
 assert.equal(gate.classifyOneOff({purpose:'DIAGNOSTIC'}).ok,true);
