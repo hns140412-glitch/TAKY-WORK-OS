@@ -59,7 +59,7 @@ def apply_edit_plan(svg_text: str, plan: Dict[str, Any]) -> Dict[str, Any]:
         state = str(op.get("verification_state", "")).upper()
         elem = by_id.get(path_id)
 
-        if not elem:
+        if elem is None:
             findings.append({"code":"PATH_ID_NOT_FOUND","severity":"CRITICAL","path_id":path_id})
             continue
         if state not in TRUSTED_STATES:
