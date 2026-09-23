@@ -10,6 +10,8 @@ const SemanticGate=require('./semantic-gate.js');
 const NarrativeGate=require('./narrative-evidence-gate.js');
 const ReferenceCompiler=require('./reference-compiler.js');
 const VisualQuality=require('./visual-quality-validator.js');
+const Measurement=require('./visual-measurement-receipt.js');
+const VisionReview=require('./vision-review-receipt.js');
 const Provenance=require('./provenance-validator.js');
 const Validator=require('./independent-validator.js');
 const Exposure=require('./exposure-gate.js');
@@ -59,13 +61,30 @@ function runProduction(input={}){
   const narrative=NarrativeGate.validateClaims(input.claims||[]);
 
   const refCompile=ReferenceCompiler.compileReferenceProfile(input.reference||{});
-  const refEffect=refCompile.ok
-    ? ReferenceCompiler.validateReferenceEffect(input.reference_effect_proof||{})
-    : Object.freeze({ok:false,status:'NOT_COMPILED'});
 
-  const a3=VisualQuality.validateA3(input.visual_metrics?.a3||{});
-  const readability=VisualQuality.validateArchitecturalReadability(input.visual_metrics?.readability||{});
-  const userEffect=VisualQuality.validateUserEffect(input.visual_metrics?.user_effect||{});
+  const visualMeasurement=Measurement.verifyVisualMeasurement(
+    input.visual_measurement_receipt,
+    input.artifact_digest||null
+  );
+  const measuredMetrics=visualMeasurement.ok
+    ? (visualMeasurement.payload.metrics?.metrics||{})
+    : {};
+
+  const refEffect=refCompile.ok
+    ? Measurement.verifyReferenceEffect(
+        input.reference_effect_receipt,
+        input.artifact_digest||null,
+        input.reference?.reference_ids||[]
+      )
+    : Object.freeze({ok:false,reason:'REFERENCE_NOT_COMPILED'});
+
+  const visionReview=VisionReview.verifyReview(
+    input.vision_review_receipt,
+    input.artifact_digest||null
+  );
+
+  const a3=VisualQuality.validateA3Measured(measuredMetrics);
+  const readability=VisualQuality.validateArchitecturalReadabilityObjective(measuredMetrics);
 
   const provenance=Provenance.validateProvenance({
     authorization:route.authorization,
@@ -80,12 +99,12 @@ function runProduction(input={}){
     GEOMETRY_GATE:geometryCompare.ok && geometry.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:refCompile.ok && refEffect.ok?'PASS':'FAIL',
-    ARCHITECTURAL_READABILITY_GATE:readability.ok?'PASS':'FAIL',
-    A3_GATE:a3.ok?'PASS':'FAIL',
+    REFERENCE_EFFECT_GATE:refCompile.ok && refEffect.ok && visionReview.ok?'PASS':'FAIL',
+    ARCHITECTURAL_READABILITY_GATE:visualMeasurement.ok && readability.ok?'PASS':'FAIL',
+    A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
     PROVENANCE_GATE:provenance.ok?'PASS':'FAIL',
-    USER_EFFECT_GATE:userEffect.ok?'PASS':'FAIL'
+    USER_EFFECT_GATE:visionReview.ok?'PASS':'FAIL'
   };
 
   const evidence={
@@ -96,10 +115,11 @@ function runProduction(input={}){
     semantics,
     narrative,
     refCompile,
+    visualMeasurement,
     refEffect,
+    visionReview,
     a3,
     readability,
-    userEffect,
     provenance,
     gate_results:Object.freeze(gate_results)
   };
@@ -157,7 +177,7 @@ function finalizeStagedProduction(input={}){
 }
 
 module.exports=Object.freeze({
-  version:'3.0.0',
+  version:'4.0.0',
   runProduction,
   finalizeStagedProduction
 });
