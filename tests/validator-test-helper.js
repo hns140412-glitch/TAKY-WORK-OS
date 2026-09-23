@@ -15,6 +15,9 @@ ensureKeyPair('TAKY_VISION_PRIVATE_KEY_PEM','TAKY_VISION_PUBLIC_KEY_PEM');
 const Signer=require('../MCP/validator/receipt-signer.cjs');
 
 module.exports=Object.freeze({
+  signValidationReadiness(input){
+    return {ok:true,receipt:Signer.signValidationReadiness(input)};
+  },
   signVisualMeasurement(input){
     return {ok:true,receipt:Signer.signVisualMeasurement(input)};
   },
