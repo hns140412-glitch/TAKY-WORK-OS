@@ -14,7 +14,7 @@ from pathlib import Path
 from typing import Any, List
 
 try:
-    import fitz
+    import pymupdf as fitz
 except ImportError as exc:  # pragma: no cover
     raise SystemExit("PyMuPDF is required: pip install pymupdf") from exc
 
