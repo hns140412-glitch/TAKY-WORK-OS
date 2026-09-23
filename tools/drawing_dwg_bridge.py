@@ -7,6 +7,7 @@ original source authority.
 """
 from __future__ import annotations
 import argparse, hashlib, json, os, re, shutil, subprocess
+from collections import Counter
 from pathlib import Path
 
 try:
@@ -23,6 +24,31 @@ RISK_RE=re.compile(
 
 def _sha(path):
     return hashlib.sha256(Path(path).read_bytes()).hexdigest()
+
+def _audit_summary(doc):
+    auditor=doc.audit()
+    errors=list(auditor.errors)
+    fixes=list(auditor.fixes)
+    codes=Counter(str(getattr(item,"code","UNKNOWN")) for item in [*errors,*fixes])
+
+    def compact(item):
+        entity=getattr(item,"entity",None)
+        dxf=getattr(entity,"dxf",None) if entity is not None else None
+        return {
+            "code":str(getattr(item,"code","UNKNOWN")),
+            "message":str(getattr(item,"message",""))[:500],
+            "entity_type":entity.dxftype() if entity is not None and hasattr(entity,"dxftype") else None,
+            "handle":getattr(dxf,"handle",None) if dxf is not None else None,
+        }
+
+    return {
+        "clean":not errors and not fixes,
+        "error_count":len(errors),
+        "fix_count":len(fixes),
+        "code_counts":dict(sorted(codes.items())),
+        "errors_sample":[compact(item) for item in errors[:20]],
+        "fixes_sample":[compact(item) for item in fixes[:40]],
+    }
 
 def probe_decoder(binary=None):
     candidate=binary or os.environ.get("TAKY_DWGREAD_BIN") or shutil.which("dwgread")
@@ -86,9 +112,26 @@ def convert_dwg_to_dxf(source,out_dxf,*,binary=None,strict=True):
     try:
         doc=ezdxf.readfile(out_dxf)
         entity_count=sum(1 for _ in doc.modelspace())
+        audit=_audit_summary(doc)
     except Exception as exc:
         return {"ok":False,"schema":SCHEMA,"reason":"DWG_DERIVED_DXF_PARSE_FAILED","error":str(exc)}
 
+    if strict and not audit["clean"]:
+        return {
+            "ok":False,
+            "schema":SCHEMA,
+            "reason":"DWG_DERIVED_DXF_AUDIT_BLOCK",
+            "source_sha256":source_sha,
+            "decoder":probe["decoder"],
+            "decoder_version":probe["version"],
+            "derived_dxf_sha256":_sha(out_dxf),
+            "derived_modelspace_entities":entity_count,
+            "audit":audit,
+            "semantic_inference":False,
+            "production_claimable":False,
+        }
+
+    audit_clean=audit["clean"]
     return {
         "ok":True,
         "schema":SCHEMA,
@@ -97,11 +140,13 @@ def convert_dwg_to_dxf(source,out_dxf,*,binary=None,strict=True):
         "dwg_signature":raw[:6].decode("ascii","replace"),
         "decoder":probe["decoder"],
         "decoder_version":probe["version"],
-        "strict_diagnostics_pass":not risky,
+        "strict_diagnostics_pass":bool(not risky and audit_clean),
         "derived_dxf_path":str(out_dxf),
         "derived_dxf_sha256":_sha(out_dxf),
         "derived_modelspace_entities":entity_count,
-        "authority":"DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE",
+        "audit":audit,
+        "source_equivalence_candidate":bool(audit_clean),
+        "authority":"DERIVED_VECTOR_PENDING_SOURCE_EQUIVALENCE" if audit_clean else "DIAGNOSTIC_DERIVED_VECTOR_WITH_AUDIT_REPAIRS",
         "semantic_inference":False,
         "production_claimable":False,
     }

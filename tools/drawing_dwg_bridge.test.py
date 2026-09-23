@@ -56,6 +56,31 @@ with tempfile.TemporaryDirectory() as raw:
     blocked=bridge.convert_dwg_to_dxf(src,root/"risk.dxf",binary=str(root/"risk.py"))
     assert not blocked["ok"] and blocked["reason"]=="DWG_DECODER_DIAGNOSTIC_BLOCK",blocked
 
+    original_audit=bridge._audit_summary
+    try:
+        bridge._audit_summary=lambda doc:{
+            "clean":False,
+            "error_count":0,
+            "fix_count":2,
+            "code_counts":{"226":2},
+            "errors_sample":[],
+            "fixes_sample":[{"code":"226","message":"Deleted invalid HATCH boundary","entity_type":"HATCH","handle":"AA"}],
+        }
+        audit_block=bridge.convert_dwg_to_dxf(src,root/"audit-block.dxf",binary=str(root/"fake.py"))
+        assert not audit_block["ok"] and audit_block["reason"]=="DWG_DERIVED_DXF_AUDIT_BLOCK",audit_block
+        assert audit_block["audit"]["fix_count"]==2
+
+        diagnostic=bridge.convert_dwg_to_dxf(
+            src,root/"audit-diagnostic.dxf",binary=str(root/"fake.py"),strict=False
+        )
+        assert diagnostic["ok"],diagnostic
+        assert diagnostic["strict_diagnostics_pass"] is False
+        assert diagnostic["source_equivalence_candidate"] is False
+        assert diagnostic["authority"]=="DIAGNOSTIC_DERIVED_VECTOR_WITH_AUDIT_REPAIRS"
+        assert diagnostic["production_claimable"] is False
+    finally:
+        bridge._audit_summary=original_audit
+
     bad=bridge.convert_dwg_to_dxf(src,root/"bad.dxf",binary=str(root/"bad.py"))
     assert not bad["ok"] and bad["reason"]=="UNTRUSTED_DWG_DECODER_IDENTITY",bad
 
