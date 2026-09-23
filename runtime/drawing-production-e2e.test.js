@@ -9,6 +9,7 @@ const cp=require('child_process');
 const Renderer=require('./drawing-a3-board-renderer.js');
 const Measurement=require('./visual-measurement-receipt.js');
 const VisionReview=require('./vision-review-receipt.js');
+const TestSigner=require('../tests/validator-test-helper.js');
 const Pipeline=require('./production-pipeline.js');
 const Broker=require('./artifact-broker.js');
 const Contract=require('./execution-contract.js');
@@ -132,7 +133,7 @@ try{
     candidatePdf,
     '--page','0'
   ]));
-  const measurement=Measurement.issueVisualMeasurement({
+  const measurement=TestSigner.signVisualMeasurement({
     artifact_digest:digest,
     metrics
   });
@@ -145,7 +146,7 @@ try{
     '--baseline',sourcePdf
   ]));
   assert.equal(comparisonPayload.comparison.schema,'TAKY_OBJECTIVE_REFERENCE_DELTA_V1');
-  const refReceipt=Measurement.issueReferenceEffect({
+  const refReceipt=TestSigner.signReferenceEffect({
     baseline_digest:Broker.sha256File(sourcePdf),
     candidate_digest:digest,
     reference_ids:['ARCHDAILY_PLAN_HIERARCHY'],
@@ -153,7 +154,7 @@ try{
   });
   assert.equal(refReceipt.ok,true);
 
-  const vision=VisionReview.signReview({
+  const vision=TestSigner.signVisionReview({
     artifact_digest:digest,
     professional_family_pass:true,
     reference_effect_visible_without_explanation:true,
