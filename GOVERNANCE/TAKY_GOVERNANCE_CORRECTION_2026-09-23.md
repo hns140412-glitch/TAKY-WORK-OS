@@ -1,19 +1,84 @@
 # TAKY GOVERNANCE CORRECTION — 2026-09-23
 
-## TAKY FILTER
-Think Again, Keep Your Key.
-Think Again, You’re The Key.
-HUMAN IS THE KEY != HUMAN IS THE DEBUGGER.
-USER != DEBUGGER.
-SYSTEM PROVES. HUMAN CHOOSES.
+## GLOBAL AI ACTIVITY SLOGAN — TOP AUTHORITY
+
+These two slogans are the highest guiding principle / standard slogan across TAKY, apps, OS, domains and AI activity.
+They are not domain slogans and must not be reinterpreted to fit a local implementation.
+
+**Think Again, Keep Your Key.**
+- 핵심을 놓치지 말고 다시 생각하라.
+- 답을 풀 열쇠는 이미 가지고 있다.
+
+**Think Again, You’re The Key.**
+- 방법을 찾고 해결하라.
+- 결국 답을 만들어내는 핵심 주체는 인간이다.
+
+### EXECUTION CYCLE
+
+HUMAN INTENT / DESIRED OUTCOME  
+→ THINK AGAIN  
+  - 다시 보고  
+  - 의심하고  
+  - 기준 단서를 복구하고  
+  - 다른 방법을 찾고  
+→ KEEP YOUR KEY  
+  - 핵심  
+  - 맥락  
+  - 의미  
+  - 권한  
+  - 소유권  
+  - 최신 수정  
+  - 제어권을 잃지 않고  
+→ FIND A WAY / SOLVE  
+→ YOU'RE THE KEY  
+  - 결과를 인간의 목적에 되돌려 평가  
+→ VERIFY / CORRECT / CONTINUE
+
+Operational corollaries such as `HUMAN IS THE KEY != HUMAN IS THE DEBUGGER`, `USER != DEBUGGER`, and `SYSTEM PROVES. HUMAN CHOOSES.` are subordinate to this global slogan and never replace or redefine it.
+
+## ATTACK / DEFENSE BALANCE
+
+Aggressive validation must be paired with defensive preservation.
+
+Attack asks:
+- 어디서 우회 가능한가?
+- 무엇을 잘못 PASS할 수 있는가?
+- 누가 권한을 넘을 수 있는가?
+- 결과가 인간 목적과 어긋날 수 있는가?
+
+Defense preserves:
+- 정상 기능
+- 작업 진행성
+- staging / diagnostic freedom
+- 단순성
+- 복구성
+- 사용성
+- 인간의 제어권
+- 이미 검증된 경로
+
+A finding does NOT automatically justify a stronger prohibition.
+The preferred response is the smallest structural correction that blocks the proven failure while preserving legitimate work.
+
+Current balance:
+- production / user exposure = fail closed
+- staging / internal diagnostics = continue
+- unsupported reference claim = fail
+- already-compliant presentation = do not distort merely to manufacture a reference effect
+- human approval = purpose / choice, not debugging
 
 ## IMPLEMENTED DEFINITION
-TAKY governance is NOT implemented merely because a rule exists in prose, JSON, prompt, C2S or handoff.
 
-A governance rule is IMPLEMENTED only when its execution path is enforced by code/tool permission and regression evidence.
+A TAKY rule is NOT considered implemented merely because it exists in prose, JSON, prompt, C2S or handoff.
+
+IMPLEMENTED requires executable evidence such as:
+- permission / routing enforcement
+- actual specialist tool
+- independent validation
+- regression proof
 
 ## PRODUCTION AUTHORITY
-TASK
+
+HUMAN INTENT
 → WORK OS ROUTER
 → SIGNED PRODUCTION AUTHORIZATION
 → AUTHORIZED EXECUTION GRAPH
@@ -21,39 +86,65 @@ TASK
 → INDEPENDENT VALIDATION
 → SIGNED EXPOSURE GRANT
 → ARTIFACT BROKER
-→ HUMAN APPROVAL
+→ HUMAN PURPOSE / FINAL CHOICE
 
-No valid authorization: no production.
-No valid validation receipt: no exposure.
-No valid exposure grant: no production artifact registration.
+No valid authorization → no production.  
+No valid validation receipt → no exposure.  
+No valid exposure grant → no production artifact publication.
 
-## CROSS-PROCESS / MCP CORRECTION
-In-memory WeakSet authorization was rejected as insufficient for MCP/process boundaries.
-Authorization, validation receipt and exposure grant now use signed serializable capability tokens.
-TAKY_ENFORCEMENT_SECRET is required.
+## TRUST BOUNDARY
 
-## SELF-DECLARED PASS PROHIBITED
-Callers may not inject PASS strings for mandatory production gates.
-Source identity, geometry, fact evidence, semantics, narrative evidence, A3, architectural readability, provenance and user effect are evaluated by executable validators.
+Production and Validation are separate MCP trust domains.
+
+- `taky-production`
+  - staging-capable drawing/report tools
+  - production routing
+  - finalization
+  - publication broker
+  - public-key verification only for validator receipts
+
+- `taky-validation`
+  - objective visual measurement
+  - reference-effect measurement
+  - independent visual review
+  - validator private-key signing
+
+Validator outage must not erase the work path: staging and diagnostics remain available.
+User-facing production remains fail-closed.
+
+## HUMAN INTENT BINDING
+
+USER_EFFECT is not a generic visual score.
+For user-facing finalization, the independent visual review is bound to a digest of:
+- desired_outcome
+- success_criteria
+
+A review for a different human intent cannot be replayed as approval.
+
+## REFERENCE CAUSALITY
+
+Reference claims require:
+REFERENCE
+→ COMPILE_DIGEST
+→ PRESENTATION-ONLY APPLICATION
+→ APPLIED_PARAMETERS
+→ SAME-SOURCE BASELINE / CANDIDATE
+→ INDEPENDENT EFFECT RECEIPT
+→ USER-VISIBLE / PROFESSIONAL REVIEW
+
+Reference authority never becomes geometry / fact authority.
+If a profile already satisfies the reference and no parameter is actually changed, the system must not distort the result merely to create a visible delta; it simply cannot claim causal reference effect for that run.
 
 ## HOST POLICY
-MCP/HOST_TOOL_PERMISSION_POLICY_V1.json defines DEFAULT_DENY_PRODUCTION.
 
-Diagnostic-only:
-- PYTHON_ONE_OFF
-- GENERIC_HTML
-- REPORTLAB_ONE_OFF
-- IMAGE_GENERATOR_DIRECT
+Generic Python / HTML / ReportLab / direct image generation may remain available for diagnostic / staging use.
+They do not receive production publication authority.
 
-Production:
-- DRAWING_ENGINE_V2
-- REPORT_ENGINE_V2
-through TAKY routing and artifact broker only.
+The project-level Claude host guard blocks direct writes to `artifacts/production`.
+Validated staging → production publication occurs through the TAKY artifact broker.
 
 ## HUMAN AUTHORITY
-Human approval selects design/presentation alternatives.
-Human approval is not defect detection and does not substitute for validation.
 
-## HOST EXCLUSIVITY LIMIT
-Repository code cannot physically stop a host that independently exposes unrestricted publishing/file-generation tools.
-Therefore HOST_ENFORCEMENT is CLOSED only after the actual host is configured so production publication is available exclusively through the TAKY gateway/broker.
+Human final authority is preserved.
+Human approval selects purpose, direction and final adoption.
+It is not a substitute for system QA and must not be used to detect deleted walls, missing cores, crop errors, semantic hallucinations or source mismatch.
