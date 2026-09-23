@@ -1328,7 +1328,45 @@
         "조경 신규 생성 금지",
         "1F/2F 수직관계 명확",
         "source geometry 유지"
-      ]
+      ],
+      "narrative": {
+        "message": {
+          "text": "2층은 A동과 B동을 동일 스케일에서 비교해 세대 조직과 코어 관계를 읽는 페이지다.",
+          "evidence_refs": [
+            "SRC-PDF-ISSUED-0923"
+          ]
+        },
+        "why_it_matters": {
+          "text": "가구 없는 원본을 중심에 두어 두 동의 평면 구성 차이를 장식보다 도면 자체로 판단하게 한다.",
+          "evidence_refs": [
+            "SRC-PDF-ISSUED-0923"
+          ]
+        },
+        "decision_points": [
+          {
+            "text": "A/B동 평면 조직 비교",
+            "evidence_refs": [
+              "SRC-PDF-ISSUED-0923",
+              "FACT-BUILDING-GROUPS"
+            ]
+          },
+          {
+            "text": "코어와 주거영역 관계 확인",
+            "evidence_refs": [
+              "SRC-PDF-ISSUED-0923"
+            ]
+          }
+        ],
+        "claims": [
+          {
+            "text": "원본에 없는 조경은 추가하지 않는다.",
+            "evidence_refs": [
+              "SRC-PDF-ISSUED-0923",
+              "REV-LAND-02"
+            ]
+          }
+        ]
+      }
     },
     {
       "page_id": "P07",
