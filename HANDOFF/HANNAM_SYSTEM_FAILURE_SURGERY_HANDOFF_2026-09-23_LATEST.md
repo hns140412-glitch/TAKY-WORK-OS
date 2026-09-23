@@ -55,8 +55,8 @@ Do not strengthen restrictions merely because a failure can be imagined.
 `fe4650f517272e0e01f5419a3c1b74a1320807cd`
 
 Evidence:
-- TAKY Enforcement Regression #237 — SUCCESS
-- drawing-engine-core #693 — SUCCESS
+- TAKY Enforcement Regression #332 — SUCCESS
+- drawing-engine-core #788 — SUCCESS
 
 After any new commit, do not reuse this evidence. Recheck the new exact HEAD.
 
@@ -88,12 +88,44 @@ New invariant:
 
 The dry pilot did NOT resume Hannam report production and did NOT create a Hannam presentation artifact.
 
+## REFERENCE EFFECT / APPLICABILITY UPDATE
+
+Real Hannam 2F staging pilot proved a safe semantic-free source-style path.
+
+Corrected source-width ranking:
+`0.01 / 0.1167 / 0.24 / 0.54 / 1.02`
+→ `LIGHT / LIGHT / SECONDARY / PRIMARY / HEAVY`
+
+Real element distribution:
+`793 / 28636 / 3176 / 134`
+
+Line-hierarchy metric:
+- dynamic range gain ≈ 1.3488
+- minimum adjacent separation gain ≈ 1.0943
+- geometry preserved
+- semantic inference false
+- source-fidelity parity 1.0
+
+Do NOT describe this as full ArchDaily semantic line hierarchy.
+Current safe claim is only:
+`ARCHDAILY_PLAN_HIERARCHY = PARTIAL / SOURCE_LINE_HIERARCHY_ONLY`
+
+Current reference applicability:
+- Divisare editorial restraint = FULL
+- ArchDaily plan hierarchy = PARTIAL
+- OMA relation-first = DEFERRED
+- BIG one-move = DEFERRED
+- SOM/Foster technical clarity = DEFERRED
+
+Multi-reference production now requires complete per-reference application/effect coverage.
+A reference name without its own causal evidence cannot inherit PASS from another reference.
+
 ## OPEN NEXT
 
 Only address these if the next goal requires them:
 
 - provision live validator/API secrets outside repository
-- run a real-project pilot when explicitly authorized
+- user-facing real-project production pilot remains NOT_RUN; real-source read-only/staging pilots are PASS
 - connect trusted DWG decoding if direct DWG is required
 - add verified source-role metadata before claiming role-dependent reference effects
 
