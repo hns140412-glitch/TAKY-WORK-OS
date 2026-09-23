@@ -80,6 +80,11 @@ function runProduction(input={}){
     input.reference_application||{},
     refCompile
   );
+  const refSourceStyle=ReferenceApplication.validateSourceStyleApplication(
+    input.reference_source_style_application||{},
+    refCompile
+  );
+  const refCausalApplication=refApplication.ok || refSourceStyle.ok;
 
   const visualMeasurement=Measurement.verifyVisualMeasurement(
     input.visual_measurement_receipt,
@@ -94,9 +99,26 @@ function runProduction(input={}){
         input.reference_effect_receipt,
         input.artifact_digest||null,
         input.reference?.reference_ids||[],
-        refCompile.compile_digest||null
+        refCompile.compile_digest||null,
+        refCompile.effect_metrics||[]
       )
     : Object.freeze({ok:false,reason:'REFERENCE_NOT_COMPILED'});
+
+  let refEffectLineage=Object.freeze({ok:true,status:'NOT_REQUIRED'});
+  if(refEffect.ok && refEffect.payload?.effect_schema==='TAKY_LINE_HIERARCHY_DELTA_V1'){
+    const expectedControlled=sourceFidelity.ok?sourceFidelity.payload?.controlled_svg_sha256:null;
+    refEffectLineage=Object.freeze(
+      expectedControlled && refEffect.payload?.effect_input_digest===expectedControlled
+        ? {ok:true,status:'PASS',controlled_svg_sha256:expectedControlled}
+        : {
+            ok:false,
+            status:'FAIL',
+            reason:'REFERENCE_EFFECT_SOURCE_FIDELITY_LINEAGE_MISMATCH',
+            expected_controlled_svg_sha256:expectedControlled||null,
+            actual_effect_input_digest:refEffect.payload?.effect_input_digest||null
+          }
+    );
+  }
 
   const visionReview=VisionReview.verifyReview(
     input.vision_review_receipt,
@@ -120,7 +142,7 @@ function runProduction(input={}){
     GEOMETRY_GATE:sourceFidelity.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:refCompile.ok && refApplication.ok && refEffect.ok && visionReview.ok?'PASS':'FAIL',
+    REFERENCE_EFFECT_GATE:refCompile.ok && refCausalApplication && refEffect.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
     ARCHITECTURAL_READABILITY_GATE:visualMeasurement.ok && readability.ok?'PASS':'FAIL',
     A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
@@ -139,8 +161,11 @@ function runProduction(input={}){
     humanIntent,
     refCompile,
     refApplication,
+    refSourceStyle,
+    refCausalApplication,
     visualMeasurement,
     refEffect,
+    refEffectLineage,
     visionReview,
     a3,
     readability,
