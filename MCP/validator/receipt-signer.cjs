@@ -35,14 +35,16 @@ function signVisualMeasurement({artifact_digest,metrics}={}){
   },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
 }
 
-function signReferenceEffect({baseline_digest,candidate_digest,reference_ids,comparison}={}){
+function signReferenceEffect({baseline_digest,candidate_digest,reference_ids,reference_compile_digest,comparison}={}){
   if(!baseline_digest || !candidate_digest) throw new Error('REFERENCE_DIGESTS_REQUIRED');
   if(!Array.isArray(reference_ids)||!reference_ids.length) throw new Error('REFERENCE_IDS_REQUIRED');
+  if(!reference_compile_digest) throw new Error('REFERENCE_COMPILE_DIGEST_REQUIRED');
   if(!comparison || comparison.schema!=='TAKY_OBJECTIVE_REFERENCE_DELTA_V1') throw new Error('OBJECTIVE_REFERENCE_COMPARISON_REQUIRED');
   return sign('TAKY_REFERENCE_EFFECT_RECEIPT','OBJECTIVE_VISUAL_MEASURER_V1',{
     baseline_digest,
     candidate_digest,
     reference_ids:[...reference_ids],
+    reference_compile_digest,
     comparison,
     objective_effect_pass:comparison.objective_effect_detected===true,
     clarity_only_suspected:comparison.clarity_only_suspected===true,
