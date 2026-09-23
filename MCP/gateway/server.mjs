@@ -176,7 +176,15 @@ export function buildServer(){
             return result({ok:false,reason:'REFERENCE_COMPILE_FAILED',compiled:referenceCompile});
           }
           referenceProfileApplication=ReferenceApplication.applyToPresentationProfile({},referenceCompile);
-          sourceStyleRequest=(referenceProfileApplication.source_style_requests||[])[0]||null;
+          const sourceStyleRequests=referenceProfileApplication.source_style_requests||[];
+          if(sourceStyleRequests.length>1){
+            return result({
+              ok:false,
+              reason:'MULTIPLE_SOURCE_STYLE_POLICIES_REQUIRE_EXPLICIT_COMPOSITION',
+              source_style_requests:sourceStyleRequests
+            });
+          }
+          sourceStyleRequest=sourceStyleRequests[0]||null;
           if(sourceStyleRequest){
             const p=path.join(dir,'source-style-policy.json');
             fs.writeFileSync(p,JSON.stringify({
@@ -387,8 +395,10 @@ export function buildServer(){
         reference:z.record(z.string(),z.any()),
         reference_application:z.record(z.string(),z.any()),
         reference_source_style_application:z.record(z.string(),z.any()).optional(),
+        reference_source_style_applications:z.array(z.record(z.string(),z.any())).optional(),
         visual_measurement_receipt:z.string().min(1),
-        reference_effect_receipt:z.string().min(1),
+        reference_effect_receipt:z.string().min(1).optional(),
+        reference_effect_receipts:z.array(z.string().min(1)).min(1).optional(),
         vision_review_receipt:z.string().min(1),
         provenance:z.record(z.string(),z.any()),
         report_package:z.record(z.string(),z.any()).optional(),
