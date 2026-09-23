@@ -50,3 +50,9 @@ taky/hannam-system-governance-correction-2026-09-23
 
 C2S rule:
 C2S_CLOSED does not mean RELEASE_PASS. Remaining items are explicit downstream realization gaps.
+
+## CI observation update
+- PR-triggered drawing-engine-core run 35827027868: FAIL at JS tests.
+- Root cause: regression test attempted in-place sort on frozen protected-anchor result; engine detection logic itself had passed earlier tests.
+- Test corrected to sort a copied array. Exact corrected-head CI must be observed before CI PASS.
+- Branch protection remains disabled, so CI success alone is not yet enforcement of merge/promotion.
