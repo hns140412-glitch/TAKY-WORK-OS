@@ -28,19 +28,26 @@ function evaluateValidationReadiness(input={}){
   const measurementPrivateKeyValid=input.measurement_private_key_valid===true;
   const visionPrivateKeyValid=input.vision_private_key_valid===true;
   const anthropicApiKeyPresent=input.anthropic_api_key_present===true;
+  const visionApiProbeOk=input.vision_api_probe_ok===true;
 
   const warnings=[];
   if(!measurementPrivateKeyValid) warnings.push('MEASUREMENT_PRIVATE_KEY_NOT_READY');
   if(!visionPrivateKeyValid) warnings.push('VISION_PRIVATE_KEY_NOT_READY');
   if(!anthropicApiKeyPresent) warnings.push('ANTHROPIC_API_KEY_NOT_READY');
+  if(anthropicApiKeyPresent && !visionApiProbeOk) warnings.push('VISION_API_MODEL_PROBE_FAILED');
 
   return Object.freeze({
     objective_validation_ready:measurementPrivateKeyValid,
-    vision_review_ready:Boolean(visionPrivateKeyValid && anthropicApiKeyPresent),
+    vision_review_ready:Boolean(
+      visionPrivateKeyValid &&
+      anthropicApiKeyPresent &&
+      visionApiProbeOk
+    ),
     user_facing_validation_ready:Boolean(
       measurementPrivateKeyValid &&
       visionPrivateKeyValid &&
-      anthropicApiKeyPresent
+      anthropicApiKeyPresent &&
+      visionApiProbeOk
     ),
     warnings:Object.freeze(warnings)
   });
