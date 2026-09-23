@@ -15,11 +15,11 @@ function validateForExposure(input={}){
   const auth=ExecutionContract.verifyProductionAuthorization(authorization);
   if(!auth.ok) return Object.freeze({ok:false,reason:'AUTHORIZATION_INVALID',detail:auth});
   if(!validator_id) return Object.freeze({ok:false,reason:'VALIDATOR_ID_REQUIRED'});
-  if(!TRUSTED_VALIDATORS.has(validator_id)){
-    return Object.freeze({ok:false,reason:'UNTRUSTED_VALIDATOR',validator_id});
-  }
   if(validator_id===auth.payload.producer_id){
     return Object.freeze({ok:false,reason:'ENGINE_CANNOT_CERTIFY_ITSELF'});
+  }
+  if(!TRUSTED_VALIDATORS.has(validator_id)){
+    return Object.freeze({ok:false,reason:'UNTRUSTED_VALIDATOR',validator_id});
   }
 
   const findings=[];
