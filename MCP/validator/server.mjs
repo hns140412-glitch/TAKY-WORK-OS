@@ -16,6 +16,7 @@ const projectRoot=path.resolve(__dirname,'../..');
 const visualAdapter=path.resolve(projectRoot,'tools/drawing_visual_metric_extractor.py');
 const reviewImageExporter=path.resolve(projectRoot,'tools/drawing_review_image_exporter.py');
 const sourceFidelityAdapter=path.resolve(projectRoot,'tools/drawing_source_fidelity_validator.py');
+const lineHierarchyAdapter=path.resolve(projectRoot,'tools/drawing_line_hierarchy_metric.py');
 
 const Signer=require('./receipt-signer.cjs');
 const VisionParser=require('../../runtime/vision-review-parser.js');
@@ -217,6 +218,57 @@ export function buildServer(){
         return result({ok:true,receipt,baseline_digest:baselineDigest,candidate_digest:candidateDigest,reference_compile_digest:input.reference_compile_digest,comparison:measured.comparison});
       }catch(error){
         return result({ok:false,reason:'REFERENCE_EFFECT_MEASUREMENT_FAILED',error:String(error?.message||error)});
+      }
+    }
+  );
+
+  server.registerTool(
+    'measure-line-hierarchy-effect',
+    {
+      description:'Measure semantic-free source line-hierarchy change on matched SVG paths and bind the result to the final candidate artifact digest.',
+      inputSchema:z.object({
+        baseline_svg_path:z.string().min(1),
+        candidate_svg_path:z.string().min(1),
+        candidate_artifact_path:z.string().min(1),
+        reference_ids:z.array(z.string()).min(1),
+        reference_compile_digest:z.string().min(16)
+      })
+    },
+    async(input)=>{
+      try{
+        const paths=[input.baseline_svg_path,input.candidate_svg_path,input.candidate_artifact_path];
+        if(paths.some(p=>!projectSafe(p))){
+          return result({ok:false,reason:'LINE_HIERARCHY_PATH_OUTSIDE_PROJECT'});
+        }
+        const comparison=await runJsonPython(lineHierarchyAdapter,[
+          input.baseline_svg_path,
+          input.candidate_svg_path
+        ]);
+        if(comparison.ok!==true){
+          return result({ok:false,reason:'LINE_HIERARCHY_MEASUREMENT_FAILED',comparison});
+        }
+        const baselineDigest=sha256File(input.baseline_svg_path);
+        const effectInputDigest=sha256File(input.candidate_svg_path);
+        const candidateDigest=sha256File(input.candidate_artifact_path);
+        const receipt=Signer.signReferenceEffect({
+          baseline_digest:baselineDigest,
+          candidate_digest:candidateDigest,
+          effect_input_digest:effectInputDigest,
+          reference_ids:input.reference_ids,
+          reference_compile_digest:input.reference_compile_digest,
+          comparison
+        });
+        return result({
+          ok:true,
+          receipt,
+          baseline_digest:baselineDigest,
+          effect_input_digest:effectInputDigest,
+          candidate_digest:candidateDigest,
+          reference_compile_digest:input.reference_compile_digest,
+          comparison
+        });
+      }catch(error){
+        return result({ok:false,reason:'LINE_HIERARCHY_EFFECT_FAILED',error:String(error?.message||error)});
       }
     }
   );
