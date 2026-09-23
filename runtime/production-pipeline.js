@@ -80,11 +80,26 @@ function runProduction(input={}){
     input.reference_application||{},
     refCompile
   );
-  const refSourceStyle=ReferenceApplication.validateSourceStyleApplication(
-    input.reference_source_style_application||{},
+  const sourceStyleApplications=
+    input.reference_source_style_applications||
+    input.reference_source_style_application||
+    [];
+  const refSourceStyleList=(Array.isArray(sourceStyleApplications)
+    ? sourceStyleApplications
+    : [sourceStyleApplications])
+    .filter(x=>x && typeof x==='object' && Object.keys(x).length)
+    .map(x=>ReferenceApplication.validateSourceStyleApplication(x,refCompile));
+  const refSourceStyle=refSourceStyleList.length===1
+    ? refSourceStyleList[0]
+    : Object.freeze({
+        ok:refSourceStyleList.length>0 && refSourceStyleList.every(x=>x.ok),
+        results:Object.freeze(refSourceStyleList)
+      });
+  const refCoverage=ReferenceApplication.validateApplicationCoverage(
+    input.reference_application||{},
+    sourceStyleApplications,
     refCompile
   );
-  const refCausalApplication=refApplication.ok || refSourceStyle.ok;
 
   const visualMeasurement=Measurement.verifyVisualMeasurement(
     input.visual_measurement_receipt,
@@ -94,30 +109,39 @@ function runProduction(input={}){
     ? (visualMeasurement.payload.metrics?.metrics||{})
     : {};
 
-  const refEffect=refCompile.ok
-    ? Measurement.verifyReferenceEffect(
-        input.reference_effect_receipt,
+  const effectReceipts=
+    input.reference_effect_receipts||
+    input.reference_effect_receipt||
+    [];
+  const refEffectSet=refCompile.ok
+    ? Measurement.verifyReferenceEffectSet(
+        effectReceipts,
         input.artifact_digest||null,
-        input.reference?.reference_ids||[],
-        refCompile.compile_digest||null,
-        refCompile.effect_metrics||[]
+        refCompile
       )
     : Object.freeze({ok:false,reason:'REFERENCE_NOT_COMPILED'});
 
-  let refEffectLineage=Object.freeze({ok:true,status:'NOT_REQUIRED'});
-  if(refEffect.ok && refEffect.payload?.effect_schema==='TAKY_LINE_HIERARCHY_DELTA_V1'){
+  let refEffectLineage=Object.freeze({ok:true,status:'NOT_REQUIRED',findings:Object.freeze([])});
+  if(refEffectSet.ok){
     const expectedControlled=sourceFidelity.ok?sourceFidelity.payload?.controlled_svg_sha256:null;
-    refEffectLineage=Object.freeze(
-      expectedControlled && refEffect.payload?.effect_input_digest===expectedControlled
-        ? {ok:true,status:'PASS',controlled_svg_sha256:expectedControlled}
-        : {
-            ok:false,
-            status:'FAIL',
-            reason:'REFERENCE_EFFECT_SOURCE_FIDELITY_LINEAGE_MISMATCH',
-            expected_controlled_svg_sha256:expectedControlled||null,
-            actual_effect_input_digest:refEffect.payload?.effect_input_digest||null
-          }
-    );
+    const findings=[];
+    for(const payload of refEffectSet.payloads||[]){
+      if(payload.effect_schema!=='TAKY_LINE_HIERARCHY_DELTA_V1') continue;
+      if(!expectedControlled || payload.effect_input_digest!==expectedControlled){
+        findings.push(Object.freeze({
+          reason:'REFERENCE_EFFECT_SOURCE_FIDELITY_LINEAGE_MISMATCH',
+          expected_controlled_svg_sha256:expectedControlled||null,
+          actual_effect_input_digest:payload.effect_input_digest||null,
+          reference_ids:Object.freeze([...(payload.reference_ids||[])])
+        }));
+      }
+    }
+    refEffectLineage=Object.freeze({
+      ok:findings.length===0,
+      status:findings.length?'FAIL':'PASS',
+      controlled_svg_sha256:expectedControlled||null,
+      findings:Object.freeze(findings)
+    });
   }
 
   const visionReview=VisionReview.verifyReview(
@@ -142,7 +166,7 @@ function runProduction(input={}){
     GEOMETRY_GATE:sourceFidelity.ok?'PASS':'FAIL',
     FACT_GATE:facts.ok?'PASS':'FAIL',
     SEMANTIC_GATE:semantics.ok?'PASS':'FAIL',
-    REFERENCE_EFFECT_GATE:refCompile.ok && refCausalApplication && refEffect.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
+    REFERENCE_EFFECT_GATE:refCompile.ok && refCoverage.ok && refEffectSet.ok && refEffectLineage.ok && visionReview.ok?'PASS':'FAIL',
     ARCHITECTURAL_READABILITY_GATE:visualMeasurement.ok && readability.ok?'PASS':'FAIL',
     A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
@@ -162,9 +186,9 @@ function runProduction(input={}){
     refCompile,
     refApplication,
     refSourceStyle,
-    refCausalApplication,
+    refCoverage,
     visualMeasurement,
-    refEffect,
+    refEffectSet,
     refEffectLineage,
     visionReview,
     a3,
