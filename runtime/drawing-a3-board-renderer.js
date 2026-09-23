@@ -127,10 +127,12 @@
     });
 
     const sourcePlaced=
-      '<g id="source-slot" data-source-geometry="locked" '+
-      'transform="translate('+fit.x.toFixed(4)+' '+fit.y.toFixed(4)+') scale('+fit.scale.toFixed(8)+')">'+
-      '<defs><clipPath id="source-slot-clip" clipPathUnits="userSpaceOnUse"><rect x="'+sb.x+'" y="'+sb.y+'" width="'+sb.width+'" height="'+sb.height+'"/></clipPath></defs>'+
-      '<g clip-path="url(#source-slot-clip)">'+body+'</g></g>';
+      '<svg id="source-slot" data-source-geometry="locked" '+
+      'x="'+(hero.x+8)+'" y="'+(hero.y+8)+'" '+
+      'width="'+(hero.width-16)+'" height="'+(hero.height-16)+'" '+
+      'viewBox="'+sb.x+' '+sb.y+' '+sb.width+' '+sb.height+'" '+
+      'preserveAspectRatio="xMidYMid meet" overflow="hidden">'+
+      body+'</svg>';
 
     const project=package_data.project||{};
     const idx=pageIndex(package_data,page_id);
