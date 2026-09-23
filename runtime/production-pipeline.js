@@ -8,6 +8,7 @@ const GeometryGuard=require('./geometry-guard.js');
 const FactGate=require('./fact-evidence-validator.js');
 const SemanticGate=require('./semantic-gate.js');
 const NarrativeGate=require('./narrative-evidence-gate.js');
+const HumanIntent=require('./human-intent-contract.js');
 const ReferenceCompiler=require('./reference-compiler.js');
 const ReferenceApplication=require('./reference-application.js');
 const VisualQuality=require('./visual-quality-validator.js');
@@ -60,6 +61,7 @@ function runProduction(input={}){
 
   const semantics=SemanticGate.validateSemanticAssignments(input.semantics||[]);
   const narrative=NarrativeGate.validateClaims(input.claims||[]);
+  const humanIntent=HumanIntent.compileHumanIntent(input.human_intent||{});
 
   const refCompile=ReferenceCompiler.compileReferenceProfile(input.reference||{});
   const refApplication=ReferenceApplication.validateApplication(
@@ -86,7 +88,8 @@ function runProduction(input={}){
 
   const visionReview=VisionReview.verifyReview(
     input.vision_review_receipt,
-    input.artifact_digest||null
+    input.artifact_digest||null,
+    humanIntent.ok?humanIntent.intent_digest:null
   );
 
   const a3=VisualQuality.validateA3Measured(measuredMetrics);
@@ -110,7 +113,7 @@ function runProduction(input={}){
     A3_GATE:visualMeasurement.ok && a3.ok?'PASS':'FAIL',
     NARRATIVE_EVIDENCE_GATE:narrative.ok?'PASS':'FAIL',
     PROVENANCE_GATE:provenance.ok?'PASS':'FAIL',
-    USER_EFFECT_GATE:visionReview.ok?'PASS':'FAIL'
+    USER_EFFECT_GATE:humanIntent.ok && visionReview.ok?'PASS':'FAIL'
   };
 
   const evidence={
@@ -120,6 +123,7 @@ function runProduction(input={}){
     facts,
     semantics,
     narrative,
+    humanIntent,
     refCompile,
     refApplication,
     visualMeasurement,
