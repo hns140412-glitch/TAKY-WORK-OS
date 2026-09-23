@@ -1,0 +1,130 @@
+{
+  "version": "2026-09-23.1",
+  "mode": "SURGERY",
+  "slogan": [
+    "Think Again, Keep Your Key.",
+    "Think Again, You’re The Key."
+  ],
+  "atoms": [
+    {
+      "id": "C2S-HAN-001",
+      "type": "CORRECTION",
+      "statement": "ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE",
+      "owner": "TAKY/Work OS",
+      "destination": "TAKY OS + Drawing Router",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-002",
+      "type": "REQUIREMENT",
+      "statement": "Production results must route through authorized engine only",
+      "owner": "Drawing Engine",
+      "destination": "runtime/drawing-production-router.js",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-003",
+      "type": "REQUIREMENT",
+      "statement": "One-off Python/ReportLab/Generic HTML/raster/generative paths are experiment/diagnostic only",
+      "owner": "Drawing Engine",
+      "destination": "production router",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-004",
+      "type": "CORRECTION",
+      "statement": "Raster/presentation layers cannot destructively outrank geometry authority",
+      "owner": "Drawing Engine",
+      "destination": "L0-L8 architecture",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-005",
+      "type": "CORRECTION",
+      "statement": "Generative output is never geometry authority",
+      "owner": "Drawing Engine",
+      "destination": "Geometry Gate",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-006",
+      "type": "REQUIREMENT",
+      "statement": "Reference mining must compile to engine parameters and visible output effect",
+      "owner": "Reference Compiler",
+      "destination": "runtime/reference-compiler.js",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-007",
+      "type": "REQUIREMENT",
+      "statement": "SOURCE_FIDELITY and PRESENTATION_QUALITY are independent",
+      "owner": "Validation",
+      "destination": "Pre-user validation",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-008",
+      "type": "REQUIREMENT",
+      "statement": "NO PASS -> NO SHOW",
+      "owner": "TAKY",
+      "destination": "L8 User Exposure Gate",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-009",
+      "type": "CORRECTION",
+      "statement": "USER != DEBUGGER; human approval is for final choice, not mechanical defect detection",
+      "owner": "TAKY",
+      "destination": "Pre-user suite",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-010",
+      "type": "CORRECTION",
+      "statement": "DATE != CONTENT CHANGE",
+      "owner": "Source Authority",
+      "destination": "TAKY Work OS",
+      "status": "APPLIED_GOVERNANCE_RUNTIME_FINGERPRINT_TODO"
+    },
+    {
+      "id": "C2S-HAN-011",
+      "type": "REQUIREMENT",
+      "statement": "Semantic verification precedes presentation",
+      "owner": "Drawing Engine",
+      "destination": "Semantic Gate",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-012",
+      "type": "REQUIREMENT",
+      "statement": "Narrative claim strength must not exceed evidence strength",
+      "owner": "Report Engine",
+      "destination": "Fact Gate",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-013",
+      "type": "CORRECTION",
+      "statement": "Handoff must distinguish RESUME/RETROSPECTIVE/SURGERY/RE_ARCHITECTURE",
+      "owner": "TAKY",
+      "destination": "Work OS",
+      "status": "APPLIED"
+    },
+    {
+      "id": "C2S-HAN-014",
+      "type": "FRONTIER",
+      "statement": "Real drawing fixtures for protected-geometry fingerprint and visual reference-effect regression remain to be added",
+      "owner": "Drawing Engine",
+      "destination": "tests/fixtures",
+      "status": "OPEN"
+    },
+    {
+      "id": "C2S-HAN-015",
+      "type": "FRONTIER",
+      "statement": "Content fingerprint freshness runtime must be implemented to prove DATE != CONTENT CHANGE automatically",
+      "owner": "Source Registry",
+      "destination": "runtime/source-freshness",
+      "status": "OPEN"
+    }
+  ]
+}
