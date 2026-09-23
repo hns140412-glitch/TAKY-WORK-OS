@@ -49,3 +49,18 @@ with tempfile.TemporaryDirectory() as d:
     assert m["metrics"]["ink_ratio"]>0
 
 print("drawing_visual_metric_extractor: PASS")
+
+
+def test_ivory_background_is_not_ink():
+    import numpy as np
+    from drawing_visual_metric_extractor import _gray_metrics
+
+    gray=np.full((200,300),242,dtype=np.uint8)
+    gray[50:55,40:260]=30
+    gray[80:150,145:150]=40
+    m=_gray_metrics(gray)
+    assert 238 <= m["background_level"] <= 246
+    assert m["ink_ratio"] < 0.10, m
+    assert m["whitespace_ratio"] > 0.85, m
+
+test_ivory_background_is_not_ink()
