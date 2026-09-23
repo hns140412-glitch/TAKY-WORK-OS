@@ -16,7 +16,7 @@ from typing import Any, Dict, Iterable, List, Tuple
 
 try:
     import ezdxf
-    import fitz
+    import pymupdf as fitz
 except ImportError as exc:
     raise SystemExit("Requires ezdxf and pymupdf") from exc
 
