@@ -35,9 +35,8 @@ CODE_PASS != PRODUCT_PASS.
 ENGINE_PASS != VISUAL_PASS.
 
 Continue only the remaining realization gaps:
-- protected-anchor regression for wall/core/entry deletion
-- semantic proposal-vs-verified regression
-- actual A3 reference-effect visual regression
+- actual-source geometry/edge/protected-anchor/semantic evidence integration
+- actual A3 before/after reference-effect visual regression
 - CI/check observation and required-check enforcement
 - cross-repo TAKY/Work OS consistency
 - aggressive bypass audit
