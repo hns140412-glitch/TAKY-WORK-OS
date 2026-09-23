@@ -54,8 +54,10 @@ function signReferenceEffect({baseline_digest,candidate_digest,reference_ids,ref
 
 function signVisionReview(payload={}){
   if(!payload.artifact_digest) throw new Error('ARTIFACT_DIGEST_REQUIRED');
+  if(!payload.intent_digest) throw new Error('HUMAN_INTENT_DIGEST_REQUIRED');
   return sign('TAKY_VISION_REVIEW_RECEIPT','VISION_VALIDATOR_V1',{
     artifact_digest:payload.artifact_digest,
+    intent_digest:payload.intent_digest,
     professional_family_pass:payload.professional_family_pass===true,
     reference_effect_visible_without_explanation:payload.reference_effect_visible_without_explanation===true,
     generic_layout_detected:payload.generic_layout_detected===true,
