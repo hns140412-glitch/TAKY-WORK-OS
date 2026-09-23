@@ -1,5 +1,5 @@
 {
-  "version": "2026-09-23.1",
+  "version": "2026-09-23.2",
   "ledger": [
     {
       "FAILURE_ID": "F-A-ENGINE-BYPASS",
@@ -19,7 +19,13 @@
       "REGRESSION_TEST": "Production authorization fails for unregistered producer and any user-facing class.",
       "OWNER": "DRAWING_ENGINE",
       "DESTINATION": "TAKY-WORK-OS/runtime",
-      "STATUS": "OPEN"
+      "STATUS": "PARTIAL_FIXED_REPO_PRODUCTION_PATH__HOST_INTERCEPTION_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-production-authority-gate.js",
+        "runtime/drawing-execution-receipt.js",
+        "runtime/drawing-production-admission-cli.js",
+        "runtime/drawing-a3-board-cli.js"
+      ]
     },
     {
       "FAILURE_ID": "F-B-RASTER-MASK",
@@ -39,7 +45,12 @@
       "REGRESSION_TEST": "Fixture mask overlapping protected wall/core must hard-fail.",
       "OWNER": "DRAWING_ENGINE",
       "DESTINATION": "runtime/pre-user-validation",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_REPO_GATE__HOST_BYPASS_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-engine-core.js",
+        "runtime/drawing-production-authority-gate.js",
+        "DRAWING/PRESENTATION_MASK_CONTRACT.json"
+      ]
     },
     {
       "FAILURE_ID": "F-C-GENERATIVE-REDRAW",
@@ -59,7 +70,11 @@
       "REGRESSION_TEST": "Any detected structural edge displacement or missing protected component blocks show.",
       "OWNER": "DRAWING_ENGINE",
       "DESTINATION": "runtime/pre-user-validation",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_REPO_GATE__HOST_BYPASS_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-production-authority-gate.js",
+        "DRAWING/DRAWING_ENGINE_ARCHITECTURE_REVISION_V3.md"
+      ]
     },
     {
       "FAILURE_ID": "F-D-REFERENCE",
@@ -79,7 +94,11 @@
       "REGRESSION_TEST": "Method with no compiled params/effect evidence hard-fails REFERENCE_EFFECT.",
       "OWNER": "REFERENCE_COMPILER",
       "DESTINATION": "DRAWING/reference",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_REFERENCE_COMPILER__INTEGRATED_EFFECT_EVIDENCE_REQUIRED",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-reference-compiler.js",
+        "DRAWING/REFERENCE_COMPILER_SPEC_V1.json"
+      ]
     },
     {
       "FAILURE_ID": "F-E-QUALITY-GATE",
@@ -99,7 +118,11 @@
       "REGRESSION_TEST": "Fidelity PASS + reference/user effect FAIL => NO_SHOW.",
       "OWNER": "VALIDATION",
       "DESTINATION": "runtime/pre-user-validation",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_PRE_USER_GATE__LIVE_VISUAL_CALIBRATION_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-pre-user-validation.js",
+        "runtime/drawing-finalization-orchestrator.js"
+      ]
     },
     {
       "FAILURE_ID": "F-F-USER-DEBUGGER",
@@ -119,7 +142,11 @@
       "REGRESSION_TEST": "Known historical defects injected as fixtures must never reach showable state.",
       "OWNER": "TAKY_GOVERNANCE",
       "DESTINATION": "runtime/pre-user-validation",
-      "STATUS": "OPEN"
+      "STATUS": "PARTIAL_FIXED_L8__HOST_INTERCEPTION_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-pre-user-validation.js",
+        "runtime/drawing-production-admission-cli.js"
+      ]
     },
     {
       "FAILURE_ID": "F-G-ONE-OFF",
@@ -139,7 +166,12 @@
       "REGRESSION_TEST": "Unregistered script requesting PREVIEW/FINAL must fail.",
       "OWNER": "WORK_OS",
       "DESTINATION": "runtime/production-router",
-      "STATUS": "OPEN"
+      "STATUS": "PARTIAL_FIXED_EXPORTERS__HOST_INTERCEPTION_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "tools/drawing_a3_bundle_exporter.py",
+        "tools/drawing_a3_output_builder.py",
+        "runtime/drawing-a3-board-cli.js"
+      ]
     },
     {
       "FAILURE_ID": "F-H-FRESHNESS",
@@ -159,7 +191,10 @@
       "REGRESSION_TEST": "Same hash with later mtime remains SAME_CONTENT.",
       "OWNER": "SOURCE_REGISTRY",
       "DESTINATION": "DRAWING/source",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_CONTENT_EQUIVALENCE",
+      "REMEDIATION_EVIDENCE": [
+        "runtime/drawing-source-equivalence.js"
+      ]
     },
     {
       "FAILURE_ID": "F-I-SEMANTIC",
@@ -179,7 +214,12 @@
       "REGRESSION_TEST": "Unverified ROAD cannot receive road-specific style token.",
       "OWNER": "SEMANTIC_ENGINE",
       "DESTINATION": "runtime/pre-user-validation",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_UNKNOWN_FIRST_GATE__LIVE_SOURCE_ADAPTER_VALIDATION_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "tools/drawing_semantic_mapper.py",
+        "runtime/drawing-mask-gate-bridge.js",
+        "runtime/drawing-sales-mask-gate.js"
+      ]
     },
     {
       "FAILURE_ID": "F-J-NARRATIVE",
@@ -199,7 +239,12 @@
       "REGRESSION_TEST": "Unsupported absolute claim hard-fails; qualified claim needs evidence refs.",
       "OWNER": "REPORT_ENGINE",
       "DESTINATION": "runtime/pre-user-validation",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_NARRATIVE_EVIDENCE_GATE__LIVE_REPORT_INTEGRATION_OPEN",
+      "REMEDIATION_EVIDENCE": [
+        "DRAWING/ARCHITECTURAL_REPORT_NARRATIVE_PROTOCOL_V1.json",
+        "runtime/drawing-narrative-decision-engine.js",
+        "runtime/drawing-pre-user-validation.js"
+      ]
     },
     {
       "FAILURE_ID": "F-K-HANDOFF",
@@ -219,7 +264,13 @@
       "REGRESSION_TEST": "Three repeated failure classes force SURGERY recommendation/route.",
       "OWNER": "WORK_OS",
       "DESTINATION": "HANDOFF",
-      "STATUS": "OPEN"
+      "STATUS": "IMPLEMENTED_ROUTER_SURGERY_MODE__CI_PENDING",
+      "REMEDIATION_EVIDENCE": [
+        "hns140412-glitch/TAKY:ENFORCEMENT/work_os_productive_router.py",
+        "hns140412-glitch/TAKY:MASTER/DRAWING_PRODUCTION_GOVERNANCE.md"
+      ]
     }
-  ]
+  ],
+  "system_closure_state": "PARTIAL__REPOSITORY_ENFORCEMENT_SUBSTANTIALLY_WIRED__HOST_LEVEL_INTERCEPTION_NOT_PROVEN",
+  "critical_boundary": "Repository code can block governed production routes, but cannot by itself prevent a chat/tool host from creating and exposing an out-of-repo artifact. Such artifact must be classified NON_PRODUCTION/UNAUTHORIZED under TAKY; platform-level interception remains unproven."
 }
