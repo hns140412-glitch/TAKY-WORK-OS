@@ -148,6 +148,27 @@ Latest checkpoint before this handoff update:
 
 After this handoff commit, query live readiness again.
 
+## READINESS HANDSHAKE
+
+Before any user-facing production attempt:
+
+1. call `taky-validation.get-validation-readiness`
+2. obtain `validation_readiness_receipt`
+3. pass that receipt to `taky-production.get-production-readiness`
+4. require:
+   - `staging_ready=true`
+   - `production_gateway_ready=true`
+   - `overall_user_facing_ready=true`
+   - `production_ready=true`
+5. only then continue to artifact-specific validation/finalization
+
+This handshake does NOT replace source-fidelity, reference-effect, visual-measurement or Vision-review receipts for the artifact itself.
+
+If validator readiness is unavailable:
+- continue staging / diagnostics
+- do not expose/publish user-facing production
+- do not ask the human to debug keys or gate failures; surface the missing readiness reason
+
 ## OPEN NEXT
 
 Only address these if the next goal requires them:
