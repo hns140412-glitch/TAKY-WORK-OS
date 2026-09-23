@@ -6,10 +6,10 @@ on:
   pull_request:
     paths:
       - 'runtime/drawing-**'
-      - 'runtime/pre-user-validation.js'
-      - 'runtime/reference-compiler.js'
       - 'tests/drawing-governance-surgery.test.js'
       - 'DRAWING/**'
+      - 'C2S/**'
+      - 'HANDOFF/**'
 jobs:
   governance-regression:
     runs-on: ubuntu-latest
