@@ -146,9 +146,28 @@
         "source levels and profile unchanged"
       ],
       "hard_gates": [
-        "levels unchanged",
-        "ground profile unchanged",
-        "cut geometry unchanged"
+        "SOURCE_GEOMETRY_UNCHANGED",
+        "CONTROL_INPUT_LONG_EDGE_AT_LEAST_2048",
+        "DIMENSIONS_TEXT_FURNITURE_HATCH_OFF_IN_CONTROL_INPUT",
+        "SECTION_CUT_VERIFIED",
+        "SOURCE_LINE_FINAL_OVERLAY",
+        "EDGE_DIFF_PASS",
+        "AI_NEVER_GEOMETRY_AUTHORITY"
+      ],
+      "presentation_profile": "SECTION_PERSPECTIVE",
+      "presentation_preset": "SECTION_PERSPECTIVE_EDITORIAL",
+      "generation_recipe": "COMFYUI_SECTION_PERSPECTIVE_EDITORIAL_V1",
+      "prompt_package": "SECTION_PERSPECTIVE_AI_PACKAGE_V1",
+      "preprocess_layers": [
+        "LAYER_A_SOURCE_LINE_STRUCTURE_ONLY",
+        "LAYER_B_INTERIOR_FURNITURE_MATERIAL_GUIDE",
+        "LAYER_C_SECTION_CUT_POCHE"
+      ],
+      "final_composite": [
+        "AI_RENDER_BOTTOM",
+        "SECTION_CUT_SOLID_MIDDLE",
+        "SOURCE_LINE_MULTIPLY_TOP",
+        "SUBTLE_FILM_GRAIN"
       ]
     }
   },
