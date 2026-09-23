@@ -1,5 +1,6 @@
 const assert=require('assert');
 const r=require('./drawing-report-package');
+const g=require('./drawing-production-gate');
 
 const pkg={
   package_id:'P1',
@@ -20,11 +21,34 @@ const pkg={
   ]
 };
 
+const allPass=()=>Object.fromEntries(g.REQUIRED_GATES.map(x=>[x,'PASS']));
 assert.equal(r.validate(pkg).ok,true);
-const plan=r.buildOutputPlan(pkg);
+
+const blocked=r.buildOutputPlan(pkg);
+assert.equal(blocked.ok,false);
+assert.equal(blocked.reason,'PRE_USER_GATE_BLOCKED');
+
+const plan=r.buildOutputPlan(pkg,{
+  artifact_class:'PREVIEW',
+  engine:'DRAWING_ENGINE',
+  execution_path:'AUTHORIZED_ENGINE',
+  gates:allPass(),
+  geometry_diff:{pass:true}
+});
 assert.equal(plan.ok,true);
+assert.equal(plan.production_admission.show,true);
 assert.equal(plan.outputs.SVG.role,'VISUAL_CANONICAL');
 assert.equal(plan.outputs.XLSX.role,'DATA_EXPORT');
+
+const bypass=r.buildOutputPlan(pkg,{
+  artifact_class:'PREVIEW',
+  engine:'PYTHON',
+  execution_path:'AD_HOC_PYTHON_ONE_OFF',
+  gates:allPass(),
+  geometry_diff:{pass:true}
+});
+assert.equal(bypass.ok,false);
+assert.equal(bypass.reason,'PRE_USER_GATE_BLOCKED');
 
 const bad=JSON.parse(JSON.stringify(pkg));
 bad.facts[1].value=123;
@@ -41,5 +65,4 @@ assert.equal(patched.facts[1].value,100);
 assert.equal(patched.facts[1].evidence_state,'CALCULATED');
 
 assert.throws(()=>r.applyFactPatch(pkg,[{fact_id:'F2',value:10,evidence_state:'PENDING'}]));
-
 console.log('drawing-report-package: PASS');
