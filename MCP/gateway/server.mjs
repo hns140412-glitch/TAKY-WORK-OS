@@ -12,9 +12,8 @@ const __dirname=path.dirname(__filename);
 const geometryAdapter=path.resolve(__dirname,'../../tools/drawing_geometry_primitive_adapter.py');
 
 const Router=require('../../runtime/work-os-router.js');
-const Validator=require('../../runtime/independent-validator.js');
-const Exposure=require('../../runtime/exposure-gate.js');
 const ArtifactBroker=require('../../runtime/artifact-broker.js');
+const Pipeline=require('../../runtime/production-pipeline.js');
 const ReferenceCompiler=require('../../runtime/reference-compiler.js');
 
 function runPython(args){
@@ -80,29 +79,31 @@ export function buildServer(){
   );
 
   server.registerTool(
-    'validate-for-exposure',
+    'finalize-staged-production',
     {
-      description:'Independently validate all mandatory TAKY gates and issue a signed validation receipt. Producer self-certification is forbidden.',
+      description:'Run TAKY computed production validation against a staging artifact. Returns a digest-bound exposure grant only when every mandatory gate passes.',
       inputSchema:z.object({
-        authorization:z.string(),
-        validator_id:z.string().min(1),
-        gate_results:z.record(z.string(),z.string())
+        staging_path:z.string().min(1),
+        task:z.object({
+          task_type:z.enum(['ARCH_DRAWING_PRESENTATION','ARCH_REPORT_ASSEMBLY']),
+          requested_output:z.enum(['VALIDATED_PREVIEW','USER_FACING','FINAL']).default('USER_FACING'),
+          requested_producer_id:z.string().optional()
+        }),
+        source_identity:z.record(z.string(),z.any()),
+        geometry:z.record(z.string(),z.any()),
+        semantics:z.array(z.record(z.string(),z.any())).default([]),
+        claims:z.array(z.record(z.string(),z.any())).default([]),
+        reference:z.record(z.string(),z.any()),
+        reference_effect_proof:z.record(z.string(),z.any()),
+        visual_metrics:z.record(z.string(),z.any()),
+        provenance:z.record(z.string(),z.any()),
+        report_package:z.record(z.string(),z.any()).optional(),
+        sources:z.array(z.record(z.string(),z.any())).optional(),
+        facts:z.array(z.record(z.string(),z.any())).optional(),
+        exposure_target:z.enum(['VALIDATED_PREVIEW','USER_VISIBLE','FINAL_APPROVABLE']).default('FINAL_APPROVABLE')
       })
     },
-    async(input)=>result(Validator.validateForExposure(input))
-  );
-
-  server.registerTool(
-    'authorize-exposure',
-    {
-      description:'Issue a signed user-exposure grant only when production authorization and independent validation both verify.',
-      inputSchema:z.object({
-        authorization:z.string(),
-        validation_receipt:z.string(),
-        target:z.enum(['VALIDATED_PREVIEW','USER_VISIBLE','FINAL_APPROVABLE'])
-      })
-    },
-    async(input)=>result(Exposure.authorizeExposure(input))
+    async(input)=>result(Pipeline.finalizeStagedProduction(input))
   );
 
   server.registerTool(
@@ -121,22 +122,6 @@ export function buildServer(){
       })
     },
     async(input)=>result(ArtifactBroker.publishProductionArtifact(input))
-  );
-
-  server.registerTool(
-    'register-production-artifact',
-    {
-      description:'Register a production artifact only when a valid signed exposure grant matches its producer and execution graph.',
-      inputSchema:z.object({
-        artifact_id:z.string().min(1),
-        artifact_type:z.string().min(1),
-        producer_id:z.string().min(1),
-        execution_graph_id:z.string().min(1),
-        source_ids:z.array(z.string()).default([]),
-        exposure_grant:z.string()
-      })
-    },
-    async(input)=>result(ArtifactBroker.registerProductionArtifact(input))
   );
 
   server.registerTool(
