@@ -1,0 +1,16 @@
+{
+  "version": "2026-09-23.1",
+  "old_paths": [
+    "TASK -> ad hoc Python -> PDF/PNG -> USER",
+    "TASK -> Generic HTML -> browser/print -> USER",
+    "TASK -> ReportLab -> PDF -> USER",
+    "SOURCE -> raster mask -> composite -> USER",
+    "SOURCE -> generative redraw -> image -> USER"
+  ],
+  "authorized_path": "TASK -> DRAWING_PRODUCTION_ROUTER -> AUTHORIZED_ENGINE -> REFERENCE_COMPILER -> PRE_USER_VALIDATION -> L8_USER_EXPOSURE_GATE -> OUTPUT",
+  "policy": {
+    "ENGINE_AVAILABLE + BYPASS_USED": "GOVERNANCE_FAILURE",
+    "ONE_OFF_SCRIPT": "EXPERIMENT_DIAGNOSTIC_ONLY",
+    "PRODUCTION_RESULT_AUTHORITY": "DRAWING_PRODUCTION_ROUTER_ONLY"
+  }
+}
