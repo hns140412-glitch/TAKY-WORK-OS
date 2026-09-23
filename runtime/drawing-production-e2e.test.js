@@ -110,8 +110,8 @@ try{
     a3:{
       width_mm:420,
       height_mm:297,
-      margin_mm:8,
-      layout:{hero_ratio:0.60,support_ratio:0.40}
+      margin_mm:4,
+      layout:{hero_ratio:0.45,support_ratio:0.55}
     },
     pages:{P01:{title:'Synthetic Plan',hero:'SOURCE_DRAWING',scale_label:'1:200'}}
   };
