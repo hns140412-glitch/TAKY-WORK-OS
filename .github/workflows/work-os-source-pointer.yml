@@ -22,6 +22,8 @@ jobs:
           python-version: "3.12"
       - name: Offline resolver tests (no Drive access or raw source upload)
         run: python -m unittest discover -s SOURCE_REFERENCE -p "source_reference_test.py" -v
+      - name: Read-only SOURCE_ARCHIVE to VAULT reconciliation tests
+        run: python -m unittest discover -s SOURCE_REFERENCE -p "source_archive_reconcile_test.py" -v
       - name: Raw/local material must remain Git-ignored and untracked
         shell: bash
         run: |
