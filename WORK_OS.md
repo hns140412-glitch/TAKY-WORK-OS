@@ -11,6 +11,36 @@ TAKY / GRAND MASTER rules govern this repository. Work OS rules may specialize e
 ## Interaction principle
 The user should be able to provide files in chat and request work naturally. TAKY handles classification, naming, filing, validation, and result organization behind the scenes. Do not force the user to operate a complex lifecycle folder tree for ordinary work.
 
+## Storage authority clarification — reference first (2026-09-28 DRAFT)
+
+Confirmed storage split:
+- DATA STORAGE: existing Google Drive or already synchronized local folder for originals, collected/reference material, indices, run state, source manifests, private receipts and work results. Verify actual persistence/sync before claiming it. Existing synchronized folder is used directly; no secondary mirror or redundant Drive root.
+- GITHUB: the development source repository (PWA/application code, tests, UI/build/deployment tooling and implementation contracts) and expressly approved application assets needed for the app. App assets are different from collected RAW/reference images, even if both have image extensions.
+- RUNTIME LINK: use an existing Drive file ID or scoped local source pointer and read only what the current work item needs; never push a data corpus/metadata inventory into GitHub or replicate the whole dataset into Work OS.
+
+
+This subordinate implementation inherits central TAKY OS/DRIVE_STORAGE_MAP.json:
+there is one existing governed TAKY Drive root. The older illustrative
+"TAKY-WORK-OS/" folder drawing below is **not authority to create another
+independent Drive root**. Existing project files stay in their owned local or
+Drive locations with stable source_ref/Drive file ID whenever recoverable.
+
+For an already preserved original, a Work OS work item records a task-scoped
+source pointer, checked permission/persistence, and only the relevant output;
+it does not replicate the entire SOURCE_ARCHIVE, SOURCE VAULT, Notion captures,
+images or other raw datasets into GitHub, a fresh Drive project folder or Work OS.
+"Preserve supplied originals" below means do not overwrite or discard originals;
+it does not require making another binary copy when the original is already
+durably accessible. Any necessary task-specific duplicate/export must be
+separately justified by access/recoverability, user rights and change scope,
+and must not claim Indexing approval or canonical promotion by mere reference.
+
+SOURCE_REFERENCE is an opt-in draft library only; it is not an active sync job,
+unauthenticated browser endpoint, automated Work OS importer or local Drive
+authorization provider. Work OS remains HOLD. Private reference metadata and
+raw content must not be Git committed. Actual Drive access and local runner
+binding remain separate verified activation steps.
+
 ## Google Drive workspace
 Preferred governed workspace name: TAKY-WORK-OS.
 Google Drive holds actual project inputs and generated business artifacts such as DWG/DXF, PDF, XLSX, DOCX, images, references, and deliverables.
