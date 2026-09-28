@@ -90,9 +90,17 @@ def resolve_pointer(
         if (not isinstance(checked, Mapping) or checked.get("file_id") != file_id
                 or checked.get("accessible") is not True):
             return {**base, "state": "CONNECTOR_ACCESS_UNVERIFIED"}
-        # A permission check is not a file-byte/hash check.
+        mime_type = checked.get("mime_type")
+        if not isinstance(mime_type, str) or not mime_type:
+            return {**base, "state": "DRIVE_FILE_TYPE_UNVERIFIED"}
+        if mime_type == "application/vnd.google-apps.folder":
+            return {**base, "state": "DRIVE_FOLDER_NOT_A_SOURCE_FILE"}
+        if mime_type == "application/vnd.google-apps.shortcut":
+            return {**base, "state": "DRIVE_SHORTCUT_NEEDS_TARGET_RESOLUTION"}
+        # A same-ID, authenticated metadata check is not a byte/hash check.
         return {**base, "state": "AUTHENTICATED_REFERENCE_AVAILABLE",
-                "content_hash_verified": False, "next": "AUTHORIZED_TASK_SCOPED_READ"}
+                "mime_type": mime_type, "content_hash_verified": False,
+                "next": "AUTHORIZED_TASK_SCOPED_READ"}
 
     key = locator.get("root_key")
     if not isinstance(key, str) or not key or not allowed_local_roots or key not in allowed_local_roots:
