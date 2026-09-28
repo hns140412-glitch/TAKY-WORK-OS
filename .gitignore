@@ -4,3 +4,10 @@ __pycache__/
 
 # RAW source archive - stored outside Git
 /SOURCE_ARCHIVE/
+
+# Private originals and generated local source material are never Git inputs.
+/SOURCE_VAULT/
+/TAKY-SOURCE-VAULT/
+/WORK_OS_SOURCE_CACHE/
+/SOURCE_REFERENCE/runtime/
+/SOURCE_REFERENCE/*.local.json
