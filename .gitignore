@@ -11,3 +11,24 @@ __pycache__/
 /WORK_OS_SOURCE_CACHE/
 /SOURCE_REFERENCE/runtime/
 /SOURCE_REFERENCE/*.local.json
+
+# Any-depth raw/source-data directories. This does not exclude /app/assets/.
+**/SOURCE_ARCHIVE/
+**/RAW_SOURCE_ARCHIVE/
+**/90_RAW_SOURCE_ARCHIVE/
+**/SOURCE_VAULT/
+**/TAKY-SOURCE-VAULT/
+**/WORK_OS_SOURCE_CACHE/
+**/captures_v04/
+**/acquired_external/
+**/data/notion_incremental/
+**/SOURCE_REFERENCE/runtime/
+
+# Local/private configuration and credential material, not app build assets.
+*.local.json
+.env
+.env.*
+!.env.example
+*.p12
+*.pfx
+*.key
