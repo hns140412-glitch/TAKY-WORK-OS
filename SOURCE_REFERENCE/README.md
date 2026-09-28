@@ -92,3 +92,32 @@ git check-ignore -v -- "SOURCE_REFERENCE/runtime/_probe.json"
 
 The tests use temporary fabricated bytes and metadata callbacks; they do NOT
 exercise a real Drive login, a real SOURCE VAULT file or hosted Work OS.
+
+
+## Local SOURCE_ARCHIVE reconciliation before any cleanup
+
+The ignored PC folder inside the Work OS clone remains **on local disk**.
+An ignore rule prevents Git upload but does not move, archive, or delete a file.
+Do not assume its reported ~9k files are duplicates of SOURCE VAULT's captures_v04
+merely because counts look close. Items may differ in bytes, provenance or dates.
+
+The controlled offline script SOURCE_REFERENCE/source_archive_reconcile.py
+compares SHA-256 and byte length between explicitly given folders. Default
+VAULT scope is captures_v04 and data/notion_incremental/snapshots only.
+It creates local-private SOURCE_REFERENCE/runtime/SOURCE_ARCHIVE_COMPARE.json.
+It never deletes, moves, copies, commits, pushes, or uploads source files.
+
+Example read-only PowerShell invocation, only once PC folders are confirmed:
+
+    Set-Location -LiteralPath 'D:\Git PWA\TAKY-WORK-OS'
+    python .\SOURCE_REFERENCE\source_archive_reconcile.py --archive-root 'D:\Git PWA\TAKY-WORK-OS\SOURCE_ARCHIVE' --vault-root 'D:\Git PWA\TAKY-SOURCE-VAULT'
+
+BYTE_IDENTICAL_CANDIDATE only says that bytes match in the selected VAULT
+scope; it does NOT verify provenance, permissions, metadata, source lineage or
+backup completeness and does NOT authorize deleting the archive copy.
+Missing or unreadable subtree, skipped symlink, changed file, and partial
+source scope prevent completeness claims. Keep this report private on the PC:
+filenames may reveal personal context, and must not be committed to GitHub.
+
+Actual cleanup is a separate action requiring preview of proposed targets and
+verified backup/persistence. No deletion capability is included in this PR.
