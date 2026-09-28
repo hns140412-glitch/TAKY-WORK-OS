@@ -121,3 +121,12 @@ filenames may reveal personal context, and must not be committed to GitHub.
 
 Actual cleanup is a separate action requiring preview of proposed targets and
 verified backup/persistence. No deletion capability is included in this PR.
+
+
+## Single file read — not bulk ingestion
+
+SOURCE_REFERENCE/source_reader.py provides a separate opt-in in-memory one-source read. It is not started or scheduled by this Draft. The Work OS caller must supply **both** a concrete work_item_id and a trusted independent authorization callback that approves exactly one source/provider/work-item/action. A field in the source pointer cannot self-authorize it. Local sources require an explicit approved root; Drive sources require an independently connected, authorized Drive byte-reader for the same exact Drive file ID. A read is limited to 8 MiB by default, with a hard 25 MiB ceiling. If an independent expected SHA-256 is supplied, mismatch rejects the read. The returned receipt contains only source identity, size, hash, and authority flags; actual bytes are transient in the caller's memory and this module never persists or uploads them.
+
+**Security and activation limits:** The Drive callback is a dependency interface, not an installed OAuth/connector binding. The local reader cannot be safely exposed as a public unauthenticated HTTP endpoint; it needs a trusted local caller and operating-system file permissions. It must not be wired into the current mobile gateway/tunnel. Full document formats, sensitive data screening and legitimate Work OS downstream artifact policy require separate domain handling. Passing a fabricated callback in CI establishes code behavior only, not real user permission.
+
+The pending SOURCE VAULT queue and existing daily 03:30/13:00 automation are separate from Work OS. Neither the new reader nor the local archive byte-audit runs automatically from GitHub, and neither runs on the user's PC merely because a GitHub branch has this code. The actual folder is not copied or deleted.
