@@ -74,10 +74,34 @@ class ReferenceTests(unittest.TestCase):
     def test_drive_access_check_is_not_content_verification(self):
         ref = drive()
         file_id = ref["locator"]["file_id"]
-        r = resolve_pointer(ref, drive_metadata_check=lambda x: {"file_id": file_id, "accessible": True})
+        r = resolve_pointer(ref, drive_metadata_check=lambda x: {
+            "file_id": file_id, "accessible": True, "mime_type": "application/pdf"})
         self.assertEqual(r["state"], "AUTHENTICATED_REFERENCE_AVAILABLE")
         self.assertFalse(r["content_hash_verified"])
         self.assertNotIn("download_url", r)
+
+    def test_drive_root_folder_cannot_pass_as_file(self):
+        ref = drive()
+        fid = ref["locator"]["file_id"]
+        r = resolve_pointer(ref, drive_metadata_check=lambda x: {
+            "file_id": fid, "accessible": True,
+            "mime_type": "application/vnd.google-apps.folder"})
+        self.assertEqual(r["state"], "DRIVE_FOLDER_NOT_A_SOURCE_FILE")
+
+    def test_drive_shortcut_requires_actual_target(self):
+        ref = drive()
+        fid = ref["locator"]["file_id"]
+        r = resolve_pointer(ref, drive_metadata_check=lambda x: {
+            "file_id": fid, "accessible": True,
+            "mime_type": "application/vnd.google-apps.shortcut"})
+        self.assertEqual(r["state"], "DRIVE_SHORTCUT_NEEDS_TARGET_RESOLUTION")
+
+    def test_drive_missing_mime_type_does_not_claim_access(self):
+        ref = drive()
+        fid = ref["locator"]["file_id"]
+        r = resolve_pointer(ref, drive_metadata_check=lambda x: {
+            "file_id": fid, "accessible": True})
+        self.assertEqual(r["state"], "DRIVE_FILE_TYPE_UNVERIFIED")
 
     def test_drive_wrong_identity_fails_closed(self):
         r = resolve_pointer(drive(), drive_metadata_check=lambda x: {"file_id": "differentId123", "accessible": True})
