@@ -106,7 +106,13 @@ def resolve_pointer(
     if not isinstance(key, str) or not key or not allowed_local_roots or key not in allowed_local_roots:
         return {**base, "state": "LOCAL_ROOT_NOT_BOUND"}
     rel = _relative(locator.get("relative_path"))
-    root = Path(allowed_local_roots[key]).resolve(strict=True)
+    configured_root = Path(allowed_local_roots[key])
+    if configured_root.is_symlink():
+        raise SourcePointerError("LOCAL_ROOT_SYMLINK_FORBIDDEN")
+    try:
+        root = configured_root.resolve(strict=True)
+    except OSError:
+        return {**base, "state": "LOCAL_ROOT_MISSING"}
     if not root.is_dir():
         raise SourcePointerError("LOCAL_ROOT_NOT_DIRECTORY")
     candidate = root
