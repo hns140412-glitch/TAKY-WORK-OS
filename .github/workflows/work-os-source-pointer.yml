@@ -1,0 +1,36 @@
+name: Work OS Source Pointer Boundary
+on:
+  pull_request:
+    paths:
+      - ".gitignore"
+      - "SOURCE_REFERENCE/**"
+      - ".github/workflows/work-os-source-pointer.yml"
+  push:
+    branches:
+      - "fix/work-os-source-pointer-only-*"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-reference-no-copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline resolver tests (no Drive access or raw source upload)
+        run: python -m unittest discover -s SOURCE_REFERENCE -p "source_reference_test.py" -v
+      - name: Raw/local material must remain Git-ignored and untracked
+        shell: bash
+        run: |
+          git check-ignore -q --no-index SOURCE_ARCHIVE/_probe.raw
+          git check-ignore -q --no-index SOURCE_VAULT/_probe.raw
+          git check-ignore -q --no-index TAKY-SOURCE-VAULT/_probe.raw
+          git check-ignore -q --no-index SOURCE_REFERENCE/runtime/_probe.json
+          git check-ignore -q --no-index SOURCE_REFERENCE/session.local.json
+          if git ls-files | grep -E '^(SOURCE_ARCHIVE|SOURCE_VAULT|TAKY-SOURCE-VAULT|WORK_OS_SOURCE_CACHE)/'; then
+            echo 'Raw source paths tracked by Git' >&2
+            exit 1
+          fi
