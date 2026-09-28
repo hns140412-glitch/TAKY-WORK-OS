@@ -12,11 +12,13 @@ TAKY-WORK-OS Git repository.
 
 | Surface | Role |
 | --- | --- |
-| SOURCE VAULT / approved local folders | Original bytes, local captures, evidence hashes, retrieval receipts |
-| Google Drive | User-authorized source and working files; existing file IDs, no forced duplicate copy |
+| Existing local SOURCE VAULT / Google Drive-synchronized data folder | Data/original bytes, captures, indices, local state, receipts and results; verify real synchronization rather than assuming it |
+| Google Drive | Authorized data and work-file storage via existing IDs; no forced duplicate local-to-cloud mirror |
 | TAKY Indexing | Stable source IDs, version/duplicate relations, provenance and search pointers |
 | Work OS | The specific work item's source_ref and minimal permitted evidence/result |
 | GitHub | PWA/app source code, explicitly approved runtime assets, UI/build/test/deployment machinery and minimal implementation contracts; central TAKY may hold governance code/contracts/tests. NO raw reference/source data or user-linked manifests |
+
+**Term distinction:** In "GitHub source repository", *source* means development source code (plus approved PWA assets and build machinery), not raw research/source evidence. The latter is data and belongs to Drive or its already-synchronized local data folder. A data folder inside a Git clone does not become safe cloud backup merely because Git ignores it.
 
 **User-confirmed scope (2026-09-28):** GitHub must not become a data/source warehouse. The SOURCE_REFERENCE code in this Draft is merely an optional PWA/Work OS implementation mechanism, NOT permission to create source pointer inventories, copy SOURCE_ARCHIVE, commit private receipts, upload extracted text, or publish captured reference imagery as an app asset. A source image is not an approved PWA asset. Until a relevant PWA actually needs this implementation, keep the module Draft/HOLD and do not activate it or expand GitHub storage. Local SOURCE VAULT and existing authorized Google Drive retain originals and derived data; app-specific approved assets alone may be versioned for the build.
 
