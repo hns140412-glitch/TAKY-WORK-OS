@@ -13,6 +13,12 @@ The user should be able to provide files in chat and request work naturally. TAK
 
 ## Storage authority clarification — reference first (2026-09-28 DRAFT)
 
+Confirmed storage split:
+- DATA STORAGE: existing Google Drive or already synchronized local folder for originals, collected/reference material, indices, run state, source manifests, private receipts and work results. Verify actual persistence/sync before claiming it. Existing synchronized folder is used directly; no secondary mirror or redundant Drive root.
+- GITHUB: the development source repository (PWA/application code, tests, UI/build/deployment tooling and implementation contracts) and expressly approved application assets needed for the app. App assets are different from collected RAW/reference images, even if both have image extensions.
+- RUNTIME LINK: use an existing Drive file ID or scoped local source pointer and read only what the current work item needs; never push a data corpus/metadata inventory into GitHub or replicate the whole dataset into Work OS.
+
+
 This subordinate implementation inherits central TAKY OS/DRIVE_STORAGE_MAP.json:
 there is one existing governed TAKY Drive root. The older illustrative
 "TAKY-WORK-OS/" folder drawing below is **not authority to create another
