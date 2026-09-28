@@ -53,6 +53,20 @@ class ReferenceTests(unittest.TestCase):
                              "LOCAL_SOURCE_MISSING")
         self.assertEqual(resolve_pointer(local())["state"], "LOCAL_ROOT_NOT_BOUND")
 
+    def test_explicit_local_root_symlink_and_missing_root_fail_closed(self):
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            missing = root / "not-exists"
+            result = resolve_pointer(local(), allowed_local_roots={"SOURCE_VAULT": missing})
+            self.assertEqual(result["state"], "LOCAL_ROOT_MISSING")
+            link = root / "linked-root"
+            try:
+                link.symlink_to(root, target_is_directory=True)
+            except (OSError, NotImplementedError):
+                self.skipTest("Symlinks not supported")
+            with self.assertRaisesRegex(SourcePointerError, "ROOT_SYMLINK_FORBIDDEN"):
+                resolve_pointer(local(), allowed_local_roots={"SOURCE_VAULT": link})
+
     def test_reject_relative_escape(self):
         with tempfile.TemporaryDirectory() as td:
             for path in ("../x", "a/../../x", "/absolute", "C:/absolute", "a\\b", "a//b"):
