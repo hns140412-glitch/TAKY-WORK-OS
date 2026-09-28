@@ -16,7 +16,9 @@ TAKY-WORK-OS Git repository.
 | Google Drive | User-authorized source and working files; existing file IDs, no forced duplicate copy |
 | TAKY Indexing | Stable source IDs, version/duplicate relations, provenance and search pointers |
 | Work OS | The specific work item's source_ref and minimal permitted evidence/result |
-| GitHub | Implementation code, tests, schemas and **non-sensitive** contracts only |
+| GitHub | PWA/app source code, explicitly approved runtime assets, UI/build/test/deployment machinery and minimal implementation contracts; central TAKY may hold governance code/contracts/tests. NO raw reference/source data or user-linked manifests |
+
+**User-confirmed scope (2026-09-28):** GitHub must not become a data/source warehouse. The SOURCE_REFERENCE code in this Draft is merely an optional PWA/Work OS implementation mechanism, NOT permission to create source pointer inventories, copy SOURCE_ARCHIVE, commit private receipts, upload extracted text, or publish captured reference imagery as an app asset. A source image is not an approved PWA asset. Until a relevant PWA actually needs this implementation, keep the module Draft/HOLD and do not activate it or expand GitHub storage. Local SOURCE VAULT and existing authorized Google Drive retain originals and derived data; app-specific approved assets alone may be versioned for the build.
 
 A pointer does **not** authorize reading material and does **not** count as
 content acquisition, verified original, Indexing approval, Mining completion or
