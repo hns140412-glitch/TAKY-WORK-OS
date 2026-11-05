@@ -1,0 +1,10 @@
+{
+  "id": "2026-09-11-ready-codex-e2e-probe-v1",
+  "action": "codex",
+  "app": "ready",
+  "title": "Codex queue end-to-end probe",
+  "expect_changes": true,
+  "prompt": "Run a bounded end-to-end TAKY Codex Queue probe on the current isolated Ready work branch. Do not change application behavior. Create exactly one new UTF-8 markdown file at docs/TAKY_CODEX_E2E_PROBE_2026-09-11.md containing: a title '# TAKY Codex Queue E2E Probe', a line 'Status: CODEX_QUEUE_E2E_EXECUTED', a line stating that the file was created by the bounded TAKY Codex Queue probe, and a short 'Safety' section stating that no runtime behavior, main, production, deployment, release, or paid generation was changed. Do not modify any other file unless absolutely required by repository tooling; no dependency changes. Run a bounded check that the file exists and contains the exact status marker. Finish with the changed file and check result.",
+  "allow_main": false,
+  "allow_production": false
+}

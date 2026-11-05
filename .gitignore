@@ -1,0 +1,10 @@
+MOBILE_DEV_GATEWAY/runtime/
+__pycache__/
+*.pyc
+
+# RAW source archive - stored outside Git
+/SOURCE_ARCHIVE/
+
+# This is a compatibility junction into the single TAKY_AI_WORKBENCH/REFERENCE
+# warehouse, not project source code. Prevent git add -A from staging RAW.
+/REFERENCE/

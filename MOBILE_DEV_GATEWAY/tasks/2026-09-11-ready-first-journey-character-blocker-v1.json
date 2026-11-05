@@ -1,0 +1,10 @@
+{
+  "id": "2026-09-11-ready-first-journey-character-blocker-v1",
+  "action": "codex",
+  "app": "ready",
+  "title": "Fix First Journey photo-to-character consultation blocker on iPhone",
+  "expect_changes": true,
+  "prompt": "Fix the current P0 blocker in Ready & Set First Journey on the current isolated Ready work branch only. The physically observed state is: on iPhone Safari the PHOTO step works, the uploaded photo preview is visible, and the blue button labeled '다음 · 캐릭터 스타일 상담' is visible, but tapping it does not advance into the CHARACTER consultation flow. Previous work around commits f76d3bee... and c653356e... added transition/recovery guards and contract markers, but the actual device interaction still remained blocked. Do not merely add more marker tests. Inspect the real event path and current branch implementation end-to-end and fix the earliest failing boundary so PHOTO -> CHARACTER consultation actually transitions reliably on iPhone Safari. Preserve the uploaded photo/local identity state across the transition and BFCache/pageshow recovery. Prevent duplicate handlers, stale overlays/worldFirstPaint, pointer-event interception, or immediate rerender/state rollback from cancelling the transition. Keep fail-open recovery bounded. Add/update automated checks that exercise the actual transition semantics as far as repository tooling allows, including click/tap handler ownership, step/state mutation, render after transition, restore/pageshow behavior, and no regression to PHOTO preview. Do not trigger or bypass paid image generation. Stop before any paid candidate generation call; the required completion boundary for this task is reaching the consultation/CHARACTER UI reliably with generation still locked behind approval. Do not touch main, production, deploy, release, secrets, or unrelated Ready features. Do not ask the user to re-upload unless state is truly unrecoverable. Run relevant syntax/static/tests and finish with root cause, exact changed files, checks, and the remaining device-only confirmation point.",
+  "allow_main": false,
+  "allow_production": false
+}
