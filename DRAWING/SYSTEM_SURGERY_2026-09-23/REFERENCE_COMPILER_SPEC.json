@@ -1,0 +1,91 @@
+{
+  "version": "2026-09-23.1",
+  "chain": [
+    "REFERENCE_NAME",
+    "MINED_DNA",
+    "DESIGN_TOKEN",
+    "ENGINE_PARAMETER",
+    "OUTPUT_EFFECT",
+    "BEFORE_AFTER_VALIDATION"
+  ],
+  "required_fields": [
+    "reference_id",
+    "dna_id",
+    "token_id",
+    "engine_parameter",
+    "expected_effect",
+    "validation_metric"
+  ],
+  "rules": [
+    "REFERENCE_NAME alone is non-executable.",
+    "Every page claiming reference use must carry at least one compiled token receipt.",
+    "Reference Effect FAIL when improvement is explainable only by prose and not detectable in output metrics/review.",
+    "Reference tokens may not mutate source geometry."
+  ],
+  "examples": [
+    {
+      "reference": "ArchDaily",
+      "dna": "PLAN_LINE_HIERARCHY",
+      "tokens": {
+        "wall_weight": 0.4,
+        "primary": 0.28,
+        "secondary": 0.18,
+        "annotation": 0.09
+      },
+      "effect": "visible hierarchy while source geometry unchanged"
+    },
+    {
+      "reference": "Divisare",
+      "dna": "EDITORIAL_RESTRAINT",
+      "tokens": {
+        "whitespace_ratio": "bounded_profile",
+        "caption_density": "low",
+        "drawing_dominance": "high"
+      },
+      "effect": "reduced generic report clutter"
+    },
+    {
+      "reference": "OMA",
+      "dna": "RELATION_FIRST",
+      "tokens": {
+        "relation_per_diagram": 1,
+        "decoration_suppression": true
+      },
+      "effect": "one explicit relation per support diagram"
+    },
+    {
+      "reference": "BIG",
+      "dna": "ONE_MOVE",
+      "tokens": {
+        "sequence": [
+          "constraint",
+          "move",
+          "result"
+        ]
+      },
+      "effect": "single readable planning move"
+    },
+    {
+      "reference": "MVRDV",
+      "dna": "TYPE_COMPARISON",
+      "tokens": {
+        "same_scale": true,
+        "same_metric": true,
+        "exception_visible": true
+      },
+      "effect": "comparable typology matrix"
+    },
+    {
+      "reference": "SOM_FOSTER",
+      "dna": "TECHNICAL_CLARITY",
+      "tokens": {
+        "hierarchy": [
+          "structure",
+          "program",
+          "envelope"
+        ]
+      },
+      "effect": "technical layer separation"
+    }
+  ]
+}

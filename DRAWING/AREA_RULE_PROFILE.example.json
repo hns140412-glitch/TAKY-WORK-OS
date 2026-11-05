@@ -1,0 +1,95 @@
+{
+  "profile_id": "ARCHITECTURE_AREA_OVERVIEW_TEMPLATE_V1",
+  "status": "DISABLED_TEMPLATE_REQUIRES_PROJECT_LEGAL_REVIEW",
+  "principle": "Geometry extraction and legal/architectural classification are separate. Activate only after current project rules are verified.",
+  "role_requirements": {
+    "SITE_AREA": {
+      "boundary_requirement": "SITE_BOUNDARY"
+    },
+    "BUILDING_AREA": {
+      "boundary_requirement": "BUILDING_AREA_BOUNDARY"
+    },
+    "GROSS_FLOOR_AREA": {
+      "boundary_requirement": "FLOOR_AREA_BOUNDARY"
+    },
+    "FAR_INCLUDED_AREA": {
+      "boundary_requirement": "FAR_INCLUDED_BOUNDARY"
+    },
+    "RESIDENTIAL_EXCLUSIVE_INTERIOR_FACE": {
+      "boundary_requirement": "INTERIOR_FACE_BOUNDARY",
+      "note": "For housing workflows that require inside-face measurement, the actual inside-face boundary must be verified. Do not derive it automatically from a centerline without a verified wall build-up."
+    },
+    "COMMON_AREA": {
+      "boundary_requirement": "COMMON_AREA_BOUNDARY"
+    },
+    "PARKING_AREA": {
+      "boundary_requirement": "PARKING_AREA_BOUNDARY"
+    },
+    "BALCONY_REFERENCE": {
+      "boundary_requirement": "BALCONY_BOUNDARY"
+    },
+    "EXCLUDED_AREA": {
+      "boundary_requirement": "EXCLUDED_AREA_BOUNDARY"
+    }
+  },
+  "aggregates": {
+    "site_area_m2": {
+      "include_roles": [
+        "SITE_AREA"
+      ]
+    },
+    "building_area_m2": {
+      "include_roles": [
+        "BUILDING_AREA"
+      ]
+    },
+    "gross_floor_area_m2": {
+      "include_roles": [
+        "GROSS_FLOOR_AREA"
+      ]
+    },
+    "far_included_area_m2": {
+      "include_roles": [
+        "FAR_INCLUDED_AREA"
+      ]
+    },
+    "residential_exclusive_m2": {
+      "include_roles": [
+        "RESIDENTIAL_EXCLUSIVE_INTERIOR_FACE"
+      ]
+    },
+    "common_area_m2": {
+      "include_roles": [
+        "COMMON_AREA"
+      ]
+    },
+    "parking_area_m2": {
+      "include_roles": [
+        "PARKING_AREA"
+      ]
+    },
+    "balcony_reference_m2": {
+      "include_roles": [
+        "BALCONY_REFERENCE"
+      ]
+    }
+  },
+  "ratios": {
+    "building_coverage_percent": {
+      "numerator": "building_area_m2",
+      "denominator": "site_area_m2",
+      "multiplier": 100
+    },
+    "floor_area_ratio_percent": {
+      "numerator": "far_included_area_m2",
+      "denominator": "site_area_m2",
+      "multiplier": 100
+    }
+  },
+  "safeguards": [
+    "Do not treat a block name, line layer, hatch, or closed polyline as a legal area role without verified evidence.",
+    "Do not auto-offset centerlines to create residential inside-face boundaries unless wall build-up and side are verified.",
+    "Do not use PDF scale-derived areas as CAD authority.",
+    "Unknown or conflicting boundaries remain UNKNOWN / BLOCKED, not estimated."
+  ]
+}

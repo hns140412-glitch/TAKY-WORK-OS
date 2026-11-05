@@ -1,0 +1,140 @@
+{
+  "contract_version": "2026-09-23.1",
+  "principle": "Technical fidelity is a gate; presentation quality and human usefulness are evaluated after the gate.",
+  "source_inspiration": [
+    {
+      "class": "ARCHITECTURE_COMPETITION_REVIEW",
+      "mined_dimensions": [
+        "linework",
+        "drawing quality",
+        "color balance",
+        "layout",
+        "hierarchy",
+        "clarity of story",
+        "clarity of diagrams",
+        "overall presentation"
+      ]
+    },
+    {
+      "class": "ARCHITECTURAL_PUBLISHING_PRACTICE",
+      "mined_dimensions": [
+        "white space",
+        "figure-ground hierarchy",
+        "controlled context",
+        "selective material/entourage",
+        "legibility"
+      ]
+    },
+    {
+      "class": "USER_VALUE",
+      "mined_dimensions": [
+        "layout comprehension",
+        "room relationships",
+        "circulation",
+        "scale/use",
+        "critical information visibility"
+      ]
+    }
+  ],
+  "hard_gates": [
+    "source identity preserved",
+    "geometry preserved unless explicit design-change task",
+    "semantic relationships preserved where known",
+    "unknown source content not silently reinterpreted"
+  ],
+  "common_review": [
+    {
+      "dimension": "LINEWORK_HIERARCHY",
+      "checks": [
+        "cut/primary/secondary/context distinction is readable",
+        "line hierarchy supports rather than obscures architecture"
+      ]
+    },
+    {
+      "dimension": "LEGIBILITY",
+      "checks": [
+        "critical architecture remains readable at intended output size",
+        "shadow/texture/entourage do not mask essential information"
+      ]
+    },
+    {
+      "dimension": "WHITE_SPACE",
+      "checks": [
+        "empty space is preserved when it improves reading",
+        "background is not filled merely for decoration"
+      ]
+    },
+    {
+      "dimension": "MATERIAL_SCALE",
+      "checks": [
+        "wood/tile/stone/paving patterns are plausible at drawing scale",
+        "texture does not redefine boundaries"
+      ]
+    },
+    {
+      "dimension": "COLOR_BALANCE",
+      "checks": [
+        "color clarifies hierarchy/function",
+        "saturation does not compete with architecture"
+      ]
+    },
+    {
+      "dimension": "LAYOUT_HIERARCHY",
+      "checks": [
+        "primary view is immediately identifiable",
+        "secondary diagrams do not compete with the focal information"
+      ]
+    },
+    {
+      "dimension": "SOURCE_FIDELITY",
+      "checks": [
+        "source-line/source-snapshot comparison passes configured gates"
+      ]
+    }
+  ],
+  "profiles": {
+    "SALES_PLAN": {
+      "human_goal": "buyer understands spatial organization and practical use quickly",
+      "checks": [
+        "room relationships readable",
+        "circulation readable",
+        "furniture scale plausible",
+        "indoor/outdoor distinction readable",
+        "critical labels/dimensions visible",
+        "no graphical manipulation of apparent room size"
+      ]
+    },
+    "SECTION_PRESENTATION": {
+      "human_goal": "reader understands vertical relationships and spatial/ground conditions quickly",
+      "checks": [
+        "cut plane dominant",
+        "ground/soil readable",
+        "near/mid/far hierarchy clear",
+        "levels preserved",
+        "background subordinate",
+        "human scale optional but useful"
+      ]
+    },
+    "PUBLICATION": {
+      "human_goal": "architecture reads clearly with restrained editorial presentation",
+      "checks": [
+        "figure-ground strong",
+        "context selective",
+        "white space high-value",
+        "material indications restrained",
+        "annotations reduced without losing meaning"
+      ]
+    },
+    "COMPETITION_BOARD": {
+      "human_goal": "concept and spatial logic are understood in a deliberate narrative sequence",
+      "checks": [
+        "focal image clear",
+        "analytical drawings remain legible",
+        "diagram contrast sufficient",
+        "story sequence intuitive",
+        "atmosphere does not overpower explanation"
+      ]
+    }
+  },
+  "scoring_policy": "Prefer PASS / NEEDS_REVISION / FAIL with evidence notes. Numeric scores may be used only for comparative experiments, not as proof of architectural correctness."
+}

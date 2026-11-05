@@ -1,0 +1,45 @@
+{
+  "contract_version": "2026-09-23.1",
+  "canonical_surface": "A3_SVG_BOARD_STATE",
+  "rationale": "A single fixed-size vector board reduces cross-format layout drift. Every downstream format is a view/export, never a new source of truth.",
+  "outputs": [
+    "HTML",
+    "PDF",
+    "PNG",
+    "PPTX",
+    "XLSX"
+  ],
+  "pipeline": [
+    "A3 board composition",
+    "canonical SVG size gate",
+    "parallel format export",
+    "per-format absolute-size validation",
+    "bundle gate",
+    "automatic re-export from canonical SVG on failure",
+    "ship only after all required formats PASS"
+  ],
+  "default": {
+    "orientation": "landscape",
+    "width_mm": 420,
+    "height_mm": 297,
+    "png_dpi": 300,
+    "png_pixels": [
+      4961,
+      3508
+    ]
+  },
+  "format_policy": {
+    "HTML": "absolute mm CSS + @page + print-color-adjust exact",
+    "PDF": "exact A3 media box; preserve vector source where possible",
+    "PNG": "exact 300-DPI A3 pixel dimensions",
+    "PPTX": "exact A3 slide EMU; board placed to full slide",
+    "XLSX": "A3 paper size + explicit print area + one-page fit"
+  },
+  "failure_policy": {
+    "output_failure_does_not_mutate_source": true,
+    "max_reexport_attempts": 2,
+    "after_max_attempts": "BLOCKED_AFTER_REEXPORT",
+    "silent_scale_fix": false
+  },
+  "quality_rule": "Page-size PASS is necessary but not sufficient. Source fidelity and architectural presentation evaluation must also PASS."
+}

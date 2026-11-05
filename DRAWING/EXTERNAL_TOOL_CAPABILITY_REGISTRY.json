@@ -1,0 +1,100 @@
+{
+  "registry_version": "2026-09-23.1",
+  "authority": "VOLATILE_CAPABILITY_REFERENCE",
+  "recheck_policy": "Revalidate before adoption, integration, spending, or live workflow changes.",
+  "records": [
+    {
+      "tool_id": "COMFYUI_CONTROLLED_PIPELINE",
+      "as_of": "2026-09-23",
+      "freshness_ttl_days": 30,
+      "role": "self-hosted controlled generative presentation",
+      "best_for": [
+        "controlled material/light exploration",
+        "local inpainting",
+        "multi-pass refinement"
+      ],
+      "geometry_boundary": "ControlNet constrains structure but does not guarantee CAD fidelity.",
+      "work_os_route": "CONTROLLED",
+      "adoption": "ADOPT_AS_OPTIONAL_RECIPE",
+      "notes": [
+        "benchmark model/preprocessor/upscale method",
+        "final source-line overlay preferred",
+        "geometry diff required for geometry-sensitive output"
+      ]
+    },
+    {
+      "tool_id": "MNML_AI_PRECISE",
+      "as_of": "2026-09-23",
+      "freshness_ttl_days": 30,
+      "role": "hosted architecture-specific rendering and floor-plan presentation",
+      "best_for": [
+        "2D plan restyle",
+        "3D dollhouse concept",
+        "model/sketch render",
+        "branching comparison"
+      ],
+      "geometry_boundary": "Precise mode is intended to preserve layout, but exact dimensions/text should remain source-controlled; vendor advises adding precise labels/dimensions in drawing tools.",
+      "work_os_route": "CONTROLLED_EXTERNAL",
+      "adoption": "EVALUATE",
+      "notes": [
+        "use as presentation layer or comparison benchmark",
+        "do not replace source vector/CAD authority"
+      ]
+    },
+    {
+      "tool_id": "VERAS_LOW_GEOMETRY_OVERRIDE",
+      "as_of": "2026-09-23",
+      "freshness_ttl_days": 30,
+      "role": "model-first AI visualization from Revit/SketchUp/Rhino/Archicad/Vectorworks",
+      "best_for": [
+        "existing 3D model visualization",
+        "material exploration",
+        "selection render"
+      ],
+      "geometry_boundary": "Lower geometry override is intended to stay faithful to the model; still treat output as visualization.",
+      "work_os_route": "CONTROLLED_EXTERNAL",
+      "adoption": "EVALUATE_WHEN_3D_MODEL_EXISTS"
+    },
+    {
+      "tool_id": "PROMEAI_PLAN_TO_CONCEPT",
+      "as_of": "2026-09-23",
+      "freshness_ttl_days": 30,
+      "role": "plan-to-concept spatial communication",
+      "best_for": [
+        "buyer communication",
+        "concept 3D views",
+        "walkthrough ideation"
+      ],
+      "geometry_boundary": "Vendor documentation explicitly says generated 3D is concept-stage and not measured; exact dimensions may vary.",
+      "work_os_route": "CONTROLLED_EXTERNAL",
+      "adoption": "REFERENCE_ONLY_FOR_CONCEPT_OUTPUT"
+    },
+    {
+      "tool_id": "D5_MODEL_FIRST",
+      "as_of": "2026-09-23",
+      "freshness_ttl_days": 30,
+      "role": "real-time model-based architectural rendering",
+      "best_for": [
+        "high-fidelity 3D model rendering",
+        "lighting/materials",
+        "walkthrough"
+      ],
+      "geometry_boundary": "Strongest when a real 3D model is already authoritative; avoid using as 2D-plan geometry reconstruction.",
+      "work_os_route": "MODEL_FIRST_EXTERNAL",
+      "adoption": "EVALUATE_WHEN_MODEL_EXISTS"
+    },
+    {
+      "tool_id": "LOOKX",
+      "as_of": "2026-09-23",
+      "freshness_ttl_days": 30,
+      "role": "architecture-focused sketch/render generation",
+      "best_for": [
+        "concept ideation",
+        "style/model experimentation"
+      ],
+      "geometry_boundary": "Current public capability evidence is insufficient here to treat output as geometry-preserving.",
+      "work_os_route": "EXPERIMENTAL_EXTERNAL",
+      "adoption": "HOLD_FOR_BENCHMARK"
+    }
+  ]
+}

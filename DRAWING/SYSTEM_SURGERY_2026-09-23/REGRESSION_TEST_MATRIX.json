@@ -1,0 +1,77 @@
+{
+  "version": "2026-09-23.1",
+  "tests": [
+    {
+      "test_id": "RT-001",
+      "scope": "ENGINE_BYPASS",
+      "fixture": "unregistered producer requests USER_PREVIEW",
+      "expected": "FAIL_AUTHORIZATION"
+    },
+    {
+      "test_id": "RT-002",
+      "scope": "MASK_GEOMETRY",
+      "fixture": "mask intersects protected wall/core",
+      "expected": "FAIL_GEOMETRY_GATE"
+    },
+    {
+      "test_id": "RT-003",
+      "scope": "GEN_REDRAW",
+      "fixture": "structural edge set differs from locked source",
+      "expected": "FAIL_GEOMETRY_GATE"
+    },
+    {
+      "test_id": "RT-004",
+      "scope": "REFERENCE_EFFECT",
+      "fixture": "method_ref present but no compiled token receipt",
+      "expected": "FAIL_REFERENCE_EFFECT_GATE"
+    },
+    {
+      "test_id": "RT-005",
+      "scope": "QUALITY_SPLIT",
+      "fixture": "source fidelity PASS, presentation effect FAIL",
+      "expected": "NO_SHOW"
+    },
+    {
+      "test_id": "RT-006",
+      "scope": "USER_EXPOSURE",
+      "fixture": "any required gate FAIL",
+      "expected": "NO_SHOW"
+    },
+    {
+      "test_id": "RT-007",
+      "scope": "ONE_OFF",
+      "fixture": "ReportLab/Python producer marked FINAL",
+      "expected": "FAIL_AUTHORIZATION"
+    },
+    {
+      "test_id": "RT-008",
+      "scope": "FRESHNESS",
+      "fixture": "same content hash, newer mtime",
+      "expected": "SAME_CONTENT_NOT_STALE"
+    },
+    {
+      "test_id": "RT-009",
+      "scope": "SEMANTIC",
+      "fixture": "ROAD inferred but unverified",
+      "expected": "FAIL_SEMANTIC_GATE_FOR_ROAD_STYLE"
+    },
+    {
+      "test_id": "RT-010",
+      "scope": "NARRATIVE",
+      "fixture": "absolute privacy/daylight claim lacks evidence",
+      "expected": "FAIL_FACT_GATE"
+    },
+    {
+      "test_id": "RT-011",
+      "scope": "HANDOFF",
+      "fixture": "repeated structural failures + RESUME mode",
+      "expected": "REQUIRE_SURGERY_MODE"
+    },
+    {
+      "test_id": "RT-012",
+      "scope": "REFERENCE_CHAIN",
+      "fixture": "reference name has DNA/token/param/effect receipt",
+      "expected": "PASS_REFERENCE_EFFECT_GATE"
+    }
+  ]
+}

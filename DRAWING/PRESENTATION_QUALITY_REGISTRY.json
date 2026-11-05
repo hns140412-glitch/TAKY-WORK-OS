@@ -1,0 +1,111 @@
+{
+  "registry_version": "2026-09-23.2",
+  "slogan_filter": {
+    "think_again": "Do not assume more rendering equals better communication. Re-check what the viewer must understand.",
+    "keep_your_key": "Source geometry, confirmed semantics, revision identity and unresolved source content remain protected.",
+    "find_a_way": "Use vector, raster, model-first, AI or hybrid methods according to the source and target output.",
+    "youre_the_key": "Final quality is judged by the intended human use at actual A3 output size."
+  },
+  "hard_gates": [
+    "SOURCE_FIDELITY",
+    "A3_ABSOLUTE_SIZE",
+    "NO_UNAUTHORIZED_GEOMETRY_CHANGE",
+    "NO_SILENT_SOURCE_REINTERPRETATION"
+  ],
+  "quality_dimensions": [
+    {
+      "id": "LINE_HIERARCHY",
+      "rule": "Cut/primary/secondary/context line classes must be visually distinguishable.",
+      "evidence": "Architectural drawing conventions and repeated practitioner feedback."
+    },
+    {
+      "id": "WHITE_SPACE",
+      "rule": "Empty space is allowed and preferred when it improves hierarchy; do not fill the sheet merely to appear rich."
+    },
+    {
+      "id": "MATERIAL_SCALE",
+      "rule": "Texture modules must be plausible at drawing scale; overscaled wood/tile/stone is NEEDS_REVISION."
+    },
+    {
+      "id": "VISUAL_PRIORITY",
+      "rule": "The primary drawing/view must be identifiable before supporting diagrams and text."
+    },
+    {
+      "id": "NARRATIVE_FLOW",
+      "rule": "Related information should form a readable macro-to-micro or concept-to-detail sequence."
+    },
+    {
+      "id": "HUMAN_SCALE",
+      "rule": "Furniture/people/vegetation are communication devices for use and scale, not decoration that obscures architecture."
+    },
+    {
+      "id": "SECTION_DEPTH",
+      "rule": "Cut plane dominates; near/mid/far information steps down in visual weight."
+    },
+    {
+      "id": "ANNOTATION_DISCIPLINE",
+      "rule": "Text/dimensions/labels use consistent hierarchy and remain legible at A3 proof size."
+    },
+    {
+      "id": "COLOR_BALANCE",
+      "rule": "Color supports hierarchy or program/material reading and does not compete with source linework."
+    },
+    {
+      "id": "ATMOSPHERE_RESTRAINT",
+      "rule": "Lighting, shadow and grain are optional; remove them when they reduce legibility."
+    }
+  ],
+  "output_profiles": {
+    "TECHNICAL_CLEAN": [
+      "LINE_HIERARCHY",
+      "ANNOTATION_DISCIPLINE",
+      "SOURCE_FIDELITY"
+    ],
+    "PUBLICATION": [
+      "LINE_HIERARCHY",
+      "WHITE_SPACE",
+      "VISUAL_PRIORITY",
+      "NARRATIVE_FLOW",
+      "COLOR_BALANCE",
+      "SOURCE_FIDELITY"
+    ],
+    "SALES_PLAN": [
+      "LINE_HIERARCHY",
+      "MATERIAL_SCALE",
+      "VISUAL_PRIORITY",
+      "HUMAN_SCALE",
+      "ANNOTATION_DISCIPLINE",
+      "SOURCE_FIDELITY"
+    ],
+    "SECTION_PRESENTATION": [
+      "LINE_HIERARCHY",
+      "SECTION_DEPTH",
+      "HUMAN_SCALE",
+      "ANNOTATION_DISCIPLINE",
+      "WHITE_SPACE",
+      "SOURCE_FIDELITY"
+    ],
+    "A3_REPORT": [
+      "VISUAL_PRIORITY",
+      "NARRATIVE_FLOW",
+      "WHITE_SPACE",
+      "ANNOTATION_DISCIPLINE",
+      "A3_ABSOLUTE_SIZE"
+    ]
+  },
+  "proof_rule": {
+    "medium": "A3",
+    "decision_labels": [
+      "PASS",
+      "NEEDS_REVISION",
+      "FAIL"
+    ],
+    "numeric_score_role": "comparison experiments only; never proof of architectural correctness",
+    "reexport_if": [
+      "A3 size mismatch",
+      "overflow/crop",
+      "critical information unreadable",
+      "source overlay regression"
+    ]
+  }
+}
