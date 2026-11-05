@@ -1,0 +1,29 @@
+{
+  "contract_version": "2026-09-23.1",
+  "pipeline": [
+    "DXF_DIRECT_PARSE",
+    "LAYER_ENTITY_PROFILE",
+    "RULE_CANDIDATE_MINING",
+    "EXPLICIT_VERIFIED_PROMOTION",
+    "UNKNOWN_FIRST_SEMANTIC_MAPPING",
+    "PRESENTATION_MASK_MANIFEST",
+    "SALES_MASK_ADMISSION"
+  ],
+  "principles": [
+    "Layer or block names may create proposals, never verified semantics by themselves.",
+    "Geometry shape may support a proposal, never promote one by itself.",
+    "Only explicit verified evidence may activate a CAD semantic rule.",
+    "Unmatched entities remain UNKNOWN.",
+    "SALES_TEXTURED falls back to PUBLICATION when required semantic masks are not verified."
+  ],
+  "accepted_promotion_evidence": [
+    "USER_CONFIRMED",
+    "SOURCE_EXPLICIT",
+    "OFFICE_STANDARD_VERIFIED",
+    "PROJECT_STANDARD_VERIFIED"
+  ],
+  "drive_probe_2026_09_23": {
+    "result": "NO_ACTUAL_DWG_DXF_IN_DISCOVERED_CAD_FOLDERS",
+    "note": "Three discovered CAD folders contained only .keep at inspection time. This is not proof that no CAD exists elsewhere in Drive."
+  }
+}

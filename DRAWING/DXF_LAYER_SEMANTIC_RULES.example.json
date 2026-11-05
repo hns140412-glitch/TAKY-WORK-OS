@@ -1,0 +1,62 @@
+{
+  "rule_set_id": "PROJECT_OR_OFFICE_LAYER_RULES",
+  "rule_set_version": "EXAMPLE_ONLY",
+  "status": "DISABLED_TEMPLATE",
+  "principle": "Do not activate these names unless the office/project confirms its CAD layer convention.",
+  "rules": [
+    {
+      "rule_id": "example-wall",
+      "enabled": false,
+      "field": "layer",
+      "match": "exact",
+      "pattern": "A-WALL",
+      "semantic_type": "WALL",
+      "confidence": "EXPLICIT_LAYER_RULE"
+    },
+    {
+      "rule_id": "example-column",
+      "enabled": false,
+      "field": "layer",
+      "match": "exact",
+      "pattern": "S-COLS",
+      "semantic_type": "COLUMN",
+      "confidence": "EXPLICIT_LAYER_RULE"
+    },
+    {
+      "rule_id": "example-door",
+      "enabled": false,
+      "field": "layer",
+      "match": "exact",
+      "pattern": "A-DOOR",
+      "semantic_type": "DOOR",
+      "confidence": "EXPLICIT_LAYER_RULE"
+    },
+    {
+      "rule_id": "example-window",
+      "enabled": false,
+      "field": "layer",
+      "match": "exact",
+      "pattern": "A-GLAZ",
+      "semantic_type": "WINDOW_OR_GLAZING",
+      "confidence": "EXPLICIT_LAYER_RULE"
+    },
+    {
+      "rule_id": "example-room",
+      "enabled": false,
+      "field": "layer",
+      "match": "exact",
+      "pattern": "A-AREA",
+      "semantic_type": "ROOM_BOUNDARY",
+      "confidence": "EXPLICIT_LAYER_RULE"
+    },
+    {
+      "rule_id": "example-parking",
+      "enabled": false,
+      "field": "layer",
+      "match": "exact",
+      "pattern": "A-PARK",
+      "semantic_type": "PARKING",
+      "confidence": "EXPLICIT_LAYER_RULE"
+    }
+  ]
+}

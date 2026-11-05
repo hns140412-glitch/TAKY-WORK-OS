@@ -1,0 +1,66 @@
+{
+  "registry_version": "2026-09-23.1",
+  "privacy_rule": "Public repository stores fixture classes and metrics only, not private project files, IDs or hashes.",
+  "fixture_classes": [
+    {
+      "fixture_id": "PLAN_A3_VECTOR",
+      "source_type": "VECTOR_PDF",
+      "benchmark_outputs": [
+        "SALES_CLEAN",
+        "SALES_TEXTURED",
+        "PUBLICATION"
+      ],
+      "baseline_metrics": [
+        "page_size",
+        "vector_path_count",
+        "geometry_digest",
+        "edge_density"
+      ],
+      "required_pass": [
+        "source-line overlay present",
+        "edge drift within tuned threshold",
+        "task completion criteria pass"
+      ]
+    },
+    {
+      "fixture_id": "BASEMENT_A3_VECTOR",
+      "source_type": "VECTOR_PDF",
+      "benchmark_outputs": [
+        "TECHNICAL_CLEAN",
+        "PUBLICATION"
+      ],
+      "special_checks": [
+        "vehicle/pedestrian access remains open",
+        "retaining-wall relationship preserved",
+        "parking/core geometry preserved"
+      ]
+    },
+    {
+      "fixture_id": "SECTION_A3_VECTOR",
+      "source_type": "VECTOR_PDF",
+      "benchmark_outputs": [
+        "SECTION_PRESENTATION",
+        "PUBLICATION"
+      ],
+      "special_checks": [
+        "cut profile preserved",
+        "ground line preserved",
+        "level relationships preserved",
+        "earth/background hierarchy readable"
+      ]
+    }
+  ],
+  "current_private_baseline_observation": {
+    "image_size_pixels": [
+      1404,
+      1985
+    ],
+    "edge_density_examples": {
+      "plan": 0.0607,
+      "basement": 0.0489,
+      "section": 0.0814
+    },
+    "status": "BASELINE_ONLY_NOT_A_PASS_THRESHOLD"
+  },
+  "threshold_policy": "Do not hard-code one edge threshold across drawing types. Tune per fixture class and resolution after generated-output trials."
+}
