@@ -1,0 +1,95 @@
+{
+  "contract_version": "2026-09-23.1",
+  "task_id": "HANNAM_P07_SECTION_PERSPECTIVE_V1",
+  "project_id": "HANNAM-737-21-AREA",
+  "page_id": "P07",
+  "source": {
+    "source_id": "SRC-PDF-ISSUED-0923",
+    "page_index": 3,
+    "role": "ISSUED_SECTION_SNAPSHOT",
+    "geometry_authority": "SOURCE_CONTROLLED"
+  },
+  "output_goal": "Architectural section perspective / cutaway with editorial material-light atmosphere while retaining exact source section geometry.",
+  "preprocessing": {
+    "layer_a": {
+      "mask_id": "SOURCE_LINE",
+      "required": true,
+      "export": "PNG",
+      "min_long_edge_px": 2048,
+      "background": "WHITE",
+      "include": [
+        "WALL_STRUCTURE_LINE",
+        "SECTION_LINE"
+      ],
+      "exclude": [
+        "DIMENSIONS",
+        "TEXT",
+        "FURNITURE_HATCH"
+      ]
+    },
+    "layer_b": {
+      "mask_id": "INTERIOR_FURNITURE",
+      "required": true,
+      "include": [
+        "INTERIOR_FURNITURE",
+        "MATERIAL_FINISH_GUIDES"
+      ],
+      "validation": "SOURCE_DERIVED_OR_USER_CONFIRMED"
+    },
+    "layer_c": {
+      "mask_id": "SECTION_CUT",
+      "required": true,
+      "include": [
+        "VERIFIED_SECTION_CUT_POCHE"
+      ],
+      "validation": "SOURCE_DERIVED_OR_USER_CONFIRMED"
+    },
+    "depth_guide": {
+      "mask_id": "DEPTH_GUIDE",
+      "required": false,
+      "role": "DEPTH_ONLY"
+    }
+  },
+  "generation": {
+    "recipe_id": "COMFYUI_SECTION_PERSPECTIVE_EDITORIAL_V1",
+    "prompt_package_id": "SECTION_PERSPECTIVE_AI_PACKAGE_V1",
+    "model_family": "SDXL",
+    "controlnet_model": "LINEART_OR_CANNY",
+    "control_weight": [
+      0.78,
+      0.8
+    ],
+    "ending_control_step": 0.8,
+    "denoise_first_pass": [
+      0.6,
+      0.65
+    ],
+    "denoise_second_pass": 0.3
+  },
+  "finishing": {
+    "source_line_overlay": {
+      "blend": "MULTIPLY",
+      "opacity": [
+        0.3,
+        0.4
+      ]
+    },
+    "section_cut": {
+      "fill": "#111111",
+      "opacity": 1
+    },
+    "film_grain": [
+      0.012,
+      0.015
+    ]
+  },
+  "completion_gate": [
+    "SOURCE_LINE_PRESENT",
+    "SECTION_CUT_DOMINANT",
+    "NO_EXTRA_WALL_COLUMN_OPENING",
+    "EDGE_DIFF_PASS",
+    "SOURCE_OVERLAY_LAST",
+    "REFERENCE_EFFECT_VISIBLE_WITHOUT_EXPLANATION"
+  ],
+  "status": "READY_FOR_LAYER_PREPARATION"
+}

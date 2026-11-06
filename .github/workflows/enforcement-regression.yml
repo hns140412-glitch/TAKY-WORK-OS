@@ -1,0 +1,37 @@
+name: TAKY Enforcement Regression
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  enforcement-regression:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+      - name: Run enforcement regression
+        run: node tests/enforcement-regression.test.js
+      - name: Run CI attestation gate regression
+        run: node tests/ci-attestation-gate.test.js
+      - name: Run readiness evaluator regression
+        run: node tests/readiness-evaluator.test.js
+      - name: Run validation readiness receipt regression
+        run: node tests/validation-readiness-receipt.test.js
+      - name: Run Vision API health regression
+        run: node tests/vision-api-health.test.js
+      - name: Run MCP trust-boundary regression
+        run: node tests/mcp-trust-boundary.test.js
+      - name: Run Claude host guard regression
+        run: python tests/claude-host-guard.test.py
+      - name: Install MCP gateway dependencies
+        run: npm install --prefix MCP/gateway --ignore-scripts
+      - name: Run MCP gateway smoke test
+        run: node MCP/gateway/server.test.mjs
+      - name: Install MCP validator dependencies
+        run: npm install --prefix MCP/validator --ignore-scripts
+      - name: Run independent validator MCP smoke test
+        run: node MCP/validator/server.test.mjs

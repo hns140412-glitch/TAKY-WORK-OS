@@ -1,0 +1,57 @@
+{
+  "contract_version": "2026-09-23.1",
+  "primary_objective": "Enhance source PDFs without damaging source geometry and assemble them into a decision-ready A3 scale-review report.",
+  "slogan_filter": [
+    "THINK_AGAIN",
+    "KEEP_YOUR_KEY",
+    "FIND_A_WAY_SOLVE",
+    "YOURE_THE_KEY",
+    "VERIFY_CORRECT_CONTINUE"
+  ],
+  "canonical_output": {
+    "format": "A3_PDF",
+    "role": "PRIMARY_REVIEW_DELIVERABLE",
+    "source_geometry_mutation": "FORBIDDEN",
+    "presentation_changes_allowed": [
+      "layout",
+      "white_space",
+      "typographic_hierarchy",
+      "captions",
+      "source-derived color hierarchy",
+      "verified overlays",
+      "validated area/design-overview tables"
+    ]
+  },
+  "derivative_outputs": [
+    "HTML",
+    "PPTX",
+    "XLSX",
+    "SVG",
+    "PNG"
+  ],
+  "priority_order": [
+    "SOURCE_FIDELITY",
+    "REPORT_COMPREHENSION",
+    "A3_PRESENTATION_QUALITY",
+    "DESIGN_OVERVIEW_ACCURACY",
+    "MULTI_FORMAT_EXPORT"
+  ],
+  "report_structure": [
+    "EXECUTIVE_OVERVIEW",
+    "SITE_AND_FIRST_FLOOR",
+    "SECOND_FLOOR",
+    "BASEMENT_PARKING",
+    "SECTION_AND_LEVELS",
+    "DESIGN_OVERVIEW_AND_VALIDATION"
+  ],
+  "area_engine_role": "SUPPORTING_ENGINE",
+  "area_engine_rule": "Area/legal automation strengthens the report but must not outrank the report-quality objective or invent uncertain values.",
+  "completion_gate": [
+    "A3 media box valid",
+    "all source drawings visible",
+    "source geometry referenced rather than redrawn",
+    "no clipped text or broken Korean glyphs",
+    "design-overview unknowns remain pending",
+    "report is usable for architectural scale-review discussion"
+  ]
+}

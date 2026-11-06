@@ -1,0 +1,48 @@
+{
+  "schema": "GOVERNANCE_GAP_MATRIX_V2",
+  "gaps": [
+    {
+      "gap": "PRODUCTION_AUTHORITY",
+      "before": "implicit/advisory",
+      "after": "exclusive AUTHORIZED_ENGINE route",
+      "proof": "production-authority-gate tests"
+    },
+    {
+      "gap": "L8_USER_EXPOSURE",
+      "before": "absent",
+      "after": "deny-by-default NO_PASS_NO_SHOW",
+      "proof": "finalization plan + production gate"
+    },
+    {
+      "gap": "REFERENCE_COMPILATION",
+      "before": "mined prose/data",
+      "after": "parameterized compile trace + effect probe",
+      "proof": "reference compiler tests"
+    },
+    {
+      "gap": "ONE_OFF_BOUNDARY",
+      "before": "could produce artifacts",
+      "after": "EXPERIMENT/DIAGNOSTIC only",
+      "proof": "production gate historical replay"
+    },
+    {
+      "gap": "FRESHNESS",
+      "before": "date could imply stale",
+      "after": "content digest rules",
+      "proof": "source-equivalence tests"
+    },
+    {
+      "gap": "HANDOFF_MODE",
+      "before": "resume continuity",
+      "after": "resume/surgery separation required",
+      "proof": "C2S + handoff; central TAKY propagation open"
+    },
+    {
+      "gap": "ENGINE_PROMOTION_AND_PROJECT_ISOLATION",
+      "before": "Generic Drawing Engine and Hannam project/report packs coexist in one broad draft PR; branch existence can be mistaken for active engine availability.",
+      "after": "GENERIC_ENGINE and PROJECT_PACK must be separate promotion units; only promoted generic engine may satisfy AUTHORIZED_ENGINE.",
+      "proof": "PR #2 scope audit: 172 changed files includes HANNAM_REPORT_PACKAGE/HANNAM profile/P07/Handoff alongside runtime core.",
+      "status": "OPEN_SPLIT_REQUIRED"
+    }
+  ]
+}

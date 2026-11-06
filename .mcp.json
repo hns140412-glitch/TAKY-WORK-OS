@@ -1,0 +1,22 @@
+{
+  "mcpServers": {
+    "taky-production": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "MCP/gateway/server.mjs"
+      ],
+      "env": {
+        "TAKY_STAGING_ROOT": "artifacts/staging",
+        "TAKY_PRODUCTION_ROOT": "artifacts/production"
+      }
+    },
+    "taky-validation": {
+      "type": "stdio",
+      "command": "node",
+      "args": [
+        "MCP/validator/server.mjs"
+      ]
+    }
+  }
+}

@@ -1,0 +1,32 @@
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit|Write|NotebookEdit|Bash|PowerShell",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/taky-production-guard.py"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "deny": [
+      "Bash",
+      "PowerShell",
+      "Edit(/artifacts/production/**)",
+      "Edit(/.claude/**)",
+      "Edit(/.mcp.json)",
+      "Edit(/MCP/HOST_TOOL_PERMISSION_POLICY_V1.json)",
+      "Edit(/MCP/**)",
+      "Edit(/runtime/**)",
+      "Edit(/.github/workflows/**)",
+      "Edit(/tests/**)",
+      "Edit(/tools/drawing_*.py)"
+    ],
+    "disableBypassPermissionsMode": "disable",
+    "disableAutoMode": "disable"
+  }
+}
