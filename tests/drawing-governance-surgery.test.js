@@ -11,7 +11,9 @@ const pkg={package_id:'T',project:{title:'T'},sources:[],facts:[],review_items:[
 // 1. Direct production planning is forbidden.
 const direct=ReportPackage.buildOutputPlan(pkg);
 assert.strictEqual(direct.ok,false);
-assert.strictEqual(direct.reason,'PRODUCTION_ROUTER_REQUIRED');
+// Integration 2026-11-06: the later enforcement line (signed production
+// authorization) owns this gate; its code for an unauthorized direct call wins.
+assert.strictEqual(direct.reason,'PRODUCTION_AUTHORIZATION_REQUIRED');
 
 // 2. Reference must be compiled AND causally evidenced.
 const compiled=RefCompiler.compile([{
