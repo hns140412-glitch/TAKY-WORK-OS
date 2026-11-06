@@ -9,7 +9,8 @@
     'SOURCE_CROP_ERROR','WALL_DELETED','CORE_DELETED','ENTRY_DELETED',
     'UNAUTHORIZED_GEOMETRY_REDRAW','WRONG_FURNITURE_BOX','WRONG_ROTATION',
     'INVENTED_SEMANTICS','UNSUPPORTED_NARRATIVE','REFERENCE_EFFECT_ABSENT',
-    'GENERIC_REPORT_LAYOUT','A3_INTEGRITY_FAIL'
+    'GENERIC_REPORT_LAYOUT','A3_INTEGRITY_FAIL','ENGINE_BYPASS',
+    'DATE_ONLY_SUPERSESSION','SOURCE_FRESHNESS_UNVERIFIED'
   ]);
   const REQUIRED_BASE=Object.freeze([
     'SOURCE','GEOMETRY','FACT','SEMANTIC','REFERENCE_EFFECT',
@@ -59,9 +60,9 @@
       validation_bundle_id:clean(evidence.validation_bundle_id),
       source_digest:clean(evidence.source_digest),
       artifact_digest:clean(evidence.artifact_digest),
-      invariant:'USER_IS_NOT_DEBUGGER__NO_SELF_ASSERTED_PASS'
+      invariant:'USER_IS_NOT_DEBUGGER__NO_SELF_ASSERTED_PASS__DATE_NE_CONTENT_CHANGE'
     });
   }
 
-  return Object.freeze({version:'2.0.0',HARD_FAILURES,REQUIRED_BASE,evaluate});
+  return Object.freeze({version:'2.1.0',HARD_FAILURES,REQUIRED_BASE,evaluate});
 });

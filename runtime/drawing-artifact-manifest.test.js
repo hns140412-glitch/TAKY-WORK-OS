@@ -11,7 +11,8 @@ const good=m.buildManifest({
     {layer_id:'L4_ENTOURAGE',view_id:'SALE',artifact_uri:'mem://entourage'},
     {layer_id:'L5_ANNOTATION',view_id:'SALE',artifact_uri:'mem://annotation'},
     {layer_id:'L6_AI_ATMOSPHERE',view_id:'SALE',artifact_uri:'mem://ai'},
-    {layer_id:'L7_FINAL_OVERLAY_VALIDATION',view_id:'SALE',artifact_uri:'mem://final',validation_state:'PASS'}
+    {layer_id:'L7_FINAL_OVERLAY_VALIDATION',view_id:'SALE',artifact_uri:'mem://final',validation_state:'PASS'},
+    {layer_id:'L8_USER_EXPOSURE',view_id:'SALE',validation_bundle_id:'VB-1',execution_receipt_id:'ER-1',exposure_state:'PASS'}
   ]
 });
 assert.equal(good.ok,true);
@@ -21,5 +22,10 @@ const bad=m.buildManifest({source_key:'SRC',artifacts:[
 ]});
 assert.equal(bad.ok,false);
 assert(bad.invalid[0].missing.includes('validation_state'));
+
+const blocked=m.buildManifest({source_key:'SRC',artifacts:[
+  {layer_id:'L8_USER_EXPOSURE',view_id:'SALE',validation_bundle_id:'VB-1',execution_receipt_id:'ER-1',exposure_state:'FAIL'}
+]});
+assert.equal(blocked.ok,false);
 
 console.log('drawing-artifact-manifest: PASS');

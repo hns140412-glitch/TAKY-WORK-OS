@@ -13,14 +13,17 @@
     L4_ENTOURAGE:['artifact_uri'],
     L5_ANNOTATION:['artifact_uri'],
     L6_AI_ATMOSPHERE:['artifact_uri'],
-    L7_FINAL_OVERLAY_VALIDATION:['artifact_uri','validation_state']
+    L7_FINAL_OVERLAY_VALIDATION:['artifact_uri','validation_state'],
+    L8_USER_EXPOSURE:['validation_bundle_id','execution_receipt_id','exposure_state']
   });
 
   function validateArtifact(a={}){
     const layer=a.layer_id;
     if(!REQUIRED_BY_LAYER[layer]) return {ok:false,reason:'UNKNOWN_LAYER'};
     const missing=REQUIRED_BY_LAYER[layer].filter(k=>a[k]===undefined||a[k]===null||a[k]==='');
-    return {ok:missing.length===0,missing};
+    const invalid=[];
+    if(layer==='L8_USER_EXPOSURE' && String(a.exposure_state||'').toUpperCase()!=='PASS') invalid.push('L8_EXPOSURE_MUST_BE_PASS');
+    return {ok:missing.length===0&&invalid.length===0,missing,invalid};
   }
 
   function buildManifest({source_key,artifacts=[]}={}){
@@ -29,7 +32,7 @@
     const seen=new Set();
     for(const [idx,a] of artifacts.entries()){
       const v=validateArtifact(a);
-      if(!v.ok) invalid.push({index:idx,layer_id:a.layer_id,missing:v.missing||[],reason:v.reason||'INVALID_ARTIFACT'});
+      if(!v.ok) invalid.push({index:idx,layer_id:a.layer_id,missing:v.missing||[],invalid:v.invalid||[],reason:v.reason||'INVALID_ARTIFACT'});
       const key=(a.view_id||'SHARED')+'::'+a.layer_id;
       if(seen.has(key)) invalid.push({index:idx,layer_id:a.layer_id,reason:'DUPLICATE_LAYER_ARTIFACT',key});
       seen.add(key);
@@ -42,5 +45,5 @@
     });
   }
 
-  return Object.freeze({version:'1.0.0',REQUIRED_BY_LAYER,validateArtifact,buildManifest});
+  return Object.freeze({version:'2.0.0',REQUIRED_BY_LAYER,validateArtifact,buildManifest});
 });

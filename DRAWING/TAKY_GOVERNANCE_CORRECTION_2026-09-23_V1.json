@@ -1,0 +1,18 @@
+{
+  "version": "2026-09-23.1",
+  "central_branch": "hns140412-glitch/TAKY:taky/user-exposure-governance-2026-09-23",
+  "correction": [
+    "ENGINE_AVAILABLE + BYPASS_USED = GOVERNANCE_FAILURE",
+    "TASK -> ROUTER -> AUTHORIZED_ENGINE -> VALIDATION -> USER_EXPOSURE_GATE -> OUTPUT",
+    "L0..L8 layer authority hard lock",
+    "NO PASS -> NO SHOW",
+    "USER != DEBUGGER",
+    "REFERENCE -> DNA -> TOKEN -> PARAMETER -> EFFECT -> VALIDATION",
+    "DATE != CONTENT CHANGE",
+    "RESUME / RETROSPECTIVE / SURGERY / RE_ARCHITECTURE separation",
+    "SOURCE_FIDELITY != PRESENTATION_QUALITY",
+    "CODE_PASS != PRODUCT_PASS",
+    "ENGINE_PASS != VISUAL_PASS"
+  ],
+  "status": "IMPLEMENTED_ON_BRANCH_NOT_MERGED"
+}

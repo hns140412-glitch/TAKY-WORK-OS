@@ -81,12 +81,12 @@
     });
   }
 
-  function validateReferenceEffect({compiled,applied_parameters=[],passed_probes=[]}={}){
+  function validateReferenceEffect({compiled,applied_parameters={},probe_evidence={}}={}){
     if(!compiler || typeof compiler.validateApplied!=='function'){
       return Object.freeze({ok:false,reason:'REFERENCE_COMPILER_UNAVAILABLE'});
     }
-    return compiler.validateApplied(compiled,{applied_parameters,passed_probes});
+    return compiler.validateApplied(compiled,{applied_parameters,probe_evidence});
   }
 
-  return Object.freeze({version:'2.0.0',UTILIZATION,classify,compileForEngine,validateReferenceEffect});
+  return Object.freeze({version:'2.1.0',UTILIZATION,classify,compileForEngine,validateReferenceEffect});
 });
