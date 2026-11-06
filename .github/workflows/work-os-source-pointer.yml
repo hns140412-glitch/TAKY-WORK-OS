@@ -1,0 +1,38 @@
+name: Work OS Source Pointer Boundary
+on:
+  pull_request:
+  push:
+    branches:
+      - "fix/work-os-source-pointer-only-*"
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  source-reference-no-copy:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - name: Offline resolver tests (no Drive access or raw source upload)
+        run: python -m unittest discover -s SOURCE_REFERENCE -p "source_reference_test.py" -v
+      - name: Task-authorized single-source on-demand read tests
+        run: python -m unittest discover -s SOURCE_REFERENCE -p "source_reader_test.py" -v
+      - name: Read-only SOURCE_ARCHIVE to VAULT reconciliation tests
+        run: python -m unittest discover -s SOURCE_REFERENCE -p "source_archive_reconcile_test.py" -v
+      - name: Storage boundary regression (app assets remain allowed)
+        run: python -m unittest discover -s SOURCE_REFERENCE -p "git_data_boundary_test.py" -v
+      - name: All-depth raw/data tracked-path guard (no private names logged)
+        run: python SOURCE_REFERENCE/git_data_boundary.py
+      - name: Validate Git ignore at root and nested locations
+        shell: bash
+        run: |
+          for path in SOURCE_ARCHIVE/_probe.raw app/SOURCE_ARCHIVE/_probe.raw SOURCE_VAULT/_probe.raw app/captures_v04/_probe.raw data/notion_incremental/_probe.raw app/SOURCE_REFERENCE/runtime/_probe.json SOURCE_REFERENCE/session.local.json app/.env.local; do
+            git check-ignore -q --no-index "$path"
+          done
+          if git check-ignore -q --no-index app/public/assets/approved-scene.png; then
+            echo 'ERROR: legitimate PWA asset directory ignored' >&2
+            exit 1
+          fi
