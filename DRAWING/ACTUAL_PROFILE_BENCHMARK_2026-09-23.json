@@ -1,0 +1,61 @@
+{
+  "benchmark_version": "2026-09-23.actual-profile.1",
+  "privacy_rule": "No private project identifiers, source hashes, or filenames are stored.",
+  "method": [
+    "full-page PDF SVG via PyMuPDF",
+    "source-weight visual hierarchy only",
+    "no architectural semantic inference",
+    "geometry fingerprint before/after",
+    "supporting edge comparison against source render"
+  ],
+  "fixtures": [
+    {
+      "fixture_class": "PLAN_A3_VECTOR",
+      "profile": "PUBLICATION",
+      "geometry_fingerprint_equal": true,
+      "edge_mismatch_ratio": 0.004963,
+      "source_weight_role_counts": {
+        "SOURCE_LIGHT": 88,
+        "SOURCE_BASE": 13083,
+        "SOURCE_HEAVY": 86,
+        "SOURCE_PRIMARY": 174,
+        "SOURCE_SECONDARY": 1453
+      },
+      "result": "PASS_GEOMETRY / PRESENTATION_CHANGED"
+    },
+    {
+      "fixture_class": "PLAN_A3_VECTOR",
+      "profile": "TECHNICAL_CLEAN",
+      "geometry_fingerprint_equal": true,
+      "edge_mismatch_ratio": 0.004456,
+      "result": "PASS_GEOMETRY / PRESENTATION_CHANGED"
+    },
+    {
+      "fixture_class": "SECTION_A3_VECTOR",
+      "profile": "SECTION_PRESENTATION_SAFE",
+      "geometry_fingerprint_equal": true,
+      "edge_mismatch_ratio": 0.005356,
+      "source_weight_role_counts": {
+        "SOURCE_BASE": 105,
+        "SOURCE_HEAVY": 42,
+        "SOURCE_LIGHT": 2,
+        "SOURCE_PRIMARY": 41,
+        "SOURCE_SECONDARY": 125
+      },
+      "result": "PASS_GEOMETRY / PRESENTATION_CHANGED"
+    },
+    {
+      "fixture_class": "BASEMENT_A3_VECTOR",
+      "profile": "TECHNICAL_CLEAN",
+      "geometry_fingerprint_equal": true,
+      "edge_mismatch_ratio": 0.003098,
+      "result": "PASS_GEOMETRY / PRESENTATION_CHANGED"
+    }
+  ],
+  "interpretation": [
+    "Geometry fingerprints remained identical because only stroke presentation attributes and data-role metadata changed.",
+    "Small edge differences are expected because line color/opacity/weight changed intentionally.",
+    "This route is suitable before semantic masks exist and is safer than guessing WALL/ROOM/CUT from PDF graphics.",
+    "True SALES_TEXTURED still requires confirmed room/material/furniture masks or a verified CAD semantic mapping."
+  ]
+}

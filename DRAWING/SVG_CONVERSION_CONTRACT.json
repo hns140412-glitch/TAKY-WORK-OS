@@ -1,0 +1,55 @@
+{
+  "contract_version": "2026-09-23.1",
+  "principle": "SVG is a working/presentation representation. Original CAD/PDF remains the preserved source.",
+  "routes": [
+    {
+      "route_id": "PDF_FULL_SVG",
+      "input": "PDF",
+      "implementation": "PyMuPDF Page.get_svg_image",
+      "layer_target": "L0_SOURCE / SOURCE_SNAPSHOT representation",
+      "best_for": [
+        "high visual preservation",
+        "review",
+        "source overlay"
+      ],
+      "authority": "ISSUED_SNAPSHOT",
+      "limitation": "not CAD semantic authority"
+    },
+    {
+      "route_id": "PDF_GEOMETRY_SVG",
+      "input": "PDF",
+      "implementation": "PyMuPDF vector path extraction + source-line exporter",
+      "layer_target": "L1_GEOMETRY / SOURCE_LINE",
+      "best_for": [
+        "clean line overlay",
+        "geometry fingerprint support",
+        "presentation styling"
+      ],
+      "authority": "SOURCE_DERIVED",
+      "limitation": "may omit annotations or PDF-specific graphics"
+    },
+    {
+      "route_id": "DXF_SVG",
+      "input": "DXF",
+      "implementation": "ezdxf drawing frontend + SVGBackend",
+      "layer_target": "L1_GEOMETRY presentation representation",
+      "best_for": [
+        "layer-aware CAD review",
+        "browser rendering",
+        "presentation overlay"
+      ],
+      "authority": "CAD_DERIVED_VIEW",
+      "limitation": "SVG does not replace original DXF entity/layer authority"
+    },
+    {
+      "route_id": "DWG_TO_DXF_TO_SVG",
+      "input": "DWG",
+      "implementation": "external/local DWG decoder -> DXF -> TAKY DXF adapter -> SVG",
+      "layer_target": "L0/L1 after conversion provenance verification",
+      "status": "CONVERSION_ADAPTER_REQUIRED",
+      "limitation": "direct native DWG decode not implemented in current runtime"
+    }
+  ],
+  "preserve_rule": "Never discard original source after SVG conversion. Store source digest and conversion provenance.",
+  "comparison_rule": "Use geometry/object checks where available; use edge/render checks only as supporting evidence."
+}

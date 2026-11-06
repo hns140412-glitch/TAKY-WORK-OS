@@ -1,0 +1,115 @@
+'use strict';
+
+const crypto=require('crypto');
+
+function privateKey(envName){
+  const pem=process.env[envName];
+  if(!pem) throw new Error(envName+'_REQUIRED');
+  return crypto.createPrivateKey(pem);
+}
+
+function sign(type,validatorId,payload,privateEnv,ttlMs=600000){
+  const now=Date.now();
+  const body=JSON.stringify({
+    v:1,
+    alg:'Ed25519',
+    type,
+    validator_id:validatorId,
+    jti:crypto.randomUUID(),
+    payload,
+    iat:now,
+    exp:now+ttlMs
+  });
+  const encoded=Buffer.from(body).toString('base64url');
+  const sig=crypto.sign(null,Buffer.from(encoded),privateKey(privateEnv)).toString('base64url');
+  return encoded+'.'+sig;
+}
+
+function signValidationReadiness(payload={}){
+  return sign('TAKY_VALIDATION_READINESS_RECEIPT','VALIDATION_READINESS_V1',{
+    objective_validation_ready:payload.objective_validation_ready===true,
+    vision_review_ready:payload.vision_review_ready===true,
+    user_facing_validation_ready:payload.user_facing_validation_ready===true,
+    vision_public_fingerprint:payload.vision_public_fingerprint||null,
+    vision_model:payload.vision_model||null
+  },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM',120000);
+}
+
+function signVisualMeasurement({artifact_digest,metrics}={}){
+  if(!artifact_digest) throw new Error('ARTIFACT_DIGEST_REQUIRED');
+  if(!metrics || metrics.schema!=='TAKY_OBJECTIVE_VISUAL_METRICS_V1') throw new Error('OBJECTIVE_VISUAL_METRICS_REQUIRED');
+  return sign('TAKY_VISUAL_MEASUREMENT_RECEIPT','OBJECTIVE_VISUAL_MEASURER_V1',{
+    artifact_digest,
+    metrics,
+    professional_quality_claim:false
+  },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
+}
+
+function signReferenceEffect({baseline_digest,candidate_digest,effect_input_digest=null,reference_ids,reference_compile_digest,comparison}={}){
+  if(!baseline_digest || !candidate_digest) throw new Error('REFERENCE_DIGESTS_REQUIRED');
+  if(!Array.isArray(reference_ids)||!reference_ids.length) throw new Error('REFERENCE_IDS_REQUIRED');
+  if(!reference_compile_digest) throw new Error('REFERENCE_COMPILE_DIGEST_REQUIRED');
+  const allowed=new Set(['TAKY_OBJECTIVE_REFERENCE_DELTA_V1','TAKY_LINE_HIERARCHY_DELTA_V1','TAKY_RELATION_FOCUS_DELTA_V1','TAKY_ONE_MOVE_EMPHASIS_DELTA_V1']);
+  if(!comparison || !allowed.has(comparison.schema)) throw new Error('OBJECTIVE_REFERENCE_COMPARISON_REQUIRED');
+  if(comparison.schema!=='TAKY_OBJECTIVE_REFERENCE_DELTA_V1' && !effect_input_digest){
+    throw new Error('REFERENCE_EFFECT_INPUT_DIGEST_REQUIRED');
+  }
+  return sign('TAKY_REFERENCE_EFFECT_RECEIPT','OBJECTIVE_VISUAL_MEASURER_V1',{
+    baseline_digest,
+    candidate_digest,
+    effect_input_digest,
+    reference_ids:[...reference_ids],
+    reference_compile_digest,
+    effect_schema:comparison.schema,
+    comparison,
+    objective_effect_pass:comparison.objective_effect_detected===true,
+    clarity_only_suspected:comparison.schema==='TAKY_OBJECTIVE_REFERENCE_DELTA_V1' && comparison.clarity_only_suspected===true,
+    professional_family_claim:false
+  },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
+}
+
+function signSourceFidelity({evidence}={}){
+  if(!evidence || evidence.schema!=='TAKY_SOURCE_FIDELITY_EVIDENCE_V1'){
+    throw new Error('SOURCE_FIDELITY_EVIDENCE_REQUIRED');
+  }
+  if(evidence.ok!==true) throw new Error('SOURCE_FIDELITY_EVIDENCE_NOT_PASSING');
+  if(!evidence.controlled_svg_sha256) throw new Error('CONTROLLED_SVG_DIGEST_REQUIRED');
+  const parity=Number(evidence.artifact_parity?.score||0);
+  if(parity<0.999) throw new Error('SOURCE_FIDELITY_ARTIFACT_PARITY_FAIL');
+  return sign('TAKY_SOURCE_FIDELITY_RECEIPT','SOURCE_FIDELITY_VALIDATOR_V1',{
+    source_sha256:evidence.source_sha256,
+    source_page_index:evidence.source_page_index,
+    candidate_digest:evidence.candidate_sha256,
+    controlled_svg_sha256:evidence.controlled_svg_sha256,
+    canonical_svg_sha256:evidence.canonical_svg_sha256,
+    source_geometry_fingerprint:evidence.source_geometry_fingerprint,
+    controlled_geometry_fingerprint:evidence.controlled_geometry_fingerprint,
+    controlled_geometry_match:evidence.controlled_geometry_match===true,
+    source_viewbox_match:evidence.source_viewbox_match===true,
+    canonical_inline_match:evidence.canonical_inline_match===true,
+    inline_transform_safe:evidence.inline_transform_safe===true,
+    artifact_type:evidence.artifact_parity?.type||null,
+    artifact_parity_score:parity
+  },'TAKY_MEASUREMENT_PRIVATE_KEY_PEM');
+}
+
+function signVisionReview(payload={}){
+  if(!payload.artifact_digest) throw new Error('ARTIFACT_DIGEST_REQUIRED');
+  if(!payload.intent_digest) throw new Error('HUMAN_INTENT_DIGEST_REQUIRED');
+  return sign('TAKY_VISION_REVIEW_RECEIPT','VISION_VALIDATOR_V1',{
+    artifact_digest:payload.artifact_digest,
+    intent_digest:payload.intent_digest,
+    professional_family_pass:payload.professional_family_pass===true,
+    reference_effect_visible_without_explanation:payload.reference_effect_visible_without_explanation===true,
+    generic_layout_detected:payload.generic_layout_detected===true,
+    decision_value_pass:payload.decision_value_pass===true
+  },'TAKY_VISION_PRIVATE_KEY_PEM');
+}
+
+module.exports=Object.freeze({
+  signValidationReadiness,
+  signVisualMeasurement,
+  signReferenceEffect,
+  signSourceFidelity,
+  signVisionReview
+});

@@ -1,0 +1,62 @@
+{
+  "schema": "REFERENCE_COMPILER_SPEC_V1",
+  "status": "ACTIVE_CANDIDATE",
+  "invariant": "REFERENCE_NAME -> MINED_DNA -> DESIGN_TOKEN -> ENGINE_PARAMETER -> OUTPUT_EFFECT -> BEFORE_AFTER_VALIDATION",
+  "compile_required": true,
+  "families": {
+    "ArchDaily": {
+      "dna": "PLAN_LINE_HIERARCHY",
+      "tokens": {
+        "wall": 0.4,
+        "primary": 0.28,
+        "secondary": 0.18,
+        "annotation": 0.09
+      }
+    },
+    "Divisare": {
+      "dna": "EDITORIAL_RESTRAINT",
+      "tokens": {
+        "whitespace_ratio": "PROFILED",
+        "caption_density": "LOW",
+        "drawing_dominance": "HIGH"
+      }
+    },
+    "OMA": {
+      "dna": "RELATION_FIRST",
+      "tokens": {
+        "diagram_relation_count": 1,
+        "decoration": "SUPPRESSED"
+      }
+    },
+    "BIG": {
+      "dna": "ONE_MOVE",
+      "tokens": {
+        "sequence": [
+          "constraint",
+          "move",
+          "result"
+        ]
+      }
+    },
+    "MVRDV": {
+      "dna": "TYPE_COMPARISON",
+      "tokens": {
+        "same_scale": true,
+        "same_metric": true,
+        "exception_visible": true
+      }
+    },
+    "SOM_Foster": {
+      "dna": "TECHNICAL_CLARITY",
+      "tokens": {
+        "hierarchy": [
+          "structure",
+          "program",
+          "envelope"
+        ]
+      }
+    }
+  },
+  "runtime": "runtime/drawing-reference-compiler.js",
+  "pass_rule": "REFERENCE_EFFECT must be observable without explanation; token presence alone is insufficient."
+}

@@ -1,0 +1,96 @@
+{
+  "schema": "REGRESSION_TEST_MATRIX_V2",
+  "cases": [
+    {
+      "id": "RT-A",
+      "historical": "Engine bypass",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-B",
+      "historical": "Raster destructive mask",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-C",
+      "historical": "Generative geometry redraw",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-D",
+      "historical": "Reference named but not compiled/applied",
+      "expected": "FAIL",
+      "test": "drawing-reference-compiler.test.js"
+    },
+    {
+      "id": "RT-E",
+      "historical": "Reference effect absent",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-F",
+      "historical": "Diagnostic shown to user",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-H",
+      "historical": "newer timestamp same content marked stale",
+      "expected": "SAME_CONTENT",
+      "test": "drawing-source-equivalence.test.js"
+    },
+    {
+      "id": "RT-J",
+      "historical": "narrative without evidence",
+      "expected": "HOLD",
+      "test": "production gate conditional NARRATIVE_EVIDENCE"
+    },
+    {
+      "id": "RT-K",
+      "historical": "bad architecture resumed unchanged",
+      "expected": "SURGERY can supersede prior handoff",
+      "test": "governance inspection + future central TAKY test"
+    },
+    {
+      "id": "RT-G",
+      "historical": "One-off renderer tries to become production artifact",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-I",
+      "historical": "Unverified semantic inference enters production",
+      "expected": "HOLD",
+      "test": "drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-L",
+      "historical": "Caller self-asserts AUTHORIZED_ENGINE without execution receipt",
+      "expected": "HOLD",
+      "test": "drawing-execution-receipt.test.js + drawing-production-authority-gate.test.js"
+    },
+    {
+      "id": "RT-M",
+      "historical": "Caller supplies PASS status without validator/evidence refs",
+      "expected": "FAIL/HOLD",
+      "test": "drawing-pre-user-validation.test.js"
+    },
+    {
+      "id": "RT-N",
+      "historical": "Execution receipt and validation bundle digests disagree",
+      "expected": "HOLD",
+      "test": "drawing-finalization-orchestrator.test.js"
+    },
+    {
+      "id": "RT-O",
+      "historical": "Feature branch engine co-located with project-specific Hannam artifacts and treated as available/default",
+      "expected": "BLOCK PROMOTION until GENERIC_ENGINE / PROJECT_PACK split is proven",
+      "test": "promotion-boundary lint (OPEN to implement)"
+    }
+  ],
+  "proof_boundary": "Exact-head CI proves repository regression checks only; hosted runtime invocation remains separate."
+}

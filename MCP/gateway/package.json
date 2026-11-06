@@ -1,0 +1,14 @@
+{
+  "name": "@taky/work-os-production-gateway",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP production permission gateway for TAKY Work OS",
+  "scripts": {
+    "start": "node server.mjs"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/server": "2.0.0",
+    "zod": "^4.0.0"
+  }
+}

@@ -1,0 +1,1815 @@
+{
+  "schema_version": "2026-09-23.2",
+  "package_id": "HANNAM_SCALE_REVIEW_V1",
+  "project": {
+    "project_id": "HANNAM-737-21-AREA",
+    "title": "용산구 한남동 737-21 일원 다세대주택 규모검토 및 사례조사",
+    "location": "서울특별시 용산구 한남동 737-21 일원",
+    "report_type": "SCALE_REVIEW_AND_CASE_STUDY",
+    "status": "WORKING_ISSUED_SNAPSHOT_0923"
+  },
+  "governance": {
+    "slogans": [
+      "Think Again, Keep Your Key.",
+      "Think Again, You’re The Key."
+    ],
+    "source_geometry_mutation": "FORBIDDEN",
+    "unknown_policy": "PRESERVE_UNKNOWN",
+    "human_final_authority": true
+  },
+  "sources": [
+    {
+      "source_id": "SRC-PDF-ISSUED-0923",
+      "title": "2026-0923_한남동 737-21일원 고급주택(4세대) 규모검토.pdf",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:1JTKELb5G8g7cVsRNpgO0ZHf90aLJn3o4",
+      "revision": "2026-09-23T11:27:40+09:00",
+      "allowed_use": [
+        "issued drawing snapshot",
+        "B1 geometry and parking count",
+        "1F geometry and road/site relation",
+        "2F geometry and A/B relation",
+        "section geometry and levels",
+        "sheet scales and annotations"
+      ],
+      "forbidden_use": [
+        "automatic legal-area role assignment",
+        "geometry replacement by reference",
+        "semantic inference beyond explicit drawing evidence"
+      ],
+      "latest": true,
+      "page_map": {
+        "B1": 0,
+        "1F": 1,
+        "2F": 2,
+        "SECTION": 3
+      },
+      "notes": "Current 4-page issued PDF in Google Drive Work; registered as the active issued snapshot for presentation/render routing."
+    },
+    {
+      "source_id": "SRC-DWG-WORK",
+      "title": "2026-0922_한남동 737-21일원 고급주택(4세대) 규모검토_SSH.dwg",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "HIGHEST_GEOMETRY",
+      "uri": "gdrive:1qplsHRMW-DY1hQaCziErrf3VMz5RR_ep",
+      "revision": "2026-09-23T08:50:30+09:00",
+      "allowed_use": [
+        "geometry",
+        "unit count",
+        "building layout",
+        "project title"
+      ],
+      "forbidden_use": [
+        "unverified DWG semantic inference before decoder/DXF route"
+      ],
+      "latest": true,
+      "notes": "Drive file modified 2026-09-22T23:50:30.322Z; file size 2,579,579 bytes. Treat as latest geometry authority."
+    },
+    {
+      "source_id": "SRC-PDF-B1",
+      "title": "지하주차장.pdf",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:1mRp3-5PV1_2Ni1sDdOE6X_mtYG3DxFzh",
+      "revision": "2026-09-23T08:38:40+09:00",
+      "allowed_use": [
+        "basement geometry",
+        "parking/access relation",
+        "site boundary",
+        "core",
+        "road relation"
+      ],
+      "forbidden_use": [
+        "automatic legal-area role assignment",
+        "parking-count guess"
+      ],
+      "latest_supporting_pdf": false,
+      "freshness": "SUPERSEDED_BY_ISSUED_0923"
+    },
+    {
+      "source_id": "SRC-PDF-1F",
+      "title": "지상1층 평면도.pdf",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:13jLtnnrfs0Ko89YR7lNU5AYSD-BIB3Wa",
+      "revision": "2026-09-22",
+      "allowed_use": [
+        "1F geometry",
+        "A/B building relation",
+        "road relation",
+        "site/access relation"
+      ],
+      "forbidden_use": [
+        "invented landscape",
+        "automatic area semantics"
+      ],
+      "freshness": "SUPERSEDED_BY_ISSUED_0923",
+      "latest_supporting_pdf": false
+    },
+    {
+      "source_id": "SRC-PDF-2F",
+      "title": "지상2층 평면도.pdf",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:1FaDpNPa8F5yT37aL2bzIBZ_GkKXOp5dY",
+      "revision": "2026-09-22",
+      "allowed_use": [
+        "2F geometry",
+        "A/B building relation",
+        "room/vertical relation"
+      ],
+      "forbidden_use": [
+        "invented landscaping",
+        "automatic area semantics"
+      ],
+      "freshness": "SUPERSEDED_BY_ISSUED_0923",
+      "latest_supporting_pdf": false
+    },
+    {
+      "source_id": "SRC-PDF-SECTION",
+      "title": "단면도.pdf",
+      "role": "CURRENT_GEOMETRY_SOURCE",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:1ks_PJO294N84ue-8zXutgtgq5yJckXmH",
+      "revision": "2026-09-23T08:38:40+09:00",
+      "allowed_use": [
+        "section geometry",
+        "B1/1F/2F relation",
+        "ground/road relation",
+        "level labels"
+      ],
+      "forbidden_use": [
+        "unverified level transcription",
+        "AI-redrawn section geometry as authority"
+      ],
+      "latest_supporting_pdf": false,
+      "freshness": "SUPERSEDED_BY_ISSUED_0923"
+    },
+    {
+      "source_id": "SRC-FORMAT-0914",
+      "title": "2026-0914_한남동 고급빌라 규모검토.pptx",
+      "role": "FORMAT_REFERENCE",
+      "authority": "REFERENCE_ONLY",
+      "uri": "gdrive:1YUld2mNHStFfaPjddYwUEuPMmMgG-soO",
+      "revision": "2026-09-14",
+      "allowed_use": [
+        "page structure",
+        "information order",
+        "table pattern",
+        "scale-review workflow"
+      ],
+      "forbidden_use": [
+        "automatic reuse of sample project numbers",
+        "automatic reuse of sample legal values"
+      ]
+    },
+    {
+      "source_id": "SRC-COMMITTEE",
+      "title": "2026-0522_건축경관 공동위원회 심의의결 조치계획_건축.pdf",
+      "role": "REVIEW_STANDARD",
+      "authority": "REVIEW_STANDARD",
+      "uri": "gdrive:1W2BiTJY3b4OCI_YD9D4JMn8FASdCywmc",
+      "revision": "2026-05-22",
+      "allowed_use": [
+        "review axes",
+        "issue-response-status logic",
+        "before-after review structure"
+      ],
+      "forbidden_use": [
+        "reuse of another project's numeric requirements as current project facts"
+      ]
+    },
+    {
+      "source_id": "SRC-CASE-0915",
+      "title": "2026-0915_한남동 규모검토 사례조사.pptx",
+      "role": "CASE_DATASET",
+      "authority": "FACT_SOURCE",
+      "uri": "gdrive:1Db1Iyzc6UxjoXGa77HM6WkAdBnWc8v6O",
+      "revision": "2026-09-15",
+      "allowed_use": [
+        "case metrics",
+        "unit types",
+        "parking per unit",
+        "exclusive area comparison"
+      ],
+      "forbidden_use": [
+        "direct proof of current-project legal adequacy"
+      ]
+    },
+    {
+      "source_id": "SRC-INFO-73718",
+      "title": "서울_용산구_한남동_737-18_외_2필지_한남동_고급주택_개발부지.pdf",
+      "role": "INFO_STRUCTURE_REFERENCE",
+      "authority": "REFERENCE_ONLY",
+      "uri": "gdrive:1M-gv0QW-ANFfL9Mg1Ng1fy2CYOoWG0pm",
+      "revision": "2025",
+      "allowed_use": [
+        "information sequence",
+        "development-decision narrative"
+      ],
+      "forbidden_use": [
+        "graphic imitation",
+        "automatic current-project fact reuse"
+      ]
+    },
+    {
+      "source_id": "SRC-METHOD-LIB",
+      "title": "Work / REFERENCE Method Library",
+      "role": "PRESENTATION_METHOD",
+      "authority": "REFERENCE_ONLY",
+      "uri": "gdrive:1Bfsf6FzvBZct_a1NSt8481MPGwxdH0Vc",
+      "revision": "LATEST",
+      "allowed_use": [
+        "drawing enhancement",
+        "diagram method",
+        "CG method",
+        "board hierarchy"
+      ],
+      "forbidden_use": [
+        "source truth replacement"
+      ]
+    }
+  ],
+  "facts": [
+    {
+      "fact_id": "FACT-PROJECT-TYPE",
+      "label": "프로젝트 성격",
+      "value": "고급주택 규모검토 / 다세대주택",
+      "unit": null,
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-DWG-WORK",
+        "SRC-PDF-1F",
+        "SRC-PDF-2F",
+        "SRC-PDF-SECTION"
+      ],
+      "calculation_ref": null,
+      "notes": "실제 Work 도면 타이틀 기준"
+    },
+    {
+      "fact_id": "FACT-UNITS",
+      "label": "계획 세대수",
+      "value": 4,
+      "unit": "세대",
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-DWG-WORK",
+        "SRC-PDF-SECTION"
+      ],
+      "calculation_ref": null,
+      "notes": "DWG 파일명 및 단면의 1~4호 관계에서 확인"
+    },
+    {
+      "fact_id": "FACT-BUILDING-GROUPS",
+      "label": "동 구성",
+      "value": "A동 / B동",
+      "unit": null,
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-PDF-1F",
+        "SRC-PDF-2F",
+        "SRC-PDF-SECTION"
+      ],
+      "calculation_ref": null,
+      "notes": "평면 및 단면 표기"
+    },
+    {
+      "fact_id": "FACT-FLOORS",
+      "label": "도면상 계획 층 구성",
+      "value": "지하1층 + 지상1층 + 지상2층",
+      "unit": null,
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-PDF-B1",
+        "SRC-PDF-1F",
+        "SRC-PDF-2F",
+        "SRC-PDF-SECTION"
+      ],
+      "calculation_ref": null,
+      "notes": "현재 Work 도면 세트 기준"
+    },
+    {
+      "fact_id": "FACT-DRAWING-SCALE",
+      "label": "도면 축척",
+      "value": "B1 1:200 / 1F 1:300 / 2F 1:200 / Section 1:200",
+      "unit": null,
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-PDF-ISSUED-0923"
+      ],
+      "calculation_ref": null,
+      "notes": "2026-0923 issued 4-page PDF sheet title blocks; scales differ by sheet."
+    },
+    {
+      "fact_id": "FACT-ROAD-CONDITION",
+      "label": "접도 구성",
+      "value": "3면 접도 - 6m 도로 1면 + 4m 도로 2면",
+      "unit": null,
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-PDF-1F",
+        "SRC-PDF-B1"
+      ],
+      "calculation_ref": null,
+      "notes": "1층/지하 평면의 도로폭 표기"
+    },
+    {
+      "fact_id": "FACT-B1-PARKING-PRESENT",
+      "label": "지하주차장 계획",
+      "value": "있음",
+      "unit": null,
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-PDF-B1",
+        "SRC-PDF-SECTION"
+      ],
+      "calculation_ref": null,
+      "notes": "주차대수는 별도 검증 필요"
+    },
+    {
+      "fact_id": "FACT-PARKING",
+      "label": "계획 주차대수",
+      "value": 14,
+      "unit": "대",
+      "evidence_state": "CONFIRMED",
+      "source_refs": [
+        "SRC-PDF-ISSUED-0923"
+      ],
+      "calculation_ref": null,
+      "notes": "2026-0923 issued B1 sheet explicitly labels 'B1F 지하주차장 (14대)'."
+    },
+    {
+      "fact_id": "FACT-SITE-AREA",
+      "label": "대지면적",
+      "value": null,
+      "unit": "㎡",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-DWG-WORK",
+        "SRC-PDF-B1",
+        "SRC-PDF-1F"
+      ],
+      "calculation_ref": "AREA_ENGINE",
+      "notes": "현재 프로젝트 경계/법적 대지 확정 후 입력"
+    },
+    {
+      "fact_id": "FACT-BUILDING-AREA",
+      "label": "건축면적",
+      "value": null,
+      "unit": "㎡",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-DWG-WORK",
+        "SRC-PDF-1F"
+      ],
+      "calculation_ref": "AREA_ENGINE",
+      "notes": "법적 경계 role 검증 필요"
+    },
+    {
+      "fact_id": "FACT-GFA",
+      "label": "연면적",
+      "value": null,
+      "unit": "㎡",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-DWG-WORK",
+        "SRC-PDF-B1",
+        "SRC-PDF-1F",
+        "SRC-PDF-2F"
+      ],
+      "calculation_ref": "AREA_ENGINE",
+      "notes": "층별 면적 role 검증 후 집계"
+    },
+    {
+      "fact_id": "FACT-BCR",
+      "label": "건폐율",
+      "value": null,
+      "unit": "%",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-DWG-WORK"
+      ],
+      "calculation_ref": "AREA_ENGINE",
+      "notes": "대지면적/건축면적 확정 후 계산"
+    },
+    {
+      "fact_id": "FACT-FAR",
+      "label": "용적률",
+      "value": null,
+      "unit": "%",
+      "evidence_state": "PENDING",
+      "source_refs": [
+        "SRC-DWG-WORK"
+      ],
+      "calculation_ref": "AREA_ENGINE",
+      "notes": "용적률 산정면적 role 검증 후 계산"
+    },
+    {
+      "fact_id": "FACT-CASE-ITAEWON111-SITE",
+      "label": "이태원111 대지면적",
+      "value": 1086.5,
+      "unit": "㎡",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-ITAEWON111-GFA",
+      "label": "이태원111 연면적",
+      "value": 3358.77,
+      "unit": "㎡",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-ITAEWON111-BCR",
+      "label": "이태원111 건폐율",
+      "value": 49,
+      "unit": "%",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-ITAEWON111-FAR",
+      "label": "이태원111 용적률",
+      "value": 70,
+      "unit": "%",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-ITAEWON111-UNITS",
+      "label": "이태원111 세대수",
+      "value": 6,
+      "unit": "세대",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-ITAEWON111-PARKING",
+      "label": "이태원111 주차대수",
+      "value": 32,
+      "unit": "대",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": "기계식 22 + 자주식 10"
+    },
+    {
+      "fact_id": "FACT-CASE-LECIEL-SITE",
+      "label": "르씨엘1022 대지면적",
+      "value": 1082,
+      "unit": "㎡",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-LECIEL-GFA",
+      "label": "르씨엘1022 연면적",
+      "value": 2965.11,
+      "unit": "㎡",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-LECIEL-BCR",
+      "label": "르씨엘1022 건폐율",
+      "value": 47.13,
+      "unit": "%",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-LECIEL-FAR",
+      "label": "르씨엘1022 용적률",
+      "value": 75.13,
+      "unit": "%",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-LECIEL-UNITS",
+      "label": "르씨엘1022 세대수",
+      "value": 11,
+      "unit": "세대",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": null
+    },
+    {
+      "fact_id": "FACT-CASE-LECIEL-PARKING",
+      "label": "르씨엘1022 주차대수",
+      "value": 25,
+      "unit": "대",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": "옥내 15 + 옥외 10"
+    },
+    {
+      "fact_id": "FACT-CASE-UPPERHOUSE-NAMSAN-PARKING",
+      "label": "어퍼하우스 남산 주차대수",
+      "value": 82,
+      "unit": "대",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": "총 18세대, 세대당 약 4.3~4.5대"
+    },
+    {
+      "fact_id": "FACT-CASE-PARC-HANNAM-PARKING",
+      "label": "파르크 한남 주차대수",
+      "value": 100,
+      "unit": "대",
+      "evidence_state": "REFERENCE_ONLY",
+      "source_refs": [
+        "SRC-CASE-0915"
+      ],
+      "calculation_ref": null,
+      "notes": "총 17세대, 세대당 약 5.88~6대"
+    }
+  ],
+  "review_items": [
+    {
+      "review_id": "REV-ARCH-01",
+      "axis": "ARCHITECTURE",
+      "topic": "A동/B동 배치와 4세대 구성의 독립성·동선·프라이버시",
+      "current_evidence_refs": [
+        "FACT-UNITS",
+        "FACT-BUILDING-GROUPS",
+        "SRC-PDF-1F",
+        "SRC-PDF-2F"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "1F/2F plan mining으로 세대별 출입·공용코어·실내외 관계 정리"
+    },
+    {
+      "review_id": "REV-ARCH-02",
+      "axis": "ARCHITECTURE",
+      "topic": "지하1층-지상1층-지상2층 수직관계 및 레벨계획",
+      "current_evidence_refs": [
+        "FACT-FLOORS",
+        "SRC-PDF-SECTION"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "단면 레벨 마이닝 및 도로/대지 레벨 관계 검증"
+    },
+    {
+      "review_id": "REV-TRAFFIC-01",
+      "axis": "TRAFFIC_PARKING",
+      "topic": "차량 진입·지하주차·회차 및 코어 접근",
+      "current_evidence_refs": [
+        "FACT-B1-PARKING-PRESENT",
+        "FACT-ROAD-CONDITION",
+        "SRC-PDF-B1"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "주차대수/차량동선/보행동선 분리 검증"
+    },
+    {
+      "review_id": "REV-TRAFFIC-02",
+      "axis": "TRAFFIC_PARKING",
+      "topic": "3면 도로 접도 조건을 활용한 차량·보행 진입 분리",
+      "current_evidence_refs": [
+        "FACT-ROAD-CONDITION",
+        "SRC-PDF-1F",
+        "SRC-PDF-B1"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "도로별 출입구 위치와 도면상 개구부를 검증"
+    },
+    {
+      "review_id": "REV-LAND-01",
+      "axis": "LANDSCAPE_EXTERNAL",
+      "topic": "1층 외부공간/마당과 세대 내부의 연계",
+      "current_evidence_refs": [
+        "SRC-PDF-1F"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "1F 외부공간을 source-derived diagram으로 분리"
+    },
+    {
+      "review_id": "REV-LAND-02",
+      "axis": "LANDSCAPE_EXTERNAL",
+      "topic": "2층에는 원도면에 없는 조경을 추가하지 않음",
+      "current_evidence_refs": [
+        "SRC-PDF-2F"
+      ],
+      "response": "원본 조건 보존",
+      "state": "PASS",
+      "next_action": null
+    },
+    {
+      "review_id": "REV-GROUND-01",
+      "axis": "STRUCTURE_GROUND",
+      "topic": "지하외벽·옹벽·대지경계·토사 및 도로 레벨 관계",
+      "current_evidence_refs": [
+        "SRC-PDF-B1",
+        "SRC-PDF-SECTION"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "B1/Section 원본을 기준으로 ground/soil/poche layer 생성"
+    },
+    {
+      "review_id": "REV-MEP-01",
+      "axis": "MEP_FIRE",
+      "topic": "지하주차장·코어·설비실/환기/방재 검토",
+      "current_evidence_refs": [
+        "SRC-PDF-B1"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "도면에 표시된 설비/실명을 별도 evidence로 추출"
+    },
+    {
+      "review_id": "REV-PERMIT-01",
+      "axis": "PERMIT_OTHER",
+      "topic": "공동위원회 사전검토 항목과 현 계획의 대응 관계",
+      "current_evidence_refs": [
+        "SRC-COMMITTEE"
+      ],
+      "response": null,
+      "state": "PENDING",
+      "next_action": "건축/교통/조경/구조/설비/기타 축으로 pre-check matrix 작성"
+    }
+  ],
+  "cases": [
+    {
+      "case_id": "CASE-ITAEWON111",
+      "name": "이태원 111",
+      "class": "DIRECT_COMPARABLE",
+      "fact_refs": [
+        "FACT-CASE-ITAEWON111-SITE",
+        "FACT-CASE-ITAEWON111-GFA",
+        "FACT-CASE-ITAEWON111-BCR",
+        "FACT-CASE-ITAEWON111-FAR",
+        "FACT-CASE-ITAEWON111-UNITS",
+        "FACT-CASE-ITAEWON111-PARKING"
+      ],
+      "comparison_dimensions": [
+        "site_area",
+        "gfa",
+        "bcr",
+        "far",
+        "floors",
+        "units",
+        "parking",
+        "parking_per_unit",
+        "exclusive_area"
+      ],
+      "limitations": [
+        "현재 프로젝트와 용도·대지·법적 조건 차이를 별도 표기"
+      ]
+    },
+    {
+      "case_id": "CASE-LECIEL1022",
+      "name": "르씨엘 1022",
+      "class": "DIRECT_COMPARABLE",
+      "fact_refs": [
+        "FACT-CASE-LECIEL-SITE",
+        "FACT-CASE-LECIEL-GFA",
+        "FACT-CASE-LECIEL-BCR",
+        "FACT-CASE-LECIEL-FAR",
+        "FACT-CASE-LECIEL-UNITS",
+        "FACT-CASE-LECIEL-PARKING"
+      ],
+      "comparison_dimensions": [
+        "site_area",
+        "gfa",
+        "bcr",
+        "far",
+        "floors",
+        "units",
+        "parking",
+        "parking_per_unit",
+        "exclusive_area"
+      ],
+      "limitations": [
+        "현재 프로젝트와 용도·대지·법적 조건 차이를 별도 표기"
+      ]
+    },
+    {
+      "case_id": "CASE-UPPERHOUSE-NAMSAN",
+      "name": "어퍼하우스 남산",
+      "class": "LUXURY_BENCHMARK",
+      "fact_refs": [
+        "FACT-CASE-UPPERHOUSE-NAMSAN-PARKING"
+      ],
+      "comparison_dimensions": [
+        "parking_per_unit",
+        "exclusive_area",
+        "unit_mix",
+        "external_space"
+      ],
+      "limitations": [
+        "규모와 유형이 다른 luxury benchmark"
+      ]
+    },
+    {
+      "case_id": "CASE-PARC-HANNAM",
+      "name": "파르크 한남",
+      "class": "LUXURY_BENCHMARK",
+      "fact_refs": [
+        "FACT-CASE-PARC-HANNAM-PARKING"
+      ],
+      "comparison_dimensions": [
+        "parking_per_unit",
+        "exclusive_area",
+        "unit_mix",
+        "external_space"
+      ],
+      "limitations": [
+        "규모와 유형이 다른 luxury benchmark"
+      ]
+    },
+    {
+      "case_id": "CASE-INFO-73718",
+      "name": "한남동 737-18 외 2필지 개발부지",
+      "class": "INFO_STRUCTURE_REFERENCE",
+      "fact_refs": [],
+      "comparison_dimensions": [
+        "land_overview",
+        "location_view",
+        "permit_status",
+        "current_plan",
+        "design_change_narrative"
+      ],
+      "limitations": [
+        "정보구성 참고용; 그래픽/수치 자동 이식 금지"
+      ]
+    }
+  ],
+  "methods": [
+    {
+      "method_id": "M-SOURCE-WEIGHT",
+      "purpose": "원본 선 위계를 유지한 채 도면 가독성 향상",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "geometry",
+        "source line hierarchy"
+      ],
+      "change": [
+        "stroke tone",
+        "presentation weight",
+        "context fade"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG",
+        "SVG"
+      ],
+      "validation": [
+        "geometry fingerprint",
+        "source overlay"
+      ]
+    },
+    {
+      "method_id": "M-SNAPSHOT-MULTIPLY",
+      "purpose": "발행 PDF의 완전한 시각정보를 source snapshot으로 보존",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "issued appearance",
+        "annotations",
+        "special PDF graphics"
+      ],
+      "change": [
+        "opacity only"
+      ],
+      "output_use": [
+        "A3",
+        "PDF",
+        "PNG",
+        "PPTX"
+      ],
+      "validation": [
+        "edge comparison",
+        "source snapshot presence"
+      ]
+    },
+    {
+      "method_id": "M-COMMITTEE-CARD",
+      "purpose": "공동위원회식 검토의견-대응-상태 논리를 보고서 카드로 전환",
+      "source_ref": "SRC-COMMITTEE",
+      "keep": [
+        "issue",
+        "response",
+        "status logic"
+      ],
+      "change": [
+        "another-project wording",
+        "page-specific content"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF"
+      ],
+      "validation": [
+        "review_id traceability"
+      ]
+    },
+    {
+      "method_id": "M-CASE-MATRIX",
+      "purpose": "유사사례를 동일 지표로 비교",
+      "source_ref": "SRC-CASE-0915",
+      "keep": [
+        "metrics",
+        "source provenance"
+      ],
+      "change": [
+        "layout",
+        "comparability grouping"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "XLSX"
+      ],
+      "validation": [
+        "all values source-referenced",
+        "limitations visible"
+      ]
+    },
+    {
+      "method_id": "M-SECTION-SAFE",
+      "purpose": "단면 CUT/GROUND/SOIL/STRUCTURE/SPACE 위계를 강화",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "section geometry",
+        "levels"
+      ],
+      "change": [
+        "poche",
+        "ground wash",
+        "background hierarchy"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG",
+        "SVG"
+      ],
+      "validation": [
+        "geometry preserved",
+        "levels preserved"
+      ]
+    },
+    {
+      "method_id": "M-RELATION-FIRST",
+      "purpose": "복잡한 정보를 장식보다 관계 중심으로 단순화",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "source anchors",
+        "relative spatial relation",
+        "labels tied to evidence"
+      ],
+      "change": [
+        "context visibility",
+        "accent",
+        "annotation density"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "SVG"
+      ],
+      "validation": [
+        "protected anchors present",
+        "no unrecorded relation invented"
+      ]
+    },
+    {
+      "method_id": "M-ONE-MOVE-SEQUENCE",
+      "purpose": "대지/진입/배치/동선 변화를 한 프레임 한 메시지로 설명",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "verified state",
+        "verified operation"
+      ],
+      "change": [
+        "visibility",
+        "accent arrows",
+        "frame sequencing"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF"
+      ],
+      "validation": [
+        "one explicit operation per frame",
+        "caption matches state delta"
+      ]
+    },
+    {
+      "method_id": "M-SECTION-LAYERED",
+      "purpose": "단면을 CUT/GROUND/SOIL/STRUCTURE/SPACE/BACKGROUND 계층으로 표현",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "section geometry",
+        "levels",
+        "ground profile"
+      ],
+      "change": [
+        "poche",
+        "tone",
+        "human scale",
+        "background suppression"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG",
+        "SVG"
+      ],
+      "validation": [
+        "cut mask provenance",
+        "level preservation",
+        "source overlay"
+      ]
+    },
+    {
+      "method_id": "M-EDITORIAL-RESTRAINT",
+      "purpose": "여백과 figure-ground를 우선해 도면 자체가 중심이 되게 함",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "primary drawing",
+        "critical annotations"
+      ],
+      "change": [
+        "white space",
+        "secondary context opacity",
+        "caption density"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG"
+      ],
+      "validation": [
+        "primary view immediately identifiable",
+        "secondary elements subordinate"
+      ]
+    },
+    {
+      "method_id": "M-HUMAN-SCALE",
+      "purpose": "사람/가구를 공간 크기와 사용성 전달용으로만 최소 사용",
+      "source_ref": "SRC-METHOD-LIB",
+      "keep": [
+        "architecture geometry"
+      ],
+      "change": [
+        "entourage only"
+      ],
+      "output_use": [
+        "A3",
+        "PPTX",
+        "HTML",
+        "PDF",
+        "PNG"
+      ],
+      "validation": [
+        "known scale",
+        "no critical edge obstruction"
+      ]
+    }
+  ],
+  "pages": [
+    {
+      "page_id": "P01",
+      "title": "Executive Summary",
+      "purpose": "사업 규모와 핵심 판단조건을 한 장에 압축",
+      "primary_message": "4세대 고급주택 규모검토의 현재 계획과 검토상태를 즉시 파악",
+      "fact_refs": [
+        "FACT-PROJECT-TYPE",
+        "FACT-UNITS",
+        "FACT-BUILDING-GROUPS",
+        "FACT-FLOORS",
+        "FACT-SITE-AREA",
+        "FACT-PARKING"
+      ],
+      "review_refs": [
+        "REV-ARCH-01",
+        "REV-TRAFFIC-01",
+        "REV-PERMIT-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT",
+        "M-COMMITTEE-CARD",
+        "M-EDITORIAL-RESTRAINT",
+        "M-ONE-MOVE-SEQUENCE"
+      ],
+      "source_visual_refs": [
+        "SRC-PDF-1F",
+        "SRC-PDF-SECTION"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "KEY_DIAGRAM",
+          "type": "DIAGRAM",
+          "content_ref": "SITE_BUILDING_RELATION"
+        },
+        {
+          "slot_id": "KEY_NUMBERS",
+          "type": "TABLE",
+          "content_ref": "TBL-OVERVIEW"
+        },
+        {
+          "slot_id": "ISSUES",
+          "type": "TEXT",
+          "content_ref": "REVIEW_SUMMARY"
+        }
+      ],
+      "completion_gate": [
+        "확정/계산/미확정 상태 구분",
+        "샘플 수치 미혼입",
+        "핵심 조건 1장 이해"
+      ]
+    },
+    {
+      "page_id": "P02",
+      "title": "Site / Planning Conditions",
+      "purpose": "도로·대지·레벨·진입 조건을 설명",
+      "primary_message": "3면 접도와 지형/진입 조건이 배치와 지하계획을 결정",
+      "fact_refs": [
+        "FACT-ROAD-CONDITION",
+        "FACT-DRAWING-SCALE"
+      ],
+      "review_refs": [
+        "REV-TRAFFIC-02",
+        "REV-GROUND-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT",
+        "M-RELATION-FIRST",
+        "M-ONE-MOVE-SEQUENCE",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-PDF-1F",
+        "SRC-PDF-B1",
+        "SRC-PDF-SECTION"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "SITE",
+          "type": "SOURCE_DRAWING",
+          "content_ref": "1F_SITE_CONTEXT"
+        },
+        {
+          "slot_id": "ACCESS",
+          "type": "DIAGRAM",
+          "content_ref": "ROAD_ACCESS"
+        },
+        {
+          "slot_id": "GROUND",
+          "type": "DIAGRAM",
+          "content_ref": "GROUND_LEVEL_RELATION"
+        }
+      ],
+      "completion_gate": [
+        "도로폭 식별",
+        "진입 관계 식별",
+        "source geometry 유지"
+      ]
+    },
+    {
+      "page_id": "P03",
+      "title": "Design Overview",
+      "purpose": "설계개요와 산출 상태를 한 표로 관리",
+      "primary_message": "계획값과 미확정값의 근거 상태를 명확히 구분",
+      "fact_refs": [
+        "FACT-SITE-AREA",
+        "FACT-BUILDING-AREA",
+        "FACT-GFA",
+        "FACT-BCR",
+        "FACT-FAR",
+        "FACT-UNITS",
+        "FACT-FLOORS",
+        "FACT-PARKING"
+      ],
+      "review_refs": [
+        "REV-PERMIT-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-COMMITTEE-CARD",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-DWG-WORK"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "OVERVIEW",
+          "type": "TABLE",
+          "content_ref": "TBL-OVERVIEW"
+        },
+        {
+          "slot_id": "STATUS",
+          "type": "TEXT",
+          "content_ref": "EVIDENCE_LEGEND"
+        }
+      ],
+      "completion_gate": [
+        "PENDING 숫자 임의입력 금지",
+        "근거열 표시",
+        "계획/기준/상태 분리"
+      ]
+    },
+    {
+      "page_id": "P04",
+      "title": "B1 Parking / Access",
+      "purpose": "지하주차·차량·보행·옹벽/지반 관계 검토",
+      "primary_message": "지하 진입과 주차 계획의 구조를 명확히 전달",
+      "fact_refs": [
+        "FACT-B1-PARKING-PRESENT",
+        "FACT-PARKING",
+        "FACT-ROAD-CONDITION"
+      ],
+      "review_refs": [
+        "REV-TRAFFIC-01",
+        "REV-TRAFFIC-02",
+        "REV-GROUND-01",
+        "REV-MEP-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT",
+        "M-SNAPSHOT-MULTIPLY",
+        "M-COMMITTEE-CARD",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-PDF-ISSUED-0923"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "SOURCE_DRAWING",
+          "content_ref": "B1_PLAN"
+        },
+        {
+          "slot_id": "ACCESS",
+          "type": "DIAGRAM",
+          "content_ref": "ACCESS_FLOW"
+        },
+        {
+          "slot_id": "GROUND",
+          "type": "DIAGRAM",
+          "content_ref": "RETAINING_SOIL_WALL"
+        },
+        {
+          "slot_id": "REVIEW",
+          "type": "TEXT",
+          "content_ref": "B1_REVIEW_CARD"
+        }
+      ],
+      "completion_gate": [
+        "차량/보행 진입 식별",
+        "주차대수 상태 표시",
+        "대지경계/지하외벽 관계 보존"
+      ]
+    },
+    {
+      "page_id": "P05",
+      "title": "1F Plan",
+      "purpose": "1층 배치·세대·외부공간·진입 관계 설명",
+      "primary_message": "A/B동과 1층 외부공간, 도로 및 진입의 관계를 읽히게 함",
+      "fact_refs": [
+        "FACT-UNITS",
+        "FACT-BUILDING-GROUPS",
+        "FACT-ROAD-CONDITION"
+      ],
+      "review_refs": [
+        "REV-ARCH-01",
+        "REV-LAND-01",
+        "REV-TRAFFIC-02"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT",
+        "M-SNAPSHOT-MULTIPLY",
+        "M-COMMITTEE-CARD",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-PDF-ISSUED-0923"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "SOURCE_DRAWING",
+          "content_ref": "1F_PLAN"
+        },
+        {
+          "slot_id": "UNIT_RELATION",
+          "type": "DIAGRAM",
+          "content_ref": "A_B_UNIT_RELATION"
+        },
+        {
+          "slot_id": "ACCESS",
+          "type": "DIAGRAM",
+          "content_ref": "PEDESTRIAN_VEHICLE_RELATION"
+        }
+      ],
+      "completion_gate": [
+        "A/B동 식별",
+        "원본 외부공간 보존",
+        "없는 요소 생성 금지"
+      ]
+    },
+    {
+      "page_id": "P06",
+      "title": "2F Plan",
+      "purpose": "2층 세대·프라이버시·수직관계 설명",
+      "primary_message": "2층 구성은 원본 그대로 두고 세대 관계만 명료화",
+      "fact_refs": [
+        "FACT-UNITS",
+        "FACT-BUILDING-GROUPS"
+      ],
+      "review_refs": [
+        "REV-ARCH-01",
+        "REV-LAND-02"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SOURCE-WEIGHT",
+        "M-SNAPSHOT-MULTIPLY",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-PDF-ISSUED-0923"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "SOURCE_DRAWING",
+          "content_ref": "2F_PLAN"
+        },
+        {
+          "slot_id": "VERTICAL",
+          "type": "DIAGRAM",
+          "content_ref": "VERTICAL_RELATION"
+        }
+      ],
+      "completion_gate": [
+        "조경 신규 생성 금지",
+        "1F/2F 수직관계 명확",
+        "source geometry 유지"
+      ],
+      "narrative": {
+        "message": {
+          "text": "2층은 A동과 B동을 동일 스케일에서 비교해 세대 조직과 코어 관계를 읽는 페이지다.",
+          "evidence_refs": [
+            "SRC-PDF-ISSUED-0923"
+          ]
+        },
+        "why_it_matters": {
+          "text": "가구 없는 원본을 중심에 두어 두 동의 평면 구성 차이를 장식보다 도면 자체로 판단하게 한다.",
+          "evidence_refs": [
+            "SRC-PDF-ISSUED-0923"
+          ]
+        },
+        "decision_points": [
+          {
+            "text": "A/B동 평면 조직 비교",
+            "evidence_refs": [
+              "SRC-PDF-ISSUED-0923",
+              "FACT-BUILDING-GROUPS"
+            ]
+          },
+          {
+            "text": "코어와 주거영역 관계 확인",
+            "evidence_refs": [
+              "SRC-PDF-ISSUED-0923"
+            ]
+          }
+        ],
+        "claims": [
+          {
+            "text": "원본에 없는 조경은 추가하지 않는다.",
+            "evidence_refs": [
+              "SRC-PDF-ISSUED-0923",
+              "REV-LAND-02"
+            ]
+          }
+        ]
+      }
+    },
+    {
+      "page_id": "P07",
+      "title": "Section / Height / Ground",
+      "purpose": "수직관계·지반·도로·지하주차 구조 설명",
+      "primary_message": "B1-1F-2F와 지반/도로의 관계를 단면에서 빠르게 이해",
+      "fact_refs": [
+        "FACT-FLOORS"
+      ],
+      "review_refs": [
+        "REV-ARCH-02",
+        "REV-GROUND-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-SECTION-SAFE",
+        "M-SNAPSHOT-MULTIPLY",
+        "M-SECTION-LAYERED",
+        "M-HUMAN-SCALE",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-PDF-ISSUED-0923"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "HERO",
+          "type": "SOURCE_DRAWING",
+          "content_ref": "SECTION"
+        },
+        {
+          "slot_id": "LEVELS",
+          "type": "TEXT",
+          "content_ref": "SECTION_LEVELS"
+        },
+        {
+          "slot_id": "GROUND",
+          "type": "DIAGRAM",
+          "content_ref": "GROUND_PROFILE"
+        }
+      ],
+      "completion_gate": [
+        "CUT 우선",
+        "ground/soil 구분",
+        "레벨 임의변경 금지"
+      ]
+    },
+    {
+      "page_id": "P08",
+      "title": "Direct Case Comparison",
+      "purpose": "유사한 저층/용산권 고급주거 사례를 동일 지표로 비교",
+      "primary_message": "현재 4세대 계획을 직접 비교 가능한 사례군 속에서 위치시킴",
+      "fact_refs": [
+        "FACT-UNITS",
+        "FACT-PARKING",
+        "FACT-SITE-AREA",
+        "FACT-GFA",
+        "FACT-BCR",
+        "FACT-FAR"
+      ],
+      "review_refs": [],
+      "case_refs": [
+        "CASE-ITAEWON111",
+        "CASE-LECIEL1022",
+        "CASE-INFO-73718"
+      ],
+      "method_refs": [
+        "M-CASE-MATRIX",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-CASE-0915",
+        "SRC-INFO-73718"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "MATRIX",
+          "type": "CASE_MATRIX",
+          "content_ref": "DIRECT_CASE_MATRIX"
+        },
+        {
+          "slot_id": "NOTES",
+          "type": "TEXT",
+          "content_ref": "COMPARABILITY_NOTES"
+        }
+      ],
+      "completion_gate": [
+        "직접비교/참고 구분",
+        "출처 표시",
+        "조건 차이 명시"
+      ]
+    },
+    {
+      "page_id": "P09",
+      "title": "Luxury Product Comparison",
+      "purpose": "고급주거의 상품구성 지표 비교",
+      "primary_message": "주차·실사용·테라스·타입 구성의 시장 benchmark를 분리 제시",
+      "fact_refs": [
+        "FACT-CASE-UPPERHOUSE-NAMSAN-PARKING",
+        "FACT-CASE-PARC-HANNAM-PARKING"
+      ],
+      "review_refs": [],
+      "case_refs": [
+        "CASE-UPPERHOUSE-NAMSAN",
+        "CASE-PARC-HANNAM"
+      ],
+      "method_refs": [
+        "M-CASE-MATRIX",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-CASE-0915"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "MATRIX",
+          "type": "CASE_MATRIX",
+          "content_ref": "LUXURY_PRODUCT_MATRIX"
+        },
+        {
+          "slot_id": "INSIGHT",
+          "type": "TEXT",
+          "content_ref": "PRODUCT_INSIGHT"
+        }
+      ],
+      "completion_gate": [
+        "benchmark를 법적 적정성 근거로 사용 금지",
+        "상품지표만 비교"
+      ]
+    },
+    {
+      "page_id": "P10",
+      "title": "Committee Pre-check Matrix",
+      "purpose": "공동위원회 관점의 사전 검토를 한 장에 정리",
+      "primary_message": "심의 전에 무엇이 확정·미확정·보완 필요한지 파악",
+      "fact_refs": [],
+      "review_refs": [
+        "REV-ARCH-01",
+        "REV-ARCH-02",
+        "REV-TRAFFIC-01",
+        "REV-TRAFFIC-02",
+        "REV-LAND-01",
+        "REV-LAND-02",
+        "REV-GROUND-01",
+        "REV-MEP-01",
+        "REV-PERMIT-01"
+      ],
+      "case_refs": [],
+      "method_refs": [
+        "M-COMMITTEE-CARD",
+        "M-RELATION-FIRST",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [
+        "SRC-COMMITTEE"
+      ],
+      "layout_slots": [
+        {
+          "slot_id": "MATRIX",
+          "type": "TABLE",
+          "content_ref": "TBL-COMMITTEE-PRECHECK"
+        }
+      ],
+      "completion_gate": [
+        "검토항목/근거/대응/상태/후속조치 모두 존재",
+        "타 프로젝트 수치 이식 금지"
+      ]
+    },
+    {
+      "page_id": "P11",
+      "title": "Decision / Next Action",
+      "purpose": "현재 단계의 의사결정과 다음 작업을 명확히 함",
+      "primary_message": "확정/계산/협의/설계수정 항목을 분리하여 다음 작업으로 연결",
+      "fact_refs": [
+        "FACT-SITE-AREA",
+        "FACT-BUILDING-AREA",
+        "FACT-GFA",
+        "FACT-BCR",
+        "FACT-FAR",
+        "FACT-PARKING"
+      ],
+      "review_refs": [
+        "REV-PERMIT-01",
+        "REV-TRAFFIC-01",
+        "REV-GROUND-01"
+      ],
+      "case_refs": [
+        "CASE-ITAEWON111",
+        "CASE-LECIEL1022"
+      ],
+      "method_refs": [
+        "M-COMMITTEE-CARD",
+        "M-EDITORIAL-RESTRAINT"
+      ],
+      "source_visual_refs": [],
+      "layout_slots": [
+        {
+          "slot_id": "CONFIRMED",
+          "type": "TEXT",
+          "content_ref": "CONFIRMED_ITEMS"
+        },
+        {
+          "slot_id": "CALCULATE",
+          "type": "TEXT",
+          "content_ref": "CALCULATION_QUEUE"
+        },
+        {
+          "slot_id": "COORDINATE",
+          "type": "TEXT",
+          "content_ref": "COORDINATION_QUEUE"
+        },
+        {
+          "slot_id": "DESIGN",
+          "type": "TEXT",
+          "content_ref": "DESIGN_ACTION_QUEUE"
+        }
+      ],
+      "completion_gate": [
+        "다음 단계가 작업 단위로 분리",
+        "PENDING 항목 누락 없음"
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "TBL-OVERVIEW",
+      "title": "건축개요",
+      "column_ids": [
+        "항목",
+        "계획",
+        "단위",
+        "상태",
+        "근거"
+      ],
+      "row_refs": [
+        "FACT-PROJECT-TYPE",
+        "FACT-UNITS",
+        "FACT-BUILDING-GROUPS",
+        "FACT-FLOORS",
+        "FACT-SITE-AREA",
+        "FACT-BUILDING-AREA",
+        "FACT-GFA",
+        "FACT-BCR",
+        "FACT-FAR",
+        "FACT-PARKING"
+      ]
+    },
+    {
+      "table_id": "TBL-COMMITTEE-PRECHECK",
+      "title": "공동위원회 사전검토",
+      "column_ids": [
+        "검토축",
+        "검토항목",
+        "현재근거",
+        "대응안",
+        "상태",
+        "후속조치"
+      ],
+      "row_refs": [
+        "REV-ARCH-01",
+        "REV-ARCH-02",
+        "REV-TRAFFIC-01",
+        "REV-TRAFFIC-02",
+        "REV-LAND-01",
+        "REV-LAND-02",
+        "REV-GROUND-01",
+        "REV-MEP-01",
+        "REV-PERMIT-01"
+      ]
+    }
+  ],
+  "outputs": {
+    "primary": "A3_PDF",
+    "visual_canonical": "A3_SVG_BOARD_STATE",
+    "derivative": [
+      "HTML",
+      "PPTX",
+      "PNG",
+      "PDF"
+    ],
+    "data_export": [
+      "XLSX"
+    ]
+  },
+  "validation": {
+    "source_fidelity": "PENDING",
+    "report_comprehension": "PENDING",
+    "output_bundle": "PENDING",
+    "latest_source_rebase": "PASS",
+    "presentation_preview_v1": "DEPRECATED_SOURCE_PRESERVATION_TEST",
+    "presentation_preview_v2": "B1_SECTION_REVIEW_READY",
+    "pending_visuals": [
+      "P05_1F_WAIT_LATEST_EXPORT",
+      "P06_2F_WAIT_LATEST_EXPORT"
+    ]
+  },
+  "presentation_reference_policy": {
+    "principle": "External sites and Work/REFERENCE supply representation methods only; Work project sources retain geometry and factual authority.",
+    "drive_sources": [
+      "REPRESENTATION_METHOD_INDEX",
+      "TREND_LEADER_MINING_2026-09-23",
+      "GLOBAL_OFFICE_DNA_2026-09-23"
+    ],
+    "external_sources": [
+      {
+        "source": "ArchDaily",
+        "url": "https://www.archdaily.com/1121384/the-limits-of-the-section-an-essay-on-graphic-representation",
+        "mined_dna": [
+          "section as layered selection/translation",
+          "vertical relationships",
+          "human-scale legibility"
+        ],
+        "use": [
+          "P07"
+        ]
+      },
+      {
+        "source": "OMA / AMO",
+        "url": "https://www.oma.com/projects/diagrams",
+        "mined_dna": [
+          "relation-first",
+          "structure/proximity over ornament",
+          "abstraction for legibility"
+        ],
+        "use": [
+          "P02",
+          "P08",
+          "P10"
+        ]
+      },
+      {
+        "source": "Drawing Matter",
+        "url": "https://drawingmatter.org/stalder-projected-sections/",
+        "mined_dna": [
+          "sectional/axonometric reading of residential relations",
+          "inside/outside threshold",
+          "single-frame apartment relation"
+        ],
+        "use": [
+          "P07"
+        ]
+      },
+      {
+        "source": "Drawing Matter",
+        "url": "https://drawingmatter.org/on-axonometric-drawing/",
+        "mined_dna": [
+          "plan/axon/perspective as complementary analytical modes",
+          "line or collage depending purpose"
+        ],
+        "use": [
+          "P01",
+          "P02",
+          "P05",
+          "P06"
+        ]
+      },
+      {
+        "source": "BIG",
+        "url": "https://cdn.big.dk/projects/yongsan-hashtag-tower-5703",
+        "mined_dna": [
+          "base-condition optimization",
+          "light/view logic",
+          "repeatable condition before exception"
+        ],
+        "use": [
+          "P01",
+          "P05",
+          "P06",
+          "P09"
+        ]
+      },
+      {
+        "source": "ArchDaily",
+        "url": "https://www.archdaily.com/1037623/decomposition-as-expression-disassembled-axonometry-as-design-tool",
+        "mined_dna": [
+          "layer decomposition",
+          "exploded axon for systems/material/process explanation"
+        ],
+        "use": [
+          "P02",
+          "P04"
+        ]
+      }
+    ],
+    "forbidden": [
+      "copy office/site graphic identity literally",
+      "replace source geometry with reference geometry",
+      "invent landscape or material not supported by source/project intent",
+      "use case visuals as factual evidence for current project"
+    ]
+  },
+  "page_presentation_rules": {
+    "P01": [
+      "main message first",
+      "one key diagram",
+      "key numbers compact",
+      "no decorative hero image"
+    ],
+    "P02": [
+      "site/road/level relations as 3-5 one-move diagrams",
+      "one accent family only"
+    ],
+    "P03": [
+      "table-first",
+      "status/evidence visually stronger than prose"
+    ],
+    "P04": [
+      "B1 source plan dominates",
+      "vehicle/pedestrian/access/retaining-ground diagrams subordinate",
+      "no geometry redraw"
+    ],
+    "P05": [
+      "1F source plan dominates",
+      "outdoor/private/circulation relations by transparent overlays only"
+    ],
+    "P06": [
+      "2F source plan dominates",
+      "no invented landscaping",
+      "privacy/view relations only if source-supported"
+    ],
+    "P07": [
+      "cut plane strongest",
+      "soil/ground readable",
+      "background quiet",
+      "human scale minimal"
+    ],
+    "P08": [
+      "same metrics across cases",
+      "current project column visually distinct",
+      "comparability limitations visible"
+    ],
+    "P09": [
+      "product metrics not legal-compliance claims",
+      "parking/exclusive/outdoor-space emphasized"
+    ],
+    "P10": [
+      "issue-evidence-response-status-next action grid",
+      "committee logic without copied project-specific requirements"
+    ],
+    "P11": [
+      "confirmed/calculation/coordination/design queues",
+      "decision clarity over decoration"
+    ]
+  }
+}
