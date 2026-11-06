@@ -1,9 +1,9 @@
-# TAKY WORK OS
+# TAKY_ARCHI GROW
 
 Status: REV_00 / PRE-CONFIRMATION EVOLVING DESIGN SOURCE
 
 ## Purpose
-TAKY-WORK-OS is the implementation and operating layer for AI-assisted professional work through conversation. It stores reusable workflows, automation logic, validation rules, schemas, scripts, and integration policies. It is not the primary warehouse for business project files.
+TAKY_ARCHI GROW is the implementation and operating layer for AI-assisted professional work through conversation. It stores reusable workflows, automation logic, validation rules, schemas, scripts, and integration policies. It is not the primary warehouse for business project files.
 
 ## Authority
 TAKY / GRAND MASTER rules govern this repository. Work OS rules may specialize execution but may not weaken validation, evidence, approval, privacy, source-of-truth, Deep Analysis, or anti-omission rules.
@@ -12,12 +12,12 @@ TAKY / GRAND MASTER rules govern this repository. Work OS rules may specialize e
 The user should be able to provide files in chat and request work naturally. TAKY handles classification, naming, filing, validation, and result organization behind the scenes. Do not force the user to operate a complex lifecycle folder tree for ordinary work.
 
 ## Google Drive workspace
-Preferred governed workspace name: TAKY-WORK-OS.
+Preferred governed workspace name: TAKY_ARCHI GROW.
 Google Drive holds actual project inputs and generated business artifacts such as DWG/DXF, PDF, XLSX, DOCX, images, references, and deliverables.
 
 Default visible structure:
 
-TAKY-WORK-OS/
+TAKY_ARCHI GROW/
 └─ [PROJECT]/
    └─ [YYYY-MM-DD]_[WORK-TITLE]/
       ├─ 요청자료/
@@ -165,8 +165,8 @@ ORCHESTRATION → ROUTING → HANDOFF → CROSS-VALIDATION → HUMAN APPROVAL
 
 ## Storage separation
 - TAKY: canonical central governance/master logic
-- TAKY-WORK-OS GitHub: reusable work execution logic and automation definitions
+- TAKY_ARCHI GROW GitHub: reusable work execution logic and automation definitions
 - TAKY-ASSETS: reusable development/product assets
-- Google Drive TAKY-WORK-OS: actual business/project source files and generated deliverables
+- Google Drive TAKY_ARCHI GROW: actual business/project source files and generated deliverables
 - Netlify: deployment only for actual webapps/PWAs that require it
 - Company PC: synchronized local working environment, not canonical master authority

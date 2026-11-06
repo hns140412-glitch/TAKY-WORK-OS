@@ -6,7 +6,7 @@ Purpose: Consolidate fragmented but materially confirmed rules into one recovera
 
 ## 0. AUTHORITY / USAGE
 
-This file is a recovery and integration candidate under TAKY-WORK-OS.
+This file is a recovery and integration candidate under ARCHI GROW.
 It does NOT replace TAKY / GRAND MASTER or project masters.
 Central TAKY canonical write requires explicit later authorization.
 
@@ -24,7 +24,7 @@ Hard distinction:
 - `TAKY/MASTER/MASTER_LOGIC.md` — cost-aware Fit-for-Purpose already states `AI-CAPABLE ≠ AI-REQUIRED` and routes by risk / cost / latency / accuracy.
 - `TAKY/OS/GUIDE_FAMILY_LEARNING_OS.md` — shared family learning, Assignment Intake, Local-first, practice evidence, teacher boundary.
 - `TAKY/MASTER/LEARNING_APP_FAMILY_MASTER_REV_01.md` — shared three-app session contract.
-- `TAKY-WORK-OS/CANDIDATES/COST_USAGE_PREFLIGHT_GATE_REV_00_CANDIDATE.md` — candidate high-usage preflight contract.
+- `ARCHI GROW/CANDIDATES/COST_USAGE_PREFLIGHT_GATE_REV_00_CANDIDATE.md` — candidate high-usage preflight contract.
 
 ### Ready & Set
 - `Ready_Set_Ui_Master_Logic_REV_07.md` — current project master baseline.

@@ -2,7 +2,7 @@
 
 Status: CANDIDATE / NOT CENTRAL TAKY CANONICAL
 Date: 2026-09-08
-Owner layer: TAKY-WORK-OS implementation / reusable execution registry
+Owner layer: ARCHI GROW implementation / reusable execution registry
 Authority: TAKY / GRAND MASTER > TAKY COMMAND / INTERACTION OS > ACTION / SKILL REGISTRY > individual action definition
 
 ## 0. SOURCE BASIS / SCOPE

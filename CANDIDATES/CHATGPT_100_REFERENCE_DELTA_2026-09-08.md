@@ -1,7 +1,7 @@
 # CHATGPT 100 REFERENCE DELTA — 2026-09-08
 
 Status: CANDIDATE / REFERENCE-EXTRACTED DELTA / NOT CENTRAL TAKY CANONICAL
-Scope: TAKY-WORK-OS / Learning-Family / Ready & Set / file-analysis workflows
+Scope: ARCHI GROW / Learning-Family / Ready & Set / file-analysis workflows
 Source basis: user-attached screenshots summarizing 100 ChatGPT usage ideas grouped into prompt/dialog design, file/image/app linkage, research/learning, and advanced/security functions.
 
 ## 0. SOURCE RULE

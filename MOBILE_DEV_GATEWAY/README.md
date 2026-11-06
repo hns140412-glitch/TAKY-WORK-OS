@@ -43,7 +43,7 @@ Direct public HTTP Codex execution is disabled by configuration. The Cloudflare-
 
 ## Start
 
-On the office PC, with `TAKY-WORK-OS` checked out to `mobile-dev-gateway-2026-09-10` and clean:
+On the office PC, with `TAKY_ARCHI GROW` checked out to `mobile-dev-gateway-2026-09-10` and clean:
 
 1. Fetch/Pull latest once.
 2. Run `MOBILE_DEV_GATEWAY\START_MOBILE_GATEWAY.bat`.
